@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coach.io - Upload Match</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-container": "#424141",
+                        "primary-fixed-dim": "#3ce36a",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "secondary-fixed": "#9cf0ff",
+                        "surface-variant": "#202020",
+                        "secondary-container": "#00e3fd",
+                        "secondary": "#bdf4ff",
+                        "on-primary-fixed": "#002108",
+                        "inverse-primary": "#006e2a",
+                        "on-secondary-container": "#00616d",
+                        "on-secondary-fixed": "#001f24",
+                        "surface-container-lowest": "#000000",
+                        "surface-tint": "#3ce36a",
+                        "surface-dim": "#000000",
+                        "error": "#ffb4ab",
+                        "on-secondary": "#00363d",
+                        "surface-container-low": "#0a0a0a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "inverse-surface": "#e2e2e2",
+                        "on-surface": "#e2e2e2",
+                        "secondary-fixed-dim": "#00daf3",
+                        "surface-container-high": "#181818",
+                        "on-primary": "#003912",
+                        "tertiary": "#cbc8c8",
+                        "primary-container": "#00c853",
+                        "tertiary-container": "#afadac",
+                        "surface": "#000000",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#202020",
+                        "surface-bright": "#2a2a2a",
+                        "background": "#000000",
+                        "on-background": "#e2e2e2",
+                        "inverse-on-surface": "#2f3131",
+                        "primary": "#3fe56c",
+                        "outline": "#869583",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "on-tertiary": "#313030",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-surface-variant": "#bbcbb8",
+                        "surface-container": "#101010",
+                        "primary-fixed": "#69ff87",
+                        "on-primary-fixed-variant": "#00531e",
+                        "outline-variant": "#3c4a3c",
+                        "on-primary-container": "#004c1b"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "margin-desktop": "64px"
+                    },
+                    fontFamily: {
+                        "label-sm": ["JetBrains Mono"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    fontSize: {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pitch-line {
+            background-image: linear-gradient(to right, #222222 1px, transparent 1px);
+            background-size: 100% 1px;
+            background-position: center;
+            background-repeat: repeat-x;
+        }
+        .glow-primary {
+            box-shadow: 0 0 12px rgba(63, 229, 108, 0.4);
+        }
+        .glow-win {
+            box-shadow: 0 0 12px rgba(0, 200, 83, 0.5);
+        }
+
+        /* Gaming HUD motion */
+        .glow-primary {
+            animation: dropzone-breathe 3s ease-in-out infinite;
+        }
+        @keyframes dropzone-breathe {
+            0%, 100% { box-shadow: 0 0 12px rgba(63, 229, 108, 0.25); }
+            50% { box-shadow: 0 0 22px rgba(63, 229, 108, 0.55); }
+        }
+        .dropzone-scan {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: theme('colors.primary');
+            opacity: 0.6;
+            filter: blur(1px);
+            animation: dropzone-scan 3.5s ease-in-out infinite;
+        }
+        @keyframes dropzone-scan {
+            0% { top: 4%; }
+            50% { top: 92%; }
+            100% { top: 4%; }
+        }
+        .step-pulse {
+            animation: step-pulse 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes step-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 227, 253, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 227, 253, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 227, 253, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen pt-[72px]">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 dark:bg-surface/80 backdrop-blur-md fixed top-0 w-full z-50 h-[72px] border-b border-white/10 flat no shadows">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full max-w-container-max mx-auto">
+<!-- Brand -->
+<a class="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary uppercase tracking-tighter" href="/">
+                Coach.io
+            </a>
+<!-- Navigation Links (Web) -->
+<div class="hidden md:flex items-center gap-8">
+<a class="font-body-md text-body-md text-primary dark:text-primary border-b-2 border-primary pb-1 active:scale-95 duration-200 transition-transform" href="/upload/">Upload</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/report/">Reports</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/trends/">Trends</a>
+</div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="max-w-container-max mx-auto px-margin-desktop pt-8 pb-24 flex flex-col gap-8">
+<!-- Header Area -->
+<div class="text-center mb-4">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Analyze Your Gameplay</h1>
+<p class="text-on-surface-variant">Upload your latest match clip for AI-driven tactical insights.</p>
+</div>
+<!-- Central Action Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Upload & Controls Column -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<!-- Drag and Drop Zone -->
+<div class="group relative w-full h-80 rounded-xl border-2 border-dashed border-primary bg-surface-container flex flex-col items-center justify-center cursor-crosshair transition-all duration-300 hover:bg-primary/5 hover:border-primary-fixed-dim glow-primary overflow-hidden">
+<div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(63,229,108,0.02)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none"></div>
+<div class="dropzone-scan pointer-events-none"></div>
+<span class="material-symbols-outlined text-6xl text-primary mb-4 transition-transform group-hover:scale-110 duration-300" style="font-variation-settings: 'wght' 300;">cloud_upload</span>
+<h2 class="font-headline-lg text-headline-lg-mobile text-on-surface mb-2">Drop your match clip</h2>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider mb-6">MP4 or MKV up to 5GB</p>
+<button class="bg-surface-variant text-on-surface px-6 py-2 rounded-full font-label-sm text-label-sm hover:bg-primary hover:text-on-primary transition-colors flex items-center gap-2" onclick="window.location.href='/analyzing/'">
+<span class="material-symbols-outlined text-[16px]">folder_open</span> Browse Files
+                    </button>
+</div>
+<!-- Controls Row -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-high border border-outline-variant/30">
+<!-- You Are Toggle -->
+<div class="flex items-center gap-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Perspective:</span>
+<div class="flex bg-surface-dim rounded p-1 border border-outline-variant/50">
+<button data-side="home" class="px-4 py-1.5 rounded-sm bg-primary/20 text-primary font-label-sm text-label-sm flex items-center gap-2 transition-colors shadow-[inset_0_0_8px_rgba(63,229,108,0.2)]">
+<span class="material-symbols-outlined text-[14px]">sports_soccer</span> Home
+                            </button>
+<button data-side="away" class="px-4 py-1.5 rounded-sm text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[14px]">sports_soccer</span> Away
+                            </button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<!-- Game Selector -->
+<div class="relative">
+<button class="flex items-center gap-2 bg-surface-dim border border-outline-variant/50 rounded px-4 py-2 text-on-surface font-label-sm text-label-sm hover:border-primary/50 transition-colors">
+                                EA FC 26 <span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</button>
+</div>
+<!-- Analysis Mode -->
+<div class="relative">
+<button class="flex items-center gap-2 bg-surface-dim border border-outline-variant/50 rounded px-4 py-2 text-on-surface font-label-sm text-label-sm hover:border-secondary-container/50 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-secondary-container">psychology</span> Full Match Auto <span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<!-- How it works Stepper -->
+<div class="mt-4 p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/20 relative overflow-hidden">
+<!-- Subtle pitch line background -->
+<div class="absolute inset-0 opacity-20 pointer-events-none flex flex-col justify-between py-4">
+<div class="w-full h-px bg-[#222222]"></div>
+<div class="w-full h-px bg-[#222222]"></div>
+<div class="w-full h-px bg-[#222222]"></div>
+</div>
+<h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-6 relative z-10">Analysis Process</h3>
+<div class="relative flex justify-between items-center z-10 max-w-lg mx-auto">
+<!-- Connecting Line -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-variant -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-1/2 h-[2px] bg-primary -translate-y-1/2 z-0 opacity-50"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_0_8px_rgba(63,229,108,0.4)]">
+<span class="material-symbols-outlined text-[18px]">done</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">Upload</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="step-pulse w-8 h-8 rounded-full bg-surface-dim border-2 border-secondary-container text-secondary-container flex items-center justify-center shadow-[0_0_12px_rgba(0,227,253,0.3)]">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary-container">AI Processing</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">sports</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Get Coached</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Matches Column -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Recent Matches</h2>
+<a class="font-label-sm text-label-sm text-primary hover:text-primary-fixed-dim transition-colors flex items-center" href="/report/">View All <span class="material-symbols-outlined text-[14px]">chevron_right</span></a>
+</div>
+<!-- Match Card 1 (Win) -->
+<div class="group relative flex items-center gap-4 p-4 rounded-lg bg-surface-container border border-outline-variant/30 hover:bg-surface-container-high transition-colors cursor-pointer overflow-hidden" onclick="window.location.href='/report/'">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary"></div>
+<div class="w-12 h-12 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-display-lg text-headline-lg-mobile glow-win shrink-0">
+                        W
+                    </div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-body-md text-body-md text-on-surface font-semibold truncate">vs xX_Sniper_Xx</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">Oct 24</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">sports_soccer</span> Div 2</span>
+<span class="text-outline-variant">•</span>
+<span class="text-primary group-hover:underline">View Analysis</span>
+</div>
+</div>
+</div>
+<!-- Match Card 2 (Loss) -->
+<div class="group relative flex items-center gap-4 p-4 rounded-lg bg-surface-container border border-outline-variant/30 hover:bg-surface-container-high transition-colors cursor-pointer overflow-hidden" onclick="window.location.href='/report/'">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-error"></div>
+<div class="w-12 h-12 rounded bg-error-container text-on-error-container flex items-center justify-center font-display-lg text-headline-lg-mobile shrink-0">
+                        L
+                    </div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-body-md text-body-md text-on-surface font-semibold truncate">vs ProPlayer99</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">Oct 23</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">sports_soccer</span> FUT Champs</span>
+<span class="text-outline-variant">•</span>
+<span class="text-primary group-hover:underline">View Analysis</span>
+</div>
+</div>
+</div>
+<!-- Match Card 3 (Draw) -->
+<div class="group relative flex items-center gap-4 p-4 rounded-lg bg-surface-container border border-outline-variant/30 hover:bg-surface-container-high transition-colors cursor-pointer overflow-hidden" onclick="window.location.href='/report/'">
+<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-tertiary"></div>
+<div class="w-12 h-12 rounded bg-surface-variant text-on-surface-variant border border-outline-variant flex items-center justify-center font-display-lg text-headline-lg-mobile shrink-0">
+                        D
+                    </div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-baseline mb-1">
+<h4 class="font-body-md text-body-md text-on-surface font-semibold truncate">vs TacticMaster</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 ml-2">Oct 21</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">sports_soccer</span> Div 2</span>
+<span class="text-outline-variant">•</span>
+<span class="text-primary group-hover:underline">View Analysis</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script src="/coach.js"></script>
+</body></html>

@@ -1,0 +1,20 @@
+You are labelling ONE frame from an EA Sports FC 26 match. Pick the single best
+label describing what is happening in this frame:
+
+- in_play: ordinary live gameplay from the main wide/broadcast camera; players
+  spread over the pitch, the small scoreboard HUD visible.
+- goal: a goal moment or its aftermath — players celebrating, a "GOAL" graphic,
+  or a close-up of a celebrating player.
+- yellow_card / red_card: the referee is holding up a yellow / red card.
+- substitution: a substitution board or on-screen sub graphic (player names,
+  in/out arrows).
+- kickoff: teams lined up around the centre circle before play starts.
+- half_time / full_time: the half-time or full-time whistle / title graphic.
+- stat_screen: a full-screen match-stats panel (possession, shots, passes).
+- replay: a slow-motion or cinematic-camera replay of a passage of play.
+- menu: any menu, pause screen, or non-gameplay UI.
+
+Rules: choose in_play ONLY for clearly ordinary live play from the main camera.
+If players are celebrating, it is goal. If it is slow-motion or a close/cinematic
+angle, it is replay. Return strict JSON only, no prose:
+{"label": "<one label above>", "confidence": 0.0-1.0}

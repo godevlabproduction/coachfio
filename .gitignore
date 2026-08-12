@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Env / secrets
+.env
+.env.local
+
+# Node / web
+web/node_modules/
+web/dist/
+web/.vite/
+frontend/node_modules/
+
+# Data / local artifacts
+data/
+clips/
+out/
+reports/
+*.mp4
+*.mov
+*.mkv
+*.pdf
+eng.traineddata
+!docs/**/*.png
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OCR model caches
+.paddleocr/
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db

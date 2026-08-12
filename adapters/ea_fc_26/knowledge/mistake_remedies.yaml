@@ -1,0 +1,152 @@
+# FC 26 MISTAKE -> REMEDY map. The coaching engine matches a detected pattern
+# (by tags/keywords) and grounds the "fix" + "what to practice" on these vetted,
+# FC-26-accurate remedies (controls + a concrete drill). Add freely.
+entries:
+  - id: overcommit_cb
+    match: [dive in, over-commit, over commit, lunge, slide tackle, caught out, beaten one-v-one]
+    problem: Diving in with the CB / over-committing tackles.
+    fix: >-
+      Hold contain (L2/LT) and jockey to delay; only stand-tackle (○/B) when the ball is
+      clearly exposed. Prefer MANUAL switching to the covering man over second-man press —
+      over-using press (R1) drags players out and opens holes.
+    drill: "Skill Games > Defending: win the ball with jockey + contain, no slide tackles."
+    tags: [defending, contain, one-v-one, tackling]
+  - id: far_post_crosses
+    match: [far post, cross, header, unmarked, box, aerial]
+    problem: Conceding headers/cutbacks from crosses, esp. far post.
+    fix: >-
+      Switch to the covering defender EARLY (Right Stick flick), mark the far-post
+      runner, and choose punch (○/B) vs catch (□/X) by traffic. Assign a Post Watcher
+      on defensive set pieces.
+    drill: "Practice Arena / Kick-Off vs Legendary: defend repeated crosses, pre-switching to the far-post man."
+    tags: [defending, crosses, far-post, set-pieces, marking]
+  - id: high_line_counter
+    match: [caught high, high line, in behind, through ball, counter, transition, gaps]
+    problem: Back line too high / caught in transition on the counter.
+    fix: >-
+      Drop the defensive line a notch, keep one fullback supporting (not both
+      forward), and set wide roles to a defensive/supportive Focus. Recover with
+      contain, not chasing.
+    drill: "Set a 'defend the counter' tactics code; play a half focusing on line height + recovery runs."
+    tags: [tactics, defensive-line, transition, counters, positioning]
+  - id: forcing_central
+    match: [forcing central, congested, lost possession midfield, turnover, no width]
+    problem: Forcing passes into a compact centre and turning it over.
+    fix: >-
+      Switch play to the under-loaded flank (change the point of attack) and use
+      first-time passes to move the block; only go central when a passing LANE opens.
+    drill: "Possession drill: mandate a switch of play before any shot; punish central forcing."
+    tags: [passing, build-up, possession, width, midfield]
+  - id: secondary_balls
+    match: [loose ball, rebound, second ball, scramble, not first to, clear]
+    problem: Not winning loose/second balls in your own box.
+    fix: >-
+      Anticipate rebounds — press R2/RT for urgency to the loose ball, and CLEAR with
+      the shoot button (not a pass) to get distance. Reaction-save with the keeper if
+      manual.
+    drill: "Kick-Off vs Legendary: focus solely on clearing rebounds from crosses/corners with the shoot button."
+    tags: [defending, loose-ball, rebounds, box, clearances]
+  - id: static_attackers
+    match: [static, no movement, no runs, no penetration, playing backward]
+    problem: Attackers static; no vertical penetration.
+    fix: >-
+      Trigger manual runs (L1/LB) to stretch the line, give Lengthy players a runway,
+      and use a Box Crasher role for late runs into the area.
+    drill: "Attacking drill: score only from a manually-triggered run in behind."
+    tags: [attacking, movement, runs, penetration]
+  - id: wasteful_finishing
+    match: [missed chances, wasteful, finishing, shot selection, blazed over]
+    problem: Poor shot selection / wasteful finishing.
+    fix: >-
+      Pick the shot: low driven (double-tap ○/B, ~2.5 bars, aim far post) across goal
+      from the edge; finesse (hold R1/RB + shoot from ~45°) to curl it in; side-foot
+      placed finish inside the box. Timed Finishing is gone — it's position + composure.
+    drill: "Practice Arena: 20 finishes — low driven from the edge, finesse from 45°, placed finishes inside."
+    tags: [attacking, shooting, finishing, composure, finesse]
+  - id: conceding_cutbacks
+    match: [cutback, cut back, pulled back, low cross, unmarked at penalty spot, byline]
+    problem: Conceding from cutbacks pulled back from the byline.
+    fix: >-
+      Track the LATE runner at the penalty spot and far post, not the ball. Hold a CM/CDM
+      on the edge of the box to block the low driven cutback pass, and keep your CBs on the
+      runners. Don't let your defender get dragged to the byline and ball-watch.
+    drill: "Get a friend to spam cutbacks in a friendly; practice tracking the penalty-spot runner and blocking the pass with a midfielder."
+    tags: [defending, cutback, marking, box, far-post, positioning]
+  - id: beaten_through_balls
+    match: [through ball, in behind, over the top, pace, offside trap, split defenders]
+    problem: Beaten repeatedly by through-balls in behind.
+    fix: >-
+      Stand BETWEEN the ball and the most dangerous option; switch to the covering
+      full-back EARLY (Right Stick) to close the half-space before the gap opens. Defend
+      with your CDMs cutting the passing lane rather than chasing with CBs. Most spam
+      relies on you over-committing — be patient and drop the line a notch.
+    drill: "Kick-Off vs Legendary: focus on early FB switching + holding CDMs to cut through-ball lanes; do not press with CBs."
+    tags: [defending, through-ball, positioning, defensive-line, switching, patience]
+  - id: cant_break_low_block
+    match: [low block, compact, parked the bus, no space, forcing central, congested, sideways]
+    problem: Can't break down a deep/compact defence.
+    fix: >-
+      Don't force it through the middle. Carry the ball down the WING as low as the goal-
+      line/byline — this pulls their defence down toward their keeper and OPENS space —
+      then cut inside or CUTBACK to a central finisher (the Vejrgang pattern). Trigger
+      manual runs (L1/LB) to pull markers and switch play to the under-loaded flank.
+    drill: "Possession drill: score only from a wide overload -> cutback or a manually-triggered run in behind."
+    tags: [attacking, low-block, width, cutback, runs, build-up]
+  - id: chasing_defender
+    match: [chasing, out of position, pressing too much, dragged around, no shape]
+    problem: Chasing the ball / defending out of shape.
+    fix: >-
+      Learning WHERE to stand beats spamming tackle. Jockey (L2/LT) to close the shooting
+      or passing LANE and shepherd play wide; only tackle when the ball is exposed. Keep
+      your defensive block connected rather than running one man at the ball.
+    drill: "Play a half with a self-rule: no slide tackles — win it all through jockey + positioning."
+    tags: [defending, positioning, jockey, contain, shape, discipline]
+  - id: beaten_by_skill_moves
+    match: [skill move, skilled, beaten by dribbling, ball roll, stepover, roulette, juggled]
+    problem: Beaten by skill-move spam.
+    fix: >-
+      Stay PATIENT and jockey (L2/LT) side-on to block the exit route — most skills need
+      space. Don't spam contain (R1/RB), it drags you out of shape; use the SECOND
+      defender (R1/RB) to cut the passing lane while your marker jockeys. Vs a ball-roll,
+      wait for the roll to finish, then tackle.
+    drill: "Have a friend spam skills in a friendly; practice side-on jockey + second-man, no early tackles."
+    tags: [defending, skill-moves, jockey, contain, patience, second-man]
+  - id: beaten_by_pace
+    match: [pace, fast, sprinted past, knock-on, speed, burned, in behind pace]
+    problem: Beaten repeatedly by pace / speed-boost dribbling.
+    fix: >-
+      Don't sprint unless you're SURE of winning it — hold contain and stay goal-side.
+      Use the second defender (R1/RB) to cut the passing lane while your marker jockeys,
+      and drop your line a notch so there's less grass in behind. Track quick turns with
+      positioning, not lunges.
+    drill: "1v1 vs a pacey player: win it by staying goal-side + second-man cover, never sprint-lunging."
+    tags: [defending, pace, contain, second-man, defensive-line, positioning]
+  - id: pressed_into_turnovers
+    match: [pressed, high press, turnover under pressure, lost it in build-up, panicked, hurried]
+    problem: Losing the ball to the opponent's high press in build-up.
+    fix: >-
+      Shield-trap (hold L2/LT) as you receive to protect it, play the FIRST-TIME pass out
+      of the press, and switch to the FREE man (often the far-side full-back) rather than
+      dwelling. If in doubt near your box, clear with the shoot button — don't force it.
+    drill: "Build-out drill vs a friend pressing: one/two-touch only, must switch to the free side to escape."
+    tags: [possession, build-up, press, shielding, first-time, switching]
+  # --- from a real coach's match analysis (user-provided) ---------------------
+  - id: give_and_go_triangles
+    match: [give and go, one-two, triangle, wall pass, quick passing, passed around, combination]
+    problem: Carved open by the opponent's give-and-go / triangle passing.
+    fix: >-
+      Spot the give-and-go/triangle pattern EARLY and switch to your FULL-BACK ahead of
+      time so you can reach their winger before the return pass — don't chase the passes
+      through the middle. Jockey to delay, keep your pivot compact, and cut the return
+      lane rather than lunging at the first man.
+    drill: "vs a friend spamming one-twos: pre-switch to the fullback and cut the return pass, no chasing."
+    tags: [defending, give-and-go, triangle, switching, positioning, wings]
+  - id: no_tackle_in_box
+    match: [tackle in the box, penalty, dived in in the area, lunged in the box, panicked in defense]
+    problem: Tackling/panicking inside your own penalty area.
+    fix: >-
+      Do NOT tackle inside your own box — tackling is unreliable there and risks penalties.
+      Use ONLY jockey (hold L2/LT), stay goal-side, read the attacker and delay. Stay calm;
+      let them run into a dead end rather than committing.
+    drill: "Defend crosses/1v1s in the box using jockey only — zero tackle button for a whole half."
+    tags: [defending, box, jockey, tackling, discipline, penalties]

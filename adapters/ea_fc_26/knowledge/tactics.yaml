@@ -1,0 +1,74 @@
+# FC 26 TACTICS / FC IQ — roles, focuses and set pieces (distilled facts).
+# Source: EA Pitch Notes gameplay deep dive + The World's Game update.
+meta:
+  system: "FC IQ (Player Roles + Focuses + team tactics)"
+  source: "https://www.ea.com/games/ea-sports-fc/fc-26/news/pitch-notes-fc26-gameplay-deep-dive"
+
+entries:
+  - id: roles_new
+    area: tactics
+    title: New FC IQ player roles
+    detail: >-
+      New roles include Ball-Playing Keeper, Wide Back, Inverted Wingback and Box
+      Crasher. Pick roles that match your plan: Inverted Wingback tucks inside to
+      protect against counters; Box Crasher gives a late runner into the area.
+    tags: [tactics, roles, formation, counters]
+  - id: focuses
+    area: tactics
+    title: Role focuses (Versatile replaces Complete)
+    detail: >-
+      Each role has Focuses that bias it defensive/supportive/attacking; "Versatile"
+      replaces the old "Complete". If you concede on the counter, set fullbacks/
+      wingers to a more defensive/supportive focus rather than full-attack.
+    tags: [tactics, focus, balance, counters]
+  - id: tactics_codes
+    area: tactics
+    title: Tactics Code system
+    detail: >-
+      Save/load up to 10 custom tactics codes and share them across modes — useful
+      to keep a balanced default and a chase-the-game preset ready.
+    tags: [tactics, presets, workflow]
+  - id: set_piece_assignments
+    area: tactics
+    title: Set-piece assignments
+    detail: >-
+      Eight new set-piece assignments (Threat Marker, Post Watcher, Top of Box,
+      throw-in takers, etc.). Assign a Post Watcher and Threat Markers to stop the
+      far-post and edge-of-box goals that concede most on defensive set pieces.
+    tags: [set-pieces, defending, crosses, far-post]
+  # --- from a real coach's match analysis (user-provided) ---------------------
+  - id: switch_over_press
+    area: tactics
+    title: Manual switching over second-man press
+    detail: >-
+      Prioritise MANUAL player switching over the second/third-man press. Over-using
+      second-man press (hold R1) — and especially third-man (double R1) — drags your AI
+      players out of position and OPENS HOLES you concede through. Use it sparingly;
+      mostly switch to the right defender yourself and jockey.
+    controls: "Right Stick flick (manual switch); R1 second-man press = sparingly"
+    tags: [defending, switching, second-man, press, shape, positioning]
+  - id: compact_central_mids
+    area: tactics
+    title: Keep CM/CDMs central & compact
+    detail: >-
+      Don't drag your CM/CDMs out to the wings — keep them CLOSE TOGETHER in the central
+      part of the pitch to screen the middle. Let full-backs handle the flanks; pulling a
+      pivot wide is what opens the central lanes you get punished through.
+    tags: [defending, midfield, compact, shape, central, positioning]
+  - id: defensive_instructions
+    area: tactics
+    title: Player instructions to stop counters/crosses
+    detail: >-
+      If you concede on the counter: set full-backs to "Stay Back While Attacking" and
+      CDMs to "Stay Back" + "Cut Passing Lanes", and drop defensive width to ~40. Control
+      a CDM/CM yourself to cut lanes and let the AI hold the back line. Switch EARLY to
+      the defender you'll need next.
+    tags: [tactics, instructions, counters, crosses, defending, width, switching]
+  - id: mentality_balance
+    area: tactics
+    title: Team mentality & staying compact
+    detail: >-
+      Pushing a high line + attacking fullbacks leaves gaps in behind on turnovers.
+      If you get countered, drop the line slightly and keep one fullback supporting
+      rather than both bombing on — compactness between the lines beats chasing.
+    tags: [tactics, defensive-line, compactness, transition, counters]

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coach.io - Moments</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&amp;family=Hanken+Grotesk:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-container": "#424141",
+                        "primary-fixed-dim": "#3ce36a",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "secondary-fixed": "#9cf0ff",
+                        "surface-variant": "#202020",
+                        "secondary-container": "#00e3fd",
+                        "secondary": "#bdf4ff",
+                        "on-primary-fixed": "#002108",
+                        "inverse-primary": "#006e2a",
+                        "on-secondary-container": "#00616d",
+                        "on-secondary-fixed": "#001f24",
+                        "surface-container-lowest": "#000000",
+                        "surface-tint": "#3ce36a",
+                        "surface-dim": "#000000",
+                        "error": "#ffb4ab",
+                        "on-secondary": "#00363d",
+                        "surface-container-low": "#0a0a0a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "inverse-surface": "#e2e2e2",
+                        "on-surface": "#e2e2e2",
+                        "secondary-fixed-dim": "#00daf3",
+                        "surface-container-high": "#181818",
+                        "on-primary": "#003912",
+                        "tertiary": "#cbc8c8",
+                        "primary-container": "#00c853",
+                        "tertiary-container": "#afadac",
+                        "surface": "#000000",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#202020",
+                        "surface-bright": "#2a2a2a",
+                        "background": "#000000",
+                        "on-background": "#e2e2e2",
+                        "inverse-on-surface": "#2f3131",
+                        "primary": "#3fe56c",
+                        "outline": "#869583",
+                        "on-secondary-fixed-variant": "#004f58",
+                        "on-tertiary": "#313030",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-surface-variant": "#bbcbb8",
+                        "surface-container": "#101010",
+                        "primary-fixed": "#69ff87",
+                        "on-primary-fixed-variant": "#00531e",
+                        "outline-variant": "#3c4a3c",
+                        "on-primary-container": "#004c1b"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "margin-desktop": "64px"
+                    },
+                    fontFamily: {
+                        "label-sm": ["JetBrains Mono"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    fontSize: {
+                        "label-sm": ["12px", { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "display-lg": ["48px", { lineHeight: "1.1", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "700" }],
+                        "headline-lg-mobile": ["24px", { lineHeight: "1.2", fontWeight: "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glow-primary {
+            box-shadow: 0 0 12px rgba(63, 229, 108, 0.25);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="sticky top-0 w-full z-50 h-[72px] bg-surface/80 backdrop-blur-md border-b border-white/10">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full max-w-container-max mx-auto">
+<a class="font-display-lg text-headline-lg text-primary uppercase tracking-tighter" href="/">
+                Coach.io
+            </a>
+<div class="flex gap-4 md:gap-8 h-full items-end">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors pb-4" href="/upload/">Upload</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors pb-4" href="/report/">Reports</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-4" href="/moment/">Moments</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors pb-4" href="/trends/">Trends</a>
+</div>
+<div>
+<span class="material-symbols-outlined text-on-surface hover:text-primary transition-colors cursor-pointer text-3xl active:scale-95 duration-200">account_circle</span>
+</div>
+</div>
+</nav>
+<!-- Content (coach.js renders the moments screen here) -->
+<main class="px-margin-mobile md:px-margin-desktop py-8 max-w-container-max mx-auto">
+<p class="text-on-surface-variant py-20 text-center">Loading moments…</p>
+</main>
+<script src="/coach.js"></script>
+</body></html>

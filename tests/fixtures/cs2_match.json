@@ -1,0 +1,11 @@
+{
+  "teams": {"home": "NAVI", "away": "FaZe"},
+  "final_score": {"home": 13, "away": 11},
+  "stats": {"home": {"kills": 85}, "away": {"kills": 80}},
+  "rounds": [
+    {"n": 1, "t_ms": 95000, "winner": "home", "highlights": ["bomb_planted"], "highlight_team": "home"},
+    {"n": 2, "t_ms": 190000, "winner": "away"},
+    {"n": 3, "t_ms": 300000, "winner": "home", "highlights": ["ace"], "highlight_team": "home"},
+    {"n": 4, "t_ms": 405000, "winner": "away", "highlights": ["clutch"], "highlight_team": "away"}
+  ]
+}

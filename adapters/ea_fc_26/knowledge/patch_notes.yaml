@@ -1,0 +1,26 @@
+# FC 26 TITLE UPDATE history (distilled). Keeps coaching current with the meta.
+# Grow via tools/ingest_knowledge.py pointed at official patch-note pages.
+entries:
+  - version: "1.4.0"
+    date: "2026"
+    summary: >-
+      Matches flow more naturally: AI defenders mark less tightly around the box and
+      leave more space when switching actions; automatic goal-line clearances in rare
+      last-ditch cases; acrobatic shots right after flicks are less accurate.
+    source: "https://patchbot.io/games/ea-sports-fc-26"
+    tags: [defending, ai-marking, shooting]
+  - version: "1.1.0"
+    date: "2025"
+    summary: >-
+      Faster jockeying and responsiveness tuning; PC-specific fixes. Rewarded
+      staying on your feet and containing over diving in.
+    source: "https://www.sportskeeda.com/esports/ea-fc-26-v1-1-patch-notes-faster-jockeying-pc-updates"
+    tags: [defending, jockey]
+  - version: "launch"
+    date: "2025-09"
+    summary: >-
+      FC 26 launch: Timed Finishing and Agile Dribbling removed; Low Driven moved to
+      double-tap shot; FC IQ roles expanded (Ball-Playing Keeper, Wide Back, Inverted
+      Wingback, Box Crasher); Competitive vs Authentic gameplay presets.
+    source: "https://www.ea.com/games/ea-sports-fc/fc-26/news/pitch-notes-fc26-gameplay-deep-dive"
+    tags: [launch, shooting, dribbling, tactics]

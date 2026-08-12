@@ -1,0 +1,118 @@
+from __future__ import annotations
+
+import logging
+
+from adapters.base.registry import load_builtin_adapters, registry
+from core.ai.vision import build_vision
+from core.config import get_settings
+from core.extraction.frames import Frame, load_frame_image
+from core.extraction.ocr import get_ocr_engine
+from core.models.enums import MatchStatus, SourceType
+from core.pipeline.context import PipelineContext
+from core.pipeline.cost import CostAccountant
+from core.pipeline.runner import run_pipeline
+from core.storage.db import session_scope
+from core.storage.frame_keys import frame_prefix, parse_frame_key, source_key
+from core.storage.objectstore import get_object_store
+from core.storage.repository import MatchRepository
+from workers.celery_app import celery_app
+from workers.progress import RedisProgressReporter
+
+log = logging.getLogger("coachio.worker")
+
+
+def _load_frames(match_id: str) -> list[Frame]:
+    store = get_object_store()
+    frames: list[Frame] = []
+    for key in store.list(frame_prefix(match_id)):
+        parsed = parse_frame_key(key)
+        if parsed is None:
+            continue
+        index, ts = parsed
+        image = load_frame_image(store.get(key))
+        frames.append(Frame(index=index, timestamp_ms=ts, key=key, image=image))
+    frames.sort(key=lambda f: f.index)
+    return frames
+
+
+@celery_app.task(name="workers.run_match_pipeline")
+def run_match_pipeline(match_id: str) -> dict:
+    load_builtin_adapters()
+    settings = get_settings()
+    reporter = RedisProgressReporter(match_id)
+
+    with session_scope() as session:
+        repo = MatchRepository(session)
+        match = repo.get(match_id)
+        if match is None:
+            reporter.report("pipeline", "failed", f"match {match_id} not found")
+            return {"match_id": match_id, "status": "not_found"}
+        repo.set_status(match_id, MatchStatus.PROCESSING)
+
+    # VIDEO -> load frames (OCR pipeline); VIDEO_NATIVE/replay/API -> load the raw
+    # source object (whole video for Gemini, or a replay/API export).
+    frames: list[Frame] = []
+    source_bytes: bytes | None = None
+    if match.source_type == SourceType.VIDEO:
+        reporter.report("pipeline", "loading", "loading frames from object store")
+        frames = _load_frames(match_id)
+        if not frames:
+            with session_scope() as session:
+                MatchRepository(session).set_status(match_id, MatchStatus.FAILED)
+            reporter.report("pipeline", "failed", "no frames uploaded")
+            return {"match_id": match_id, "status": "no_frames"}
+    else:
+        reporter.report("pipeline", "loading", "loading uploaded source (video/replay)")
+        try:
+            source_bytes = get_object_store().get(source_key(match_id))
+        except Exception:
+            with session_scope() as session:
+                MatchRepository(session).set_status(match_id, MatchStatus.FAILED)
+            reporter.report("pipeline", "failed", "no source uploaded")
+            return {"match_id": match_id, "status": "no_source"}
+
+    # Longitudinal memory: this player's recurring issues across past matches.
+    identity = (match.capture or {}).get("identity", "")
+    player_history = None
+    if identity:
+        with session_scope() as session:
+            player_history = MatchRepository(session).recurring_issues(identity)
+
+    duration_ms = max((f.timestamp_ms for f in frames), default=0)
+    adapter = registry.get(match.game_id, match.game_edition)
+    ident = adapter.identity()
+    match.adapter_version = f"{ident.game_id}@{ident.edition}"
+
+    ctx = PipelineContext(
+        match=match,
+        adapter=adapter,
+        frames=frames,
+        ocr=get_ocr_engine(settings.ocr_engine),
+        settings=settings,
+        cost=CostAccountant.for_match(settings.match_budget_usd, duration_ms),
+        reporter=reporter,
+        vision=build_vision(settings),
+        object_store=get_object_store(),
+        source_bytes=source_bytes,
+        player_history=player_history,
+    )
+
+    # Native whole-video path runs a single Gemini stage; everything else runs
+    # the default frame/replay pipeline.
+    from core.pipeline.stages import VIDEO_NATIVE_STAGES
+    stages = VIDEO_NATIVE_STAGES if match.source_type == SourceType.VIDEO_NATIVE else None
+
+    try:
+        run_pipeline(ctx, stages=stages)
+    finally:
+        with session_scope() as session:
+            MatchRepository(session).save(match)
+
+    reporter.report(
+        "pipeline",
+        "final",
+        f"status={match.status.value} cost=${match.cost_usd:.4f} "
+        f"confidence={match.parse_confidence}",
+        match_status=match.status.value,
+    )
+    return {"match_id": match_id, "status": match.status.value, "cost_usd": match.cost_usd}

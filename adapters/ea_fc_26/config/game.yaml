@@ -1,0 +1,49 @@
+# EA Sports FC 26 — identity, vocabulary, metrics, validation.
+# This file is DATA. Adding FC 27 next year = copy this, bump edition + schema.
+
+identity:
+  game_id: ea-fc
+  franchise: ea-fc          # annual editions share a franchise…
+  edition: "26"             # …but adapters are versioned per edition
+  display_name: EA Sports FC 26
+  platforms: [ps5, xbox, pc]
+  supported_sources: [video]
+
+# Game vocabulary -> core EventCategory. The core only sees the category.
+events:
+  - { game_type: goal,         category: score_change,    description: "Player's team scored" }
+  - { game_type: concede,      category: score_change,    description: "Opponent scored" }
+  - { game_type: yellow_card,  category: discipline,      description: "Yellow card shown" }
+  - { game_type: red_card,     category: discipline,      description: "Red card shown" }
+  - { game_type: substitution, category: roster_change,   description: "Substitution made" }
+  - { game_type: kickoff,      category: period_boundary, description: "Kickoff / half start" }
+  - { game_type: half_time,    category: period_boundary, description: "Half-time" }
+  - { game_type: full_time,    category: period_boundary, description: "Full-time whistle" }
+  - { game_type: stat_screen,  category: stat_snapshot,   description: "Match-facts screen read" }
+  - { game_type: replay,       category: scene_change,    description: "Replay / cutscene" }
+  - { game_type: menu,         category: scene_change,    description: "Menu / non-gameplay" }
+
+# What numbers matter. `source_expr: ocr:<region>` ties a metric to a HUD region.
+metrics:
+  - { key: score_home,          label: "Goals (home)",         higher_is_better: true,  source_expr: "ocr:score_home" }
+  - { key: score_away,          label: "Goals (away)",         higher_is_better: false, source_expr: "ocr:score_away" }
+  - { key: possession_home_pct, label: "Possession % (home)",  unit: "%", higher_is_better: true,  source_expr: "ocr:ss_possession_home" }
+  - { key: possession_away_pct, label: "Possession % (away)",  unit: "%", higher_is_better: false, source_expr: "ocr:ss_possession_away" }
+  - { key: shots_home,          label: "Shots (home)",         higher_is_better: true,  source_expr: "ocr:ss_shots_home" }
+  - { key: shots_away,          label: "Shots (away)",         higher_is_better: false, source_expr: "ocr:ss_shots_away" }
+  - { key: shots_on_target_home,label: "Shots on target (home)",higher_is_better: true, source_expr: "ocr:ss_sot_home" }
+  - { key: shots_on_target_away,label: "Shots on target (away)",higher_is_better: false,source_expr: "ocr:ss_sot_away" }
+  - { key: pass_accuracy_home_pct, label: "Pass accuracy % (home)", unit: "%", higher_is_better: true,  source_expr: "ocr:ss_passacc_home" }
+  - { key: pass_accuracy_away_pct, label: "Pass accuracy % (away)", unit: "%", higher_is_better: false, source_expr: "ocr:ss_passacc_away" }
+  - { key: tackles_home,        label: "Tackles (home)",       higher_is_better: true,  source_expr: "ocr:ss_tackles_home" }
+  - { key: tackles_away,        label: "Tackles (away)",       higher_is_better: false, source_expr: "ocr:ss_tackles_away" }
+
+# Declarative sanity checks (generic ones handled in the base class).
+# Football-specific temporal rules (score can't decrease) are in adapter.py.
+validation:
+  - { metric: possession_home_pct, min: 0, max: 100 }
+  - { metric: possession_away_pct, min: 0, max: 100 }
+  - { metric: pass_accuracy_home_pct, min: 0, max: 100 }
+  - { metric: pass_accuracy_away_pct, min: 0, max: 100 }
+  - { metric: shots_home, non_negative: true }
+  - { metric: shots_away, non_negative: true }

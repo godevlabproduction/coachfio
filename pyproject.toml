@@ -1,0 +1,65 @@
+[project]
+name = "coachio"
+version = "0.0.0"
+description = "Game-agnostic gameplay analysis engine (Phase 0)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    "python-multipart>=0.0.9",
+    "sse-starlette>=2.1",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "sqlalchemy>=2.0.30",
+    "psycopg[binary]>=3.1",
+    "celery>=5.4",
+    "redis>=5.0",
+    "boto3>=1.34",
+    # Pinned to the numpy-1.x era: PaddleOCR/OpenCV 2.x wheels are compiled
+    # against numpy 1.x ABI and fail to import under numpy 2.x.
+    "numpy==1.26.4",
+    "opencv-python-headless==4.6.0.66",
+    "anthropic>=0.40",
+    "pillow>=10.3",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Heavy / platform-sensitive. Installed in the backend image; kept optional so
+# the rest of the stack can boot with OCR_ENGINE=stub while iterating.
+ocr = [
+    # Pinned to the 2.x line on purpose. PaddlePaddle 3.x's new PIR/oneDNN CPU
+    # executor throws "ConvertPirAttribute2RuntimeAttribute not support" on many
+    # CPUs, and PaddleOCR 3.x changed its return format. 2.x is the known-good
+    # combo for the classic .ocr(img, cls=False) -> [[box,(text,conf)]] API this
+    # code targets.
+    "paddlepaddle==2.6.2",
+    "paddleocr==2.7.3",
+    # Keep the rest of the transitive stack in the same numpy-1.x era, or these
+    # get resolved to numpy-2 builds that break the ABI again.
+    "pandas==2.2.2",
+    "protobuf==3.20.2",
+]
+dev = [
+    "pytest>=8.2",
+    "ruff>=0.4",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "adapters*", "api*", "workers*"]
+
+[tool.setuptools.package-data]
+# HUD schemas / prompts ship as data, not code.
+"adapters" = ["**/*.yaml", "**/*.yml", "**/*.txt"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

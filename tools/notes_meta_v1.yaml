@@ -1,0 +1,91 @@
+source: text:meta-notes-v1
+facts:
+  # --- Meta Passing Mechanics & Attack Patterns ---
+  - title: The Recycle Pattern (Wing Byline)
+    detail: >-
+      Drive down the wing to the byline, then turn back toward the edge of the
+      box and pass to open midfielders. This pulls the opponent's defence out of
+      alignment and isolates their centre-backs, opening a cleaner central attack.
+    category: attacking
+    tags: [passing, recycle, attack_pattern, wing_play, meta]
+
+  - title: First-Time Driven Passes Through the Middle
+    detail: >-
+      Fire first-time driven passes rapidly through central areas to exploit high
+      player reactions and bypass recovering defenders before their shape resets.
+    controls: R1 + X / RB + A (driven pass)
+    category: attacking
+    tags: [passing, driven_pass, transition, meta]
+
+  - title: Inside Forward Integration
+    detail: >-
+      Set your wingers to the Inside Forward role so they drift inside, drag their
+      markers with them and create dynamic central passing triangles.
+    category: tactic
+    tags: [fc_iq, inside_forward, wingers, attacking, meta]
+
+  # --- Meta Defending Strategies ---
+  - title: Sprint Jockey
+    detail: >-
+      Sprint-jockey to keep tight control and close distance to the attacker
+      without over-sprinting or pulling your centre-backs out of position.
+    controls: L2 + R2 / LT + RT
+    category: defending
+    tags: [jockey, sprint_jockey, positioning, meta]
+
+  - title: Conservative Defensive Positioning
+    detail: >-
+      Defend with patient left-stick positioning and hold your defensive line to
+      block passing and shooting paths, rather than gambling on aggressive standing
+      tackles or spamming buttons.
+    category: defending
+    tags: [positioning, patience, meta]
+
+  - title: Restrained Second-Man Press
+    detail: >-
+      Tap the second-man press in short half-second bursts to clog passing lanes.
+      Never hold it down: it drags a second defender out and breaks your structure.
+    controls: R1 / RB (tap, not hold)
+    category: defending
+    tags: [second_man_press, structure, meta]
+
+  - title: Fullback Pressing on Wide Attacks
+    detail: >-
+      When the opponent attacks wide channels, press with your wide fullbacks
+      instead of dragging central defenders out of position.
+    category: defending
+    tags: [fullbacks, wide_defending, positioning, meta]
+
+  # --- Meta Shooting Techniques ---
+  - title: Finesse Shots
+    detail: >-
+      Currently the strongest finishing mechanic. Position at a 45-degree angle
+      inside or just outside the box, use about 2 to 2.5 bars of power, and bend it
+      toward the far post.
+    controls: R1 + shoot / RB + shoot
+    category: attacking
+    tags: [shooting, finesse, meta]
+
+  - title: First-Time Finishes
+    detail: >-
+      Extremely strong due to responsive competitive presets: shoot immediately
+      off a pass, before the defender or goalkeeper can react.
+    category: attacking
+    tags: [shooting, first_time, meta]
+
+  - title: Low Driven Shots
+    detail: >-
+      Power up the shot normally, then tap the shoot button a second time before
+      contact for a low driven finish. Lethal in tight 1v1 box situations or when
+      the keeper rushes out.
+    controls: shoot, then tap shoot again before contact
+    category: attacking
+    tags: [shooting, low_driven, meta]
+
+  - title: Precision Shooting
+    detail: >-
+      Turn on Precision Shooting in settings for manual left-stick directional
+      control, letting you place shots into the corner pockets.
+    controls: enable in settings; aim with the Left Stick
+    category: settings
+    tags: [shooting, precision, settings, meta]

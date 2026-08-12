@@ -1,0 +1,55 @@
+from __future__ import annotations
+
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+from core.models.enums import SourceType
+
+
+class CreateMatchRequest(BaseModel):
+    game_id: str = "ea-fc"
+    edition: str = "26"
+    source_type: SourceType = SourceType.VIDEO
+    # Client-declared capture info: resolution, platform, fps. Helps pick a HUD
+    # schema variant. Opaque to the core.
+    capture: dict[str, Any] = Field(default_factory=dict)
+
+
+class CreateMatchResponse(BaseModel):
+    match_id: str
+    status: str
+    # Client uploads frames to POST {frames_endpoint} as multipart, then calls
+    # {complete_endpoint}.
+    frames_endpoint: str
+    complete_endpoint: str
+    progress_endpoint: str
+
+
+class GameInfo(BaseModel):
+    game_id: str
+    edition: str
+    display_name: str
+    franchise: str
+    platforms: list[str]
+    supported_sources: list[str]
+    metric_keys: list[str]
+
+
+class FrameUploadResponse(BaseModel):
+    match_id: str
+    index: int
+    key: str
+
+
+class TrendResponse(BaseModel):
+    key: str
+    label: str
+    unit: str | None
+    higher_is_better: bool | None
+    latest: float | None
+    previous: float | None
+    delta: float | None
+    improving: bool | None
+    average: float | None
+    points: list[dict[str, Any]]

@@ -1,0 +1,90 @@
+# FC 26 META FORMATIONS & TACTICAL PRINCIPLES (distilled from meta guides).
+# Sources: dexerto.com, teamgullit.com, itemd2r.com FC 26 tactics guides (2026).
+# Used to ground coaching in what actually works in the current meta.
+principles:
+  - id: build_up_meta
+    title: Meta build-up = quick vertical transitions
+    detail: >-
+      The FC 26 attacking meta is fast transitions, vertical passes and intelligent
+      off-ball runs — not slow sideways possession. Counter and Balanced build-up
+      styles dominate; when you win the ball, look to progress vertically before the
+      opponent resets.
+    tags: [attacking, build-up, transition, meta, passing]
+  - id: two_cdms
+    title: Double pivot for control
+    detail: >-
+      Two defensive midfielders (a holder + a box-to-box/box-crasher) is the standard
+      meta base — it screens the back line and stops opponents playing through the
+      middle. If you get overrun centrally, hold one CDM back rather than pushing both.
+    tags: [tactics, midfield, defending, through-ball, positioning]
+  - id: fullbacks_meta
+    title: Full-backs must defend AND support
+    detail: >-
+      Narrow/attacking systems put heavy load on full-backs; use technically strong
+      full-backs and don't push BOTH forward — keep one supporting to avoid getting
+      countered in the wide channels.
+    tags: [tactics, fullbacks, width, counters, transition]
+  - id: manual_defending
+    title: Manual jockey defending
+    detail: >-
+      AI defending is toned down in FC 26 — winning the ball relies on manual jockey
+      (hold L2/LT) at the right moment and timing the stand tackle, not auto-contain.
+      Contain to delay, second-man (L1/LB) to double, tackle only when the ball is
+      exposed.
+    tags: [defending, jockey, contain, tackling, meta]
+  - id: defensive_line_height
+    title: Line height & depth
+    detail: >-
+      Many meta setups run a HIGH line (depth ~70) to compress the pitch and win the
+      ball high; drop toward ~40-45 if you keep getting beaten by through-balls and
+      pace. Defensive width ~35-50. Tune depth down when vulnerable to the counter.
+    tags: [tactics, defensive-line, depth, width, counters, through-ball]
+
+entries:
+  - id: f_451
+    formation: "4-5-1"
+    title: 4-5-1 (top meta, controlled midfield)
+    detail: >-
+      Most-meta control formation (April 2026). Balanced build-up, high line (~70
+      depth); dominates midfield and morphs into 4-3-3 / 4-2-3-1 in possession. Roles:
+      Box-to-Box mids, Inside-Forward wingers, False-9 striker.
+    tags: [formation, 451, control, midfield, meta]
+  - id: f_4411
+    formation: "4-4-1-1"
+    title: 4-4-1-1 (post-patch #1)
+    detail: >-
+      Balanced build-up, high depth (~60-70). Great for rapid counters via the CAM +
+      striker; the CAM (Shadow Striker) is critical — Bonmatí/Bellingham-type shines.
+      Inside-Forward wingers. Shifts into 4-3-3 / 4-2-3-1 dynamically.
+    tags: [formation, 4411, counter, cam, meta]
+  - id: f_442
+    formation: "4-4-2"
+    title: 4-4-2 (reliable, two strikers)
+    detail: >-
+      Balanced build-up, high depth. Two strikers pressure the back line; midfield
+      four gives coverage. Needs a strong CM pair that can defend (screen the middle)
+      as it's attack-heavy. Inside-Forward wide men.
+    tags: [formation, 442, strikers, width, meta]
+  - id: f_4231
+    formation: "4-2-3-1 Wide"
+    title: 4-2-3-1 Wide (safe, compact)
+    detail: >-
+      The safe staple — four at the back + two CDMs for a compact block, three CAMs
+      supporting a lone striker. Excellent defensive support; needs a strong striker.
+    tags: [formation, 4231, safe, compact, defending]
+  - id: f_4213
+    formation: "4-2-1-3"
+    title: 4-2-1-3 (balanced overall)
+    detail: >-
+      Very balanced: two CDMs (one Holding for cover, one Box-Crasher to join
+      attacks), a CAM, and LW/RW/ST. Counter build-up, line ~40. Wide players need
+      pace + creativity.
+    tags: [formation, 4213, balanced, box-crasher, counter]
+  - id: f_5212
+    formation: "5-2-1-2"
+    title: 5-2-1-2 (overload with a back three)
+    detail: >-
+      Looks defensive but overloads attack: three CBs mop up counters while
+      midfielders + two strikers flood forward. Counter build-up, line ~45, wing-backs
+      at Balanced for width.
+    tags: [formation, 5212, back-three, overload, counters]

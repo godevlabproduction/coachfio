@@ -1,0 +1,13 @@
+.git
+web/node_modules
+web/dist
+data
+*.mp4
+*.mov
+*.mkv
+__pycache__
+*.pyc
+.venv
+.pytest_cache
+.ruff_cache
+overlay.png

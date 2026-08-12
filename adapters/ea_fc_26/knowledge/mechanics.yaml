@@ -1,0 +1,181 @@
+# FC 26 gameplay MECHANICS — distilled facts (paraphrased) + exact controls.
+# NOT a verbatim copy of any doc: short factual entries a coach can cite, each
+# with a source. Grow via tools/ingest_knowledge.py. Controls are PlayStation /
+# Xbox.
+meta:
+  game: "EA Sports FC 26"
+  current_title_update: "1.4.0"
+  modes:
+    competitive: "FUT / Clubs / Online — responsive, consistent, less randomness (mandatory online)"
+    authentic: "Career/offline default — realism, strategic pacing, weather"
+  source: "https://www.ea.com/games/ea-sports-fc/fc-26/news/pitch-notes-fc26-gameplay-deep-dive"
+
+entries:
+  - id: jockey
+    area: defending
+    title: Jockey / contain
+    detail: >-
+      Hold L2/LT to jockey — stay goal-side, delay the attacker and shepherd them
+      wide instead of diving in. Jockey movement was made more agile in FC 26 and
+      faster in Title Update 1.1; sprint-jockey with L2+R2/LT+RT to keep up with
+      pace while staying on your feet.
+    controls: "Hold L2/LT (jockey); L2+R2 / LT+RT (sprint jockey)"
+    tags: [defending, contain, positioning, transition, one-v-one]
+  - id: tackling
+    area: defending
+    title: Standing & slide tackles
+    detail: >-
+      Stand tackle (○/B) is improved and personality-driven (Stand Tackle 71+
+      unlocks advanced animations); tackles from behind are less effective. Time
+      the stand tackle when the ball is exposed rather than spamming it.
+    controls: "○/B (stand tackle); □/X (slide tackle)"
+    tags: [defending, tackling, timing]
+  - id: second_man_switch
+    area: defending
+    title: Manual switching & second man
+    detail: >-
+      Switch to the right defender early with the Right Stick flick (or L1/LB for
+      the second-man press) so you mark runners and cover the far post instead of
+      ball-watching. Late switching is a top cause of conceding.
+    controls: "Right Stick flick (manual switch); L1/LB (second-man contain)"
+    tags: [defending, switching, marking, far-post, crosses]
+  - id: shield_trap
+    area: ball_control
+    title: Shield trapping & first-touch precision
+    detail: >-
+      Hold L2/LT as you receive to shield-trap — prioritises body position over a
+      perfect touch, protecting the ball under pressure. Also improves first-touch
+      control at speed (a slight speed trade-off).
+    controls: "Hold L2/LT while receiving"
+    tags: [possession, shielding, hold-up, under-pressure]
+  - id: low_driven_shot
+    area: attacking
+    title: Low driven shot
+    detail: >-
+      Double-tap the shot button for a low driven shot (replaces the old
+      contextual trigger). Great for finishing across goal from the edge of the
+      box. Works on all shot types except chips.
+    controls: "Double-tap ○ / B"
+    tags: [shooting, finishing, edge-of-box]
+  - id: timed_finishing_removed
+    area: attacking
+    title: Timed Finishing REMOVED
+    detail: >-
+      Timed Finishing (the second shot-button tap for a green-timed shot) was
+      REMOVED in FC 26 — do NOT coach it. Finishing is now about shot selection,
+      position and composure, not timing the tap.
+    tags: [shooting, removed, do-not-mention]
+  - id: agile_dribbling_removed
+    area: attacking
+    title: Agile Dribbling REMOVED
+    detail: >-
+      The L2+R2 Agile Dribbling mechanic was REMOVED. Close control now comes from
+      Dynamic/Shield Dribbling and skill moves — do NOT coach Agile Dribbling.
+    tags: [dribbling, removed, do-not-mention]
+  - id: acceleration_types
+    area: attacking
+    title: Acceleration types (Explosive / Lengthy / Controlled)
+    detail: >-
+      Players fall into Explosive (sharp bursts over short distance), Lengthy
+      (build speed over distance) or Controlled. Use Explosive players for tight
+      first-yard breaks; give Lengthy players a runway rather than tight turns.
+    tags: [dribbling, pace, player-fit, acceleration]
+  - id: explosive_sprint
+    area: attacking
+    title: Explosive sprint & knock-ons
+    detail: >-
+      R2/RT gives explosive acceleration in all directions; a knock-on (R2 + push
+      into space) beats a defender for pace but sacrifices close control — use in
+      open space, not in traffic.
+    controls: "R2/RT (sprint); R2 + direction (knock-on)"
+    tags: [dribbling, pace, space]
+  - id: passing_lanes
+    area: attacking
+    title: Through balls & passing lanes
+    detail: >-
+      Aim through-balls into the LANE between defenders (not straight at a runner);
+      first-time passes are faster in short-range. Through-pass accuracy behind you
+      (135°/180°) is reduced in Competitive — avoid blind backward through-balls.
+    controls: "△/Y (through ball); L1+△ / LB+Y (lofted through)"
+    tags: [passing, through-ball, build-up, competitive]
+  - id: shielding_move
+    area: ball_control
+    title: Shoulder challenges & box-outs
+    detail: >-
+      Stronger players win shoulder challenges and box out for aerials based on
+      Strength difference; hold position with L2/LT and back into weaker markers to
+      protect the ball or attack crosses.
+    tags: [physicality, hold-up, aerials, strength]
+  - id: gk_be_a_keeper
+    area: goalkeeper
+    title: Manual keeper & deflection control
+    detail: >-
+      GK positioning uses an ML model to cut angles; deflections are steered to
+      safety. If you take manual keeper, dive with the Right Stick and choose
+      punch (○/B) vs catch (□/X) on crosses by traffic in the box.
+    controls: "Right Stick (dive); ○/B punch, □/X catch"
+    tags: [goalkeeper, crosses, positioning]
+  - id: finesse_shot
+    area: attacking
+    title: Finesse shot
+    detail: >-
+      Finesse shots are strong this patch — hold R1/RB and shoot from around a 45°
+      angle to curl it past the keeper into the far corner. Best with a striker who
+      has finishing/curl; take an extra touch to set the angle if you have time.
+    controls: "Hold R1/RB + ○/B (finesse)"
+    tags: [shooting, finishing, finesse, far-post]
+  - id: low_driven_power
+    area: attacking
+    title: Low driven shot — power & aim
+    detail: >-
+      Load about 2.5 power bars, aim at the FAR post, facing goal. It's a sharp, low,
+      precise strike keepers rarely stop — ideal from the edge of the box and from
+      cutbacks.
+    controls: "Double-tap ○/B, ~2.5 bars, aim far post"
+    tags: [shooting, finishing, low-driven, edge-of-box, cutback]
+  - id: first_time_shots
+    area: attacking
+    title: First-time shots from cutbacks
+    detail: >-
+      First-time shots are especially effective from CUTBACKS and short corners —
+      the keeper can't reset. Line the striker up at the penalty spot and hit it first
+      time rather than taking a touch under pressure.
+    tags: [shooting, finishing, cutback, first-time, corners]
+  - id: through_ball_incisive
+    area: attacking
+    title: Through balls & Incisive Pass
+    detail: >-
+      Play through-balls when the attacker is ALREADY sprinting onto it; against a flat
+      line use a LOFTED through pass over the top or toggle a manual run to beat offside.
+      Through-balls are far stronger from a midfielder with the Incisive Pass PlayStyle.
+    controls: "△/Y through; L1+△ / LB+Y lofted through; R1/RB + player-run for manual runs"
+    tags: [passing, through-ball, playstyle, offside, movement]
+  - id: manual_runs
+    area: attacking
+    title: Manual runs to unlock defences
+    detail: >-
+      Trigger a manual run (L1/LB, or flick the Right Stick for a directed run) with a
+      fast striker to create through-ball chances and drag markers out of shape — the
+      key to breaking a low block.
+    controls: "L1/LB (player run); Right Stick flick (directed run)"
+    tags: [attacking, runs, movement, low-block, penetration]
+  # --- from a real coach's match analysis (user-provided) ---------------------
+  - id: directional_first_touch
+    area: attacking
+    title: Orient your first touch (left stick)
+    detail: >-
+      Before the ball arrives, HOLD the left stick toward the direction you want your
+      player to turn — the receive is oriented that way, so you're set up for a shot or
+      pass much faster. Huge in the opponent's box: face goal on the touch instead of
+      taking a slow settling touch.
+    controls: "Hold Left Stick toward your target BEFORE receiving"
+    tags: [attacking, first-touch, receiving, box, composure]
+  - id: winger_runs_giveandgo
+    area: attacking
+    title: Winger runs + give-and-go on the counter
+    detail: >-
+      Constantly send your wingers into runs (L1/LB) and combine with the striker via
+      give-and-go one-twos, especially on the COUNTER right after you win the ball in
+      your own half — that's when the space is biggest.
+    controls: "L1/LB (send runner); one-two / give-and-go passes"
+    tags: [attacking, wingers, runs, counter, give-and-go, transition]

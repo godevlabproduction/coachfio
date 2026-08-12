@@ -1,0 +1,494 @@
+gaps:
+- id: what-does-the-inverted-wingback-role-do
+  question: what does the Inverted Wingback role do?
+  status: resolved
+  match_id: ''
+- id: what-is-the-explosive-stepover-skill-move-and-how-do-you-do-
+  question: what is the Explosive Stepover skill move and how do you do it?
+  status: resolved
+  match_id: ''
+- id: what-triggers-the-quick-tactics-menu-overlay-on-the-left-sid
+  question: What triggers the quick tactics menu overlay on the left side during gameplay
+    in FC 26?
+  status: resolved
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-are-playstyle-indicators-displayed-above-player-heads-du
+  question: How are playstyle indicators displayed above player heads during high-pressure
+    defensive duels in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-specific-attributes-determine-player-positioning-speed-
+  question: What specific attributes determine player positioning speed when transitioning
+    from high press to low block in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-are-the-exact-stat-requirements-for-the-what-a-hit-evol
+  question: What are the exact stat requirements for the 'What a Hit' evolution shown
+    in the pause menu?
+  status: resolved
+  match_id: 116c9ee0ec6c41c2b83055c1e2b9ed47
+- id: how-does-the-role-playstyle-dynamic-impact-midfielder-positi
+  question: How does the 'Role++' playstyle dynamic impact midfielder positioning
+    in FC 26 tactical setups?
+  status: resolved
+  match_id: 116c9ee0ec6c41c2b83055c1e2b9ed47
+- id: how-does-the-advanced-forward-playstyle-role-affect-player-p
+  question: How does the 'Advanced Forward' playstyle role affect player positioning
+    in FC 26 build-up?
+  status: resolved
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-quick-tactic-setting-triggers-the-team-press-prompt-see
+  question: What quick tactic setting triggers the 'Team Press' prompt seen on the
+    bottom-left D-pad overlay?
+  status: resolved
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-manual-goalkeeper-positioning-toggle-affect-keeper-
+  question: How does manual goalkeeper positioning toggle affect keeper AI coverage
+    on near-post shots in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-the-advanced-forward-role-affect-player-movement-in
+  question: How does the Advanced Forward role affect player movement in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-button-combination-executes-the-low-finesse-shot-mechan
+  question: What button combination executes the low finesse shot mechanic in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-playstyle-bonuses-does-the-advanced-forward-playstyle-p
+  question: What playstyle bonuses does the Advanced Forward playstyle provide in
+    FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-the-team-press-quick-tactic-impact-player-fatigue-i
+  question: How does the Team Press quick tactic impact player fatigue in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-are-the-requirements-for-triggering-the-what-a-hit-evol
+  question: What are the requirements for triggering the 'What a Hit' evolution in
+    FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-the-overload-set-pieces-quick-tactic-alter-player-p
+  question: How does the Overload Set Pieces quick tactic alter player positioning
+    during build-up in FC 26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-specific-attribute-boosts-are-granted-by-the-advanced-f
+  question: What specific attribute boosts are granted by the Advanced Forward evolution
+    card?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-do-player-roles-affect-automated-defensive-tracking-duri
+  question: How do player roles affect automated defensive tracking during fast opposition
+    counter-attacks?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-the-team-press-quick-tactic-affect-stamina-depletio
+  question: How does the 'Team Press' quick tactic affect stamina depletion in FC
+    26?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: what-are-the-exact-triggers-for-the-opponent-forfeit-prompt-
+  question: What are the exact triggers for the opponent forfeit prompt in Ultimate
+    Team?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-playstyle-affect-pina-s-finesse-shooting-accuracy-f
+  question: How does PlayStyle+ affect Pina's finesse shooting accuracy from outside
+    the box?
+  status: open
+  match_id: abae1db84907403088b47c3cf6b9cc1d
+- id: how-does-manual-goalkeeper-movement-affect-shot-coverage-in-
+  question: How does manual goalkeeper movement affect shot coverage in FC 26?
+  status: open
+  match_id: 028d96e3e34942b1baa98f4031c4da74
+- id: what-quick-tactic-inputs-trigger-team-press-in-fc-26
+  question: What quick tactic inputs trigger Team Press in FC 26?
+  status: open
+  match_id: 028d96e3e34942b1baa98f4031c4da74
+- id: how-are-division-rivals-forfeit-penalties-calculated-in-fc-2
+  question: How are Division Rivals forfeit penalties calculated in FC 26?
+  status: open
+  match_id: 028d96e3e34942b1baa98f4031c4da74
+- id: how-does-the-advanced-forward-role-affect-striker-positionin
+  question: How does the Advanced Forward role affect striker positioning in FC 26
+    build-up?
+  status: open
+  match_id: 97b7c428681947ca94db41ea40b1ed32
+- id: what-quick-tactic-triggers-aggressive-team-pressing-during-o
+  question: What quick tactic triggers aggressive team pressing during opposition
+    goal kicks?
+  status: open
+  match_id: 97b7c428681947ca94db41ea40b1ed32
+- id: what-is-the-function-of-the-quick-tactics-team-press-mechani
+  question: What is the function of the Quick Tactics 'Team Press' mechanic in FC
+    26?
+  status: open
+  match_id: 97b7c428681947ca94db41ea40b1ed32
+- id: how-does-the-role-assignment-affect-midfielder-positioning-i
+  question: How does the 'Role+' assignment affect midfielder positioning in FC 26
+    tactical setups?
+  status: open
+  match_id: 97b7c428681947ca94db41ea40b1ed32
+- id: what-are-the-requirements-for-completing-a-favourite-evoluti
+  question: What are the requirements for completing a Favourite Evolution objective
+    during Ultimate Team matches?
+  status: open
+  match_id: 97b7c428681947ca94db41ea40b1ed32
+- id: what-specific-playstyle-perks-are-active-on-gullit-during-co
+  question: What specific playstyle perks are active on Gullit during corner kick
+    routines in FC 26?
+  status: open
+  match_id: edcbd5016dac4b0bbd8537e51781f46f
+- id: how-does-the-team-press-quick-tactic-impact-player-stamina-d
+  question: How does the Team Press quick tactic impact player stamina drain during
+    early-game transitions in FC 26?
+  status: open
+  match_id: edcbd5016dac4b0bbd8537e51781f46f
+- id: what-are-the-objectives-required-to-complete-the-what-a-hit-
+  question: What are the objectives required to complete the What a Hit favorite evolution
+    seen in the menu?
+  status: open
+  match_id: edcbd5016dac4b0bbd8537e51781f46f
+- id: how-does-high-team-pressing-impact-defensive-line-spacing-in
+  question: How does high team pressing impact defensive line spacing in FC 26?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: what-are-the-most-effective-custom-tactics-to-prevent-centra
+  question: What are the most effective custom tactics to prevent central overload
+    in FC 26?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: how-do-player-evolution-playstyles-impact-0-pina-s-finishing
+  question: How do player evolution playstyles impact 0 PINA's finishing attributes
+    in FC 26?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: what-defensive-tactic-setting-best-prevents-opponent-central
+  question: What defensive tactic setting best prevents opponent central through balls
+    on counters?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: how-does-the-new-playstyle-system-affect-tackle-recovery-tim
+  question: How does the new PlayStyle+ system affect tackle recovery times in FC
+    26?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: what-custom-tactics-instruction-best-prevents-fullbacks-from
+  question: What custom tactics instruction best prevents fullbacks from pushing too
+    high on quick turnovers?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: what-specific-player-playstyles-trigger-the-quick-animation-
+  question: What specific player playstyles trigger the quick animation during Pina's
+    close-range finish?
+  status: open
+  match_id: a6ae8495193846a58465a875dc80dc38
+- id: how-does-the-custom-tactics-menu-setting-team-press-affect-s
+  question: How does the custom tactics menu setting 'Team Press' affect Stamina depletion
+    rate in FC 26?
+  status: open
+  match_id: a6ae8495193846a58465a875dc80dc38
+- id: what-tactic-instruction-triggers-full-backs-to-push-up-high-
+  question: What tactic instruction triggers full-backs to push up high in FC 26?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: how-does-the-new-playstyle-impact-player-jockeying-speed-ins
+  question: How does the new PlayStyle+ impact player jockeying speed inside the box
+    in FC 26?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: what-are-the-best-manual-switching-settings-to-prevent-cbs-f
+  question: What are the best manual switching settings to prevent CBs from stepping
+    out of line?
+  status: open
+  match_id: b3c9a82278e64864a18348ec3b706dc5
+- id: what-specific-player-attribute-thresholds-trigger-the-advanc
+  question: What specific player attribute thresholds trigger the Advanced Forward
+    dynamic badge animation?
+  status: open
+  match_id: 4a298e84827c4806a556ec1de311e977
+- id: how-does-the-game-calculate-coin-rewards-when-an-opponent-fo
+  question: How does the game calculate coin rewards when an opponent forfeits mid-match?
+  status: open
+  match_id: 4a298e84827c4806a556ec1de311e977
+- id: what-dynamic-tactic-setting-was-activated-during-the-quick-t
+  question: What dynamic tactic setting was activated during the quick tactics popup
+    at 00:59?
+  status: open
+  match_id: 4a298e84827c4806a556ec1de311e977
+- id: which-playstyle-modifier-was-active-during-pina-s-second-goa
+  question: Which playstyle modifier was active during Pina's second goal celebration
+    card?
+  status: open
+  match_id: 4a298e84827c4806a556ec1de311e977
+- id: how-does-the-advanced-forward-playstyle-affect-pina-s-positi
+  question: How does the Advanced Forward playstyle affect Pina's positioning in FC
+    26?
+  status: open
+  match_id: 72909955992346a1be3eec592a7dacf0
+- id: what-quick-tactic-trigger-was-activated-during-the-goal-sequ
+  question: What quick tactic trigger was activated during the goal sequence at 03:12?
+  status: open
+  match_id: 72909955992346a1be3eec592a7dacf0
+- id: how-does-the-intercept-playstyle-affect-automated-intercepti
+  question: How does the Intercept PlayStyle+ affect automated interception animations
+    compared to standard Intercept in FC 26?
+  status: open
+  match_id: 383338e8c23e4b95b41e1962c12ac0f3
+- id: what-is-the-exact-controller-input-for-triggering-an-immedia
+  question: What is the exact controller input for triggering an immediate first-time
+    trivela shot on the run?
+  status: open
+  match_id: 383338e8c23e4b95b41e1962c12ac0f3
+- id: how-do-manual-player-triggered-runs-l1-lb-interact-with-the-
+  question: How do manual player-triggered runs (L1/LB) interact with the opponent's
+    defensive depth settings during fast counter-attacks?
+  status: open
+  match_id: 383338e8c23e4b95b41e1962c12ac0f3
+- id: what-playstyle-bonus-does-lacroix-gain-after-completing-leve
+  question: What playstyle bonus does Lacroix gain after completing Level 3 of Party
+    at the Back evolution?
+  status: open
+  match_id: 6859eaef7be74cf78991ba4c58982c76
+- id: how-does-the-corner-kick-attacking-target-player-assignment-
+  question: How does the Corner Kick Attacking Target Player assignment affect player
+    positioning in EA FC 26?
+  status: open
+  match_id: 6859eaef7be74cf78991ba4c58982c76
+- id: what-are-the-exact-stat-boosts-provided-by-the-shadow-chemis
+  question: What are the exact stat boosts provided by the Shadow Chemistry Style
+    on Griezmann in FC 26?
+  status: open
+  match_id: 6859eaef7be74cf78991ba4c58982c76
+- id: what-are-the-exact-attribute-boosts-provided-by-the-shadow-p
+  question: What are the exact attribute boosts provided by the Shadow PlayStyle+
+    on Griezmann?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: how-does-the-inside-foot-curled-corner-mechanic-affect-ball-
+  question: How does the Inside Foot Curled corner mechanic affect ball trajectory
+    compared to standard lofted corners?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: what-are-the-tactical-instruction-differences-between-fullba
+  question: What are the tactical instruction differences between 'Fullback' and 'False
+    9' roles in FC 26 build-up play?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: what-specific-player-attributes-are-boosted-by-the-party-at-
+  question: What specific player attributes are boosted by the 'Party at the Back'
+    Evolution in FC 26?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: how-does-the-shadow-s-role-instruction-alter-midfielder-posi
+  question: How does the 'Shadow S' role instruction alter midfielder positioning
+    during defensive transitions?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: how-does-player-fatigue-affect-late-game-sprint-speed-in-fc-
+  question: How does player fatigue affect late-game sprint speed in FC 26 Ultimate
+    Team?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: what-specific-tactic-trigger-causes-full-backs-like-a-t-nour
+  question: What specific tactic trigger causes full-backs like Aït-Nouri to invert
+    during build-up play?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: how-does-the-new-evolution-upgrade-mechanism-calculate-level
+  question: How does the new Evolution upgrade mechanism calculate level completion
+    challenges in Ultimate Team?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: what-exact-attribute-boosts-does-the-party-at-the-back-evolu
+  question: What exact attribute boosts does the Party at the Back Evolution provide
+    at Level 4 in FC 26?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: how-does-the-inside-foot-curled-set-piece-mechanic-affect-co
+  question: How does the Inside Foot Curled set-piece mechanic affect corner trajectory
+    compared to standard lob pass?
+  status: open
+  match_id: 5b97d0cf6c824c17a47097f1852aca95
+- id: what-specific-tactic-trigger-causes-the-full-backs-to-invert
+  question: What specific tactic trigger causes the full-backs to invert heavily during
+    midfield build-up in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-player-lock-mechanic-affect-defensive-line-ai-p
+  question: How does the player lock mechanic affect defensive line AI positioning
+    when switching defenders rapidly?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-are-the-precise-controller-inputs-and-timing-window-for
+  question: What are the precise controller inputs and timing window for the La Croqueta
+    cancel in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-specific-defensive-playstyle-playstyle-triggers-automat
+  question: What specific defensive playstyle playstyle+ triggers automatic block
+    animations in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-new-role-system-affect-player-tracking-during-r
+  question: How does the new role system affect player tracking during rapid transition
+    attacks?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-input-combination-triggers-the-controlled-sprint-boost-
+  question: What input combination triggers the controlled sprint boost when cutting
+    inside near the box?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-fc-26-s-manual-goalkeeper-positioning-system-affect
+  question: How does FC 26's manual goalkeeper positioning system affect near-post
+    shot stopping?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-are-the-specific-tactical-ai-adjustments-for-cb-playsty
+  question: What are the specific Tactical AI adjustments for CB playstyles in FC
+    26 defensive transitions?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-fc-26-playstyle-activation-overlay-trigger-duri
+  question: How does the FC 26 PlayStyle+ activation overlay trigger during contested
+    header duels?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-is-the-most-effective-manual-goalkeeper-movement-comman
+  question: What is the most effective manual goalkeeper movement command to cover
+    short cutback passes in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-inside-forward-role-affect-wing-positioning-dur
+  question: How does the 'Inside Forward++' role affect wing positioning during rapid
+    transitions in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: which-defensive-custom-tactic-setting-best-prevents-central-
+  question: Which defensive custom tactic setting best prevents central defenders
+    from stepping out during 1v1 dribbles?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-controlled-acceleration-style-impact-defensive-jock
+  question: How does Controlled acceleration style impact defensive jockeying responsiveness
+    in 1v1 situations?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-controlled-acceleration-type-affect-defensive-r
+  question: How does the controlled acceleration type affect defensive recovery in
+    FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: which-playstyle-modifier-provides-the-highest-success-rate-o
+  question: Which PlayStyle+ modifier provides the highest success rate on second-chance
+    tackles inside the box?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-is-the-most-effective-manual-goalkeeper-positioning-tec
+  question: What is the most effective manual goalkeeper positioning technique against
+    near-post cutbacks?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-overload-set-pieces-quick-tactic-impact-midfiel
+  question: How does the overload set pieces quick tactic impact midfield defensive
+    balance during transitions?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-inside-forward-role-impact-wide-winger-position
+  question: How does the 'Inside Forward++' role impact wide winger positioning in
+    FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-controls-the-automatic-goalkeeper-movement-when-defendi
+  question: What controls the automatic goalkeeper movement when defending 1v1 situations
+    in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-tactical-custom-tactics-switching-function-during-a
+  question: How does tactical custom tactics switching function during active gameplay
+    in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-the-inside-forward-role-attribute-affect-player-pos
+  question: How does the 'Inside Forward++' role attribute affect player positioning
+    in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-are-the-exact-triggers-for-activating-manual-goalkeeper
+  question: What are the exact triggers for activating manual goalkeeper movement
+    ('Move Goalkeeper') in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-overload-set-pieces-quick-tactic-impact-defensive-t
+  question: How does 'Overload Set Pieces' quick tactic impact defensive transition
+    structure?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: what-is-the-difference-between-controlled-and-explosive-acce
+  question: What is the difference between Controlled and Explosive acceleration types
+    for wingers in FC 26?
+  status: open
+  match_id: f12c718837ce46dc973f4f2a377993fb
+- id: how-does-controlled-sprint-speed-in-fc-26-compare-when-using
+  question: How does controlled sprint speed in FC 26 compare when using PlayStyle
+    vs normal attributes?
+  status: open
+  match_id: fe5665907e1e4cc4b05207d89af73e59
+- id: what-are-the-exact-input-triggers-for-manual-goalkeeper-posi
+  question: What are the exact input triggers for manual goalkeeper positioning during
+    set-piece defense?
+  status: open
+  match_id: fe5665907e1e4cc4b05207d89af73e59
+- id: how-do-intercept-playstyle-animations-assist-manual-cb-jocke
+  question: How do intercept PlayStyle animations assist manual CB jockeying in tight
+    box situations?
+  status: open
+  match_id: fe5665907e1e4cc4b05207d89af73e59
+- id: how-do-specific-player-roles-affect-ai-off-ball-positioning-
+  question: How do specific player roles affect AI off-ball positioning during defensive
+    transitions in FC 26?
+  status: open
+  match_id: fe5665907e1e4cc4b05207d89af73e59
+- id: what-is-the-most-effective-manual-jockey-control-scheme-for-
+  question: What is the most effective manual jockey control scheme for 1v1 defending
+    in the penalty area in FC 26?
+  status: open
+  match_id: fe5665907e1e4cc4b05207d89af73e59
+- id: how-does-the-quick-tactics-team-press-modifier-impact-stamin
+  question: How does the Quick Tactics 'Team Press' modifier impact stamina consumption
+    in FC 26?
+  status: open
+  match_id: fe5665907e1e4cc4b05207d89af73e59
+- id: what-specific-player-playstyle-icons-trigger-during-corner-k
+  question: What specific player playstyle icons trigger during corner kick delivery
+    animations?
+  status: open
+  match_id: 385d605b9fa647a79a4aa3834313c40e
+- id: how-does-the-manual-goalkeeper-movement-mechanic-function-in
+  question: How does the manual goalkeeper movement mechanic function in FC 26 defensive
+    set pieces?
+  status: open
+  match_id: 385d605b9fa647a79a4aa3834313c40e
+- id: what-tactic-instruction-causes-fullbacks-to-invert-into-cent
+  question: What tactic instruction causes fullbacks to invert into central midfield
+    during build-up phase?
+  status: open
+  match_id: 385d605b9fa647a79a4aa3834313c40e
+- id: how-does-the-automated-cb-jockey-mechanic-function-under-hig
+  question: How does the automated CB jockey mechanic function under high latency
+    in FC 26?
+  status: open
+  match_id: 385d605b9fa647a79a4aa3834313c40e
+- id: what-impact-does-the-team-press-quick-tactic-have-on-stamina
+  question: What impact does the Team Press Quick Tactic have on stamina consumption
+    during second-half transitions in FC 26?
+  status: open
+  match_id: 385d605b9fa647a79a4aa3834313c40e
+- id: how-are-player-role-playstyles-calculated-when-playing-out-o
+  question: How are player Role PlayStyles calculated when playing out of natural
+    positions in FC 26?
+  status: open
+  match_id: 385d605b9fa647a79a4aa3834313c40e

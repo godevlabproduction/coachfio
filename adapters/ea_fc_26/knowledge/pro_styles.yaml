@@ -1,0 +1,95 @@
+# PRO PLAYER STYLES — gold-standard references the coach can point the player toward
+# ("play more like a top pro here"). Distilled from public analysis; paraphrased.
+# Sources: footballgamingzone.com, iggm.com, whatsgaming.net, fut.gg, rbleipzig.com.
+entries:
+  - id: vejrgang
+    player: "Anders Vejrgang (RBLZ) — FC Pro World Champion"
+    formation: "4-5-1 (controlled possession)"
+    summary: >-
+      A relentless, possession-based attacking system that dominates from start to
+      finish, paired with disciplined, patient MANUAL defending. The gold standard for
+      breaking down a low block without getting countered.
+    attacking:
+      - >-
+        Controlled possession that suddenly commits numbers forward — flooding passing
+        angles and sustained pressure rather than slow sideways play.
+      - >-
+        Wide players STRETCH the pitch, then CUT INSIDE to shoot or slide the ball to a
+        central POACHER who waits to finish — width first, then penetrate centrally.
+      - >-
+        Three roaming/attacking midfielders given freedom to drift central, receive
+        between the lines and trigger runs that overload the opponent's back line.
+      - >-
+        Wing-backs pushed HIGH to create extra advanced passing options vs a low block
+        (accepted risk: exposure on the counter — mitigated by elite CBs).
+    defending:
+      - >-
+        "Float" defender movement — subtle direction changes, half-steps and micro
+        adjustments to control space and passing lanes, INSTEAD of sprinting straight
+        at the ball. Contain and shepherd, don't lunge.
+      - >-
+        Elite CB pairing (pace + strength + defensive PlayStyles) allows quick recovery
+        WITHOUT overcommitting — hold shape, let the CBs mop up.
+    dribbling_finishing:
+      - >-
+        Controlled sprint (don't full-sprint everywhere) to exploit gaps and open
+        better angles; left-stick feints to unbalance the defender, then a protected
+        through-ball or shot.
+      - >-
+        Ruthless, composed finishing — take high-percentage chances inside the box
+        rather than forcing difficult efforts.
+    coach_with_it:
+      - >-
+        If the player forces central passes into a compact block: coach the Vejrgang
+        pattern — stretch wide first, then cut inside / cutback to a central finisher.
+      - >-
+        If the player dives into tackles and gets beaten: coach "float" contain
+        defending (jockey L2/LT, micro-adjust, don't sprint at the ball).
+      - >-
+        If the player over-commits and gets countered: keep shape with the CBs and be
+        selective about when wing-backs bomb forward.
+    tags: [pro, vejrgang, possession, low-block, wing-play, cutback, poacher,
+           defending, contain, jockey, finishing, counters]
+  - id: bachoore
+    player: "Manuel Bachoore — FC Pro World Champion"
+    formation: "4-4-1-1 / 4-4-2 (midfield control, shifts to 4-3-3 / 4-2-3-1)"
+    summary: >-
+      Wins through MIDFIELD CONTROL and tactical discipline — a flat, pacey midfield
+      that covers deep out of possession and floods forward in transition, with sharp,
+      quick passing rather than risky dribbling.
+    attacking:
+      - >-
+        Flat five-man midfield: two Box-to-Box CMs, a central playmaker between them,
+        and two Inside Forwards starting DEEPER than usual — they transition from a
+        covering role to advanced positions using pace + high OVR.
+      - >-
+        Sharp, disciplined passing to progress; win the middle first, then release the
+        inside forwards into space.
+    defending:
+      - >-
+        The deep-starting wide men and box-to-box CMs give a compact block; stay
+        disciplined and don't over-chase — let the shape win the ball back.
+    coach_with_it:
+      - >-
+        If the player keeps losing the midfield battle: coach a Bachoore-style flat
+        midfield — two Box-to-Box CMs + a central playmaker to control the centre.
+      - >-
+        If they can't transition: start inside-forward wingers DEEPER so they cover,
+        then break with pace on the turnover.
+    tags: [pro, bachoore, midfield, control, transition, discipline, passing, 4411, 442]
+  - id: tekkz
+    player: "Tekkz — 3x ePremier League champion"
+    formation: "attacking, finesse-focused"
+    summary: >-
+      Renowned for mastering the FINESSE PlayStyle and clinical shooting — punishing
+      any space at the edge of the box.
+    attacking:
+      - >-
+        Finesse shots from ~45° (hold R1/RB + shoot) curled to the far corner; get the
+        ball onto the striker's stronger foot at the top of the box and bend it.
+    coach_with_it:
+      - >-
+        If the player wastes angled chances at the edge of the box: coach the Tekkz
+        finesse — hold R1/RB and curl it far post from ~45°, ideally with a Finesse
+        PlayStyle striker.
+    tags: [pro, tekkz, finesse, shooting, finishing, edge-of-box]

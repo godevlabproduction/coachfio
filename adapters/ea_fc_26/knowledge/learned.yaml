@@ -1,0 +1,529 @@
+entries:
+- id: what-does-the-inverted-wingback-role-do
+  detail: In EA Sports FC 26, the Inverted Wingback is a player role assigned to wide
+    defenders (LB/RB). When their team has possession, the player moves forward and
+    adopts a central position high up the pitch. This role is designed to support
+    midfield build-up play and create numerical superiority in central attacking areas.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHcqFhLjq_8tqSaeLHgO2u6zO6pkrKOAC5n2cl7skbUx_bZPsxDxR0NVYYlgM9ONF3ecZpmAQNy1dm_fQoWQjQYyDqFam-UvVeLUtHUJJJ32w5d
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHv7rqR_Az8vl5XOMBqEk1TFviR98WLwTTCH_WseMEpvVqCcaIzSMbhOBJXoaT4O6ou15HqmXRsmyopBnqGM5OZ53kx8bID2gOOz1qBaOzElpB0rNWZT_xR
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwwhmh6aKcUOkPZTiJhK-Yw2H7FpElzgX95KGMk1ioUuDlIBj2YYYbCZ1syYW1UHit8Nck1klEHt8VjLE0KNheqf54ocYnuEwHDCcnKY1QosBmTWlzc2RV7nBdo9DwEeW3GmgoHw==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFhiVgFqIdlTFSQJsNoB6NFBfFzyuqD1QiYzobm8IRyqbVD_5TQLXBWe4efGJeD1nkz4gfeaknJG7h3QAReAAZ7NFM7VA025CuOyi0g13K4OtuWVTdsC-_L2LpemPPaVC-pL7k=
+  tags: []
+  reviewed: false
+- id: what-is-the-explosive-stepover-skill-move-and-how-do-you-do-
+  detail: The Explosive Stepover is a 3-star skill move introduced in *EA Sports FC
+    26* that performs a faster stepover animation followed by a burst of acceleration
+    to beat defenders. To execute it, hold **L1** (PlayStation) or **LB** (Xbox) and
+    rotate the **Right Stick** forward to the left or right, using the **Left Stick**
+    to select your exit direction.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGl0gFJSpjehVDYSmZCvh4FvuU4bpLv5aoCHtTAbnC5F_4HtsnzlgPJvPrLzmXxndzqY8RftUJVHQWgyJfyyQ47TIHVmAkixOH1Erb3nqlP4sjdb7k0pUYCyLoNPGvLqwbI1TyW3KBgvTXcE87zFQ==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHs_xQ-_O1Lv_bJuCwPKq5_YXrUXwMsbCjM8tVRsWGX-uqVF1s86caWVVskxWzj0RbiBMB1_iMQVH_Y0Mp6eJ3sBzzTaJSC7i1-Hlt-_-39MRYh8dk8dRmGh4N9htpOZCffhXhg-g==
+  tags: []
+  reviewed: false
+- id: what-triggers-the-quick-tactics-menu-overlay-on-the-left-sid
+  detail: In EA Sports FC 26, pressing Left on the D-Pad triggers the tactical menu
+    overlay on the left of the screen during gameplay. It displays your custom formation
+    and tactical presets (My Tactics) so you can change your team setup on the fly
+    without pausing. Selecting one makes players dynamically adjust position and playing
+    style in real time.
+  sources:
+  - https://www.ea.com/games/ea-sports-fc/fc-26
+  tags: []
+  reviewed: false
+- id: what-are-the-exact-stat-requirements-for-the-what-a-hit-evol
+  detail: In EA Sports FC 26, the player requirements for the 'What a Hit' evolution
+    are a primary or alternative position of CM, a maximum Overall rating of 87, and
+    a maximum Pace attribute of 93  [1.3.1,
+  sources: []
+  tags: []
+  reviewed: false
+- id: how-does-the-role-playstyle-dynamic-impact-midfielder-positi
+  detail: In EA Sports FC 26, Role++ represents elite mastery of a specific FC IQ
+    Player Role, directly governing how an AI-controlled player positions themselves
+    off the ball. For midfielders, a Role++ designation ensures they execute role-specific
+    tactical behaviors—such as holding deep, making box-to-box runs, or drifting wide—with
+    maximum intelligence and consistency. This provides superior positional discipline
+    and fluid transitions, allowing midfield tactical setups to perform at their highest
+    operational effectiveness.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEcJx5ZlYTfA1Wj34nThOe5yDL9cz-nWyzIrfdPe3Ah2mhHSRdvJHXqzX6KK5jyDmf3_uheOFFekPH0JlWQNUfiq-hfDfM0B0Pxl83rS34MEt8GYA2PAanj
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFClMdd3gmqPf3QmnNFq5WvScg0CY1mUdkbFLsigBeh9RIZrOjt4RzOkG71yB-kInTBoAK5APILVbgEqhfoEuKuj0RkBCAEUekvkUX3Nq5hwHBO
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF-2T5Z4Os3tMTjnZDujO_zF_q6amueEVLrIh7ve2M3tImn-W5wz_RFd0Njoses5Ja5hXTtwGIr0BuS7VA4CBLo09nJbBYoVH20bb-YSl9Z9zUrBEPKnDtjbDciVZUhcEIm206P3n_YkAIo9qEjTDFxNBvRuUC3YSa9r00zDGG2P8hF
+  tags: []
+  reviewed: false
+- id: how-does-the-advanced-forward-playstyle-role-affect-player-p
+  detail: In EA Sports FC 26, a striker with the Advanced Forward role stays close
+    to the opposition's defensive line while actively making themselves available
+    as a passing option during build-up play. Depending on their focus setting, they
+    can also drift wider or drop into deeper pockets to support ball progression before
+    making runs in behind the defense.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQELfJ9ANxvnUSnCK-Qo2nVoaO8oIFQSL6ShWeXI7i3thPmlLwgkpeAokSSiPkj1FZJgClMy-vLgwuCr1kyR89SflBiRJ5oXCbLLKe1Dykl3HX5H
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGF4-zLzwaJts6mvunbyekGUVXYK5ToUHfUpImoZnmWiPSLHmDBEscmecjt_jhrn6zSlw4l54z-HI021PbzFX4vatOkHLJ5WWlfbKbUamSFd4R4ApQ9foYj
+  tags: []
+  reviewed: false
+- id: what-quick-tactic-setting-triggers-the-team-press-prompt-see
+  detail: The 'Team Press' prompt on the bottom-left D-pad overlay is triggered by
+    selecting the **Team Press** option within the Quick Tactics menu. Players access
+    this by pressing **Up** on the directional pad (D-pad) during gameplay and then
+    selecting Team Press (by pressing **Right**). Once activated, team members temporarily
+    apply aggressive, high-pressure defense against the opposing ball carrier.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGsriOtwu72GkXUz1VDrl-r_u8TUWSBnbuqjo5fmPQ663FXBoAmua93tLTQZnBnTiaQ8AKCL9hHttknydQrJq9RdXzl7ublwc_9Qi7fCjpHQ_4F4sx5G8_G8ubMfwNpKUY=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGZqjtN_ol9QPFxGJMc2DdQnBO0JmcvuESEVUt-8xn8IY6VYLc7STheRYCbkZsUYbGsY9DWiVzsO_2Tjbu5DXlkEcPybmRne9DzvilzFrkH6y1D2I6pSSkjAX7FB0uWHNXa7ke3zVxPdk2csrVINHe21a9ArkpdHVz-PyGsc4szFwfwAkz-
+  tags: []
+  reviewed: false
+- id: 4-4-1-1-2-meta-custom-tactics-fc-iq-player-roles
+  detail: 'The 4-4-1-1 (2) formation provides balanced midfield control and fluid
+    attacking width. Set Build-Up Style to Short Passing, Defensive Approach to Balanced,
+    and Line Height to 60. Essential player roles include ST on False 9 (Build-Up),
+    CAM on Playmaker (Balanced), LM and RM on Inside Forward (Balanced), CMs on Box-to-Box,
+    LBs/RBs on Fullback (Balanced/Defend), and CBs on Defender (Defend). Controls:
+    Tactics Menu: Short Passing | Line Height: 60'
+  sources:
+  - video:training1.mp4
+  tags:
+  - 4-4-1-1
+  - custom_tactics
+  - fc_iq
+  - formation
+  - meta
+  - tactic
+  reviewed: false
+- id: essential-meta-passing-playstyles-pinged-pass-incisive-pass
+  detail: 'Pinged Pass (and Pinged Pass+) accelerates ground passes through dense
+    midfields without causing heavy receiving touches. Incisive Pass (and Incisive
+    Pass+) delivers sharper, faster through balls into space for attacking runs. Controls:
+    R1 + X / RB + A (Pinged Pass), Triangle / Y (Incisive Pass)'
+  sources:
+  - video:training1.mp4
+  tags:
+  - playstyles
+  - pinged_pass
+  - incisive_pass
+  - passing
+  - meta
+  reviewed: false
+- id: recycling-possession-in-the-final-third
+  detail: 'When an opponent blocks forward passing lanes in the penalty box, recycle
+    the ball back to central midfielders or fullbacks. This shifts the opponent''s
+    defensive block and creates fresh space for penetration. Controls: X / A (Ground
+    Pass), R1 + X / RB + A (Driven Pass)'
+  sources:
+  - video:training1.mp4
+  tags:
+  - attacking
+  - recycling
+  - possession
+  - chance_creation
+  - attacking
+  reviewed: false
+- id: first-time-driven-pass-for-rapid-build-up
+  detail: 'Executing a driven pass first-time catches opponent defensive lines unprepared
+    before they can close space or organize pressing. Use it to quickly move the ball
+    from midfield into key attacking positions. Controls: R1 + X (PS) / RB + A (Xbox)
+    on first touch'
+  sources:
+  - video:training1.mp4
+  tags:
+  - driven_pass
+  - first_time_pass
+  - passing
+  - build_up
+  - mechanic
+  reviewed: false
+- id: protecting-center-backs-by-tracking-back-with-midfielders
+  detail: 'Avoid manually switching to center backs and pulling them out of position
+    during transition defense. Instead, manually control central midfielders or fullbacks
+    to track back, cut passing lanes, and preserve the backline structure. Controls:
+    Right Stick / L1 (PS) or Right Stick / LB (Xbox) player switching'
+  sources:
+  - video:training1.mp4
+  tags:
+  - defending
+  - center_backs
+  - tracking_back
+  - positioning
+  - defending
+  reviewed: false
+- id: slow-jockeying-in-tight-defensive-spaces
+  detail: 'Hold L2 / LT for slow jockeying when defending inside or near the penalty
+    box. Slow jockeying prevents overshooting attacker movements, keeps defenders
+    balanced, and increases block/tackle accuracy in crowded areas. Controls: Hold
+    L2 (PS) / Hold LT (Xbox)'
+  sources:
+  - video:training1.mp4
+  tags:
+  - defending
+  - jockeying
+  - slow_jockey
+  - box_defense
+  - defending
+  reviewed: false
+- id: fc-26-shoulder-challenge-bruiser-mechanics-update
+  detail: 'EA FC 26 adjusted shoulder challenges so physical outcomes better reflect
+    strength and PlayStyle differences between players. The boost from Bruiser/Bruiser+
+    is slightly reduced, while Enforcer/Enforcer+ provides a boost to shoulder tackles.
+    High strength defenders are more effective at pushing dribblers off the ball,
+    while agile, high-dribbling attackers recover faster from physical contact. Controls:
+    L2 / LT (Physical Contact) or Circle / B (Tackle / Push-Pull)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - bruiser
+  - shoulder_challenge
+  - patch_notes
+  - defending
+  - physicality
+  - mechanic
+  reviewed: false
+- id: positioning-for-shoulder-challenges
+  detail: 'When running parallel to an attacker along the wing or into the box, position
+    your defender slightly ahead or level shoulder-to-shoulder before applying physical
+    pressure. Steering your defender into the attacker''s trajectory cuts off their
+    path and triggers a shoulder challenge animation that dispossesses the ball cleanly.
+    Controls: L2 + R2 / LT + RT (Sprint Jockey) into contact, tap Circle / B (Physical
+    Tackle)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - defending
+  - shoulder_tackle
+  - jockeying
+  - positioning
+  - defending
+  reviewed: false
+- id: shoulder-challenge-logic-avoiding-back-fouls
+  detail: 'FC 26 includes logic that predicts when a shoulder challenge would hit
+    an attacker directly from behind and automatically cancels the tackle attempt
+    or adjusts the angle to prevent unnecessary fouls. Controls: Circle / B (Tackle
+    / Push-Pull)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - defending
+  - fouls
+  - mechanic
+  - shoulder_tackle
+  - mechanic
+  reviewed: false
+- id: defending-wing-runs-and-cut-backs
+  detail: 'When defending wide players running down the flank, do not sprint directly
+    at the ball carrier. Jockey diagonally back towards your goal to cover the interior
+    passing and cut-back angles while forcing the attacker toward the touchline. Controls:
+    L2 / LT (Jockey) or L2 + R2 / LT + RT (Sprint Jockey)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - defending
+  - wingers
+  - cutbacks
+  - positioning
+  - jockeying
+  - defending
+  reviewed: false
+- id: tracking-central-runs-during-counter-attacks
+  detail: 'During opponent counter-attacks, manually switch to central midfielders
+    or fullbacks and run backward to cover central passing lanes rather than stepping
+    forward with center-backs. Pulling center-backs out of position creates dangerous
+    gaps in the defensive line. Controls: Right Stick (Player Switching), R2 / RT
+    (Sprint)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - defending
+  - counter_attack
+  - player_switching
+  - positioning
+  - center_backs
+  - defending
+  reviewed: false
+- id: evading-physical-shoulder-tackles-as-an-attacker
+  detail: 'When a physical defender attempts a shoulder challenge on your dribbler,
+    avoid running side-by-side in a straight line. Change direction sharply inward
+    or cut away from the defender''s approach line so their physical contact misses
+    or fails to trigger a dispossess animation. Controls: Left Stick (Directional
+    Dribbling), L2 / LT (Shielding)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - dribbling
+  - attacking
+  - evasion
+  - shoulder_tackle
+  - shielding
+  - attacking
+  reviewed: false
+- id: patient-box-defending-shot-angle-blocking
+  detail: 'Inside the penalty area, avoid committing rash tackles or sliding. Maintain
+    a disciplined jockey stance positioned directly between the ball carrier and the
+    goal to block open shooting lanes, waiting for the attacker to commit to a heavy
+    touch before tackling. Controls: L2 / LT (Jockey)'
+  sources:
+  - video:training2.mp4
+  tags:
+  - defending
+  - box_defense
+  - shot_blocking
+  - jockeying
+  - patience
+  - defending
+  reviewed: false
+- id: the-recycle-pattern-wing-byline
+  detail: Drive down the wing to the byline, then turn back toward the edge of the
+    box and pass to open midfielders. This pulls the opponent's defence out of alignment
+    and isolates their centre-backs, opening a cleaner central attack.
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - passing
+  - recycle
+  - attack_pattern
+  - wing_play
+  - meta
+  - attacking
+  reviewed: false
+- id: first-time-driven-passes-through-the-middle
+  detail: 'Fire first-time driven passes rapidly through central areas to exploit
+    high player reactions and bypass recovering defenders before their shape resets.
+    Controls: R1 + X / RB + A (driven pass)'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - passing
+  - driven_pass
+  - transition
+  - meta
+  - attacking
+  reviewed: false
+- id: inside-forward-integration
+  detail: Set your wingers to the Inside Forward role so they drift inside, drag their
+    markers with them and create dynamic central passing triangles.
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - fc_iq
+  - inside_forward
+  - wingers
+  - attacking
+  - meta
+  - tactic
+  reviewed: false
+- id: sprint-jockey
+  detail: 'Sprint-jockey to keep tight control and close distance to the attacker
+    without over-sprinting or pulling your centre-backs out of position. Controls:
+    L2 + R2 / LT + RT'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - jockey
+  - sprint_jockey
+  - positioning
+  - meta
+  - defending
+  reviewed: false
+- id: conservative-defensive-positioning
+  detail: Defend with patient left-stick positioning and hold your defensive line
+    to block passing and shooting paths, rather than gambling on aggressive standing
+    tackles or spamming buttons.
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - positioning
+  - patience
+  - meta
+  - defending
+  reviewed: false
+- id: restrained-second-man-press
+  detail: 'Tap the second-man press in short half-second bursts to clog passing lanes.
+    Never hold it down: it drags a second defender out and breaks your structure.
+    Controls: R1 / RB (tap, not hold)'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - second_man_press
+  - structure
+  - meta
+  - defending
+  reviewed: false
+- id: fullback-pressing-on-wide-attacks
+  detail: When the opponent attacks wide channels, press with your wide fullbacks
+    instead of dragging central defenders out of position.
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - fullbacks
+  - wide_defending
+  - positioning
+  - meta
+  - defending
+  reviewed: false
+- id: finesse-shots
+  detail: 'Currently the strongest finishing mechanic. Position at a 45-degree angle
+    inside or just outside the box, use about 2 to 2.5 bars of power, and bend it
+    toward the far post. Controls: R1 + shoot / RB + shoot'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - shooting
+  - finesse
+  - meta
+  - attacking
+  reviewed: false
+- id: first-time-finishes
+  detail: 'Extremely strong due to responsive competitive presets: shoot immediately
+    off a pass, before the defender or goalkeeper can react.'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - shooting
+  - first_time
+  - meta
+  - attacking
+  reviewed: false
+- id: low-driven-shots
+  detail: 'Power up the shot normally, then tap the shoot button a second time before
+    contact for a low driven finish. Lethal in tight 1v1 box situations or when the
+    keeper rushes out. Controls: shoot, then tap shoot again before contact'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - shooting
+  - low_driven
+  - meta
+  - attacking
+  reviewed: false
+- id: precision-shooting
+  detail: 'Turn on Precision Shooting in settings for manual left-stick directional
+    control, letting you place shots into the corner pockets. Controls: enable in
+    settings; aim with the Left Stick'
+  sources:
+  - text:meta-notes-v1
+  tags:
+  - shooting
+  - precision
+  - settings
+  - meta
+  - settings
+  reviewed: false
+- id: triggered-and-directed-runs
+  detail: 'Triggering runs sends an AI teammate sprinting forward into space. By flicking
+    the Right Stick immediately after pressing L1/LB, you can manually direct the
+    exact angle and direction your teammate runs to exploit gaps in the opposition
+    defense. Controls: L1 (PS) / LB (Xbox) to trigger, flick Right Stick for directed
+    run'
+  sources:
+  - video:training3.mp4
+  tags:
+  - triggered_runs
+  - directed_runs
+  - attacking
+  - positioning
+  - attacking
+  reviewed: false
+- id: finesse-shot
+  detail: 'The finesse shot curls the ball into the corner of the goal with added
+    accuracy. It is particularly effective around the edge of the penalty box or inside
+    the area when creating a clear curling line around the goalkeeper. Controls: R1
+    + Circle (PS) / RB + B (Xbox)'
+  sources:
+  - video:training3.mp4
+  tags:
+  - finesse_shot
+  - shooting
+  - finishing
+  - mechanic
+  reviewed: false
+- id: precision-pass
+  detail: 'Precision through passes allow you to manually target space and control
+    pass distance, enabling precise placement into open grass ahead of attackers to
+    bypass defensive blocks. Controls: R1 + Triangle (PS) / RB + Y (Xbox)'
+  sources:
+  - video:training3.mp4
+  tags:
+  - precision_pass
+  - passing
+  - through_ball
+  - mechanic
+  reviewed: false
+- id: one-touch-passing
+  detail: 'Passing immediately upon receiving the ball maintains a fast attacking
+    tempo and prevents defenders from closing down space or completing tackles before
+    passing lanes close. Controls: X / Square / Triangle (PS) / A / X / Y (Xbox) before
+    ball arrival'
+  sources:
+  - video:training3.mp4
+  tags:
+  - one_touch_pass
+  - passing
+  - attack_tempo
+  - attacking
+  reviewed: false
+- id: driven-ground-pass
+  detail: 'A driven ground pass hits the ball with high velocity across the pitch,
+    making it ideal for breaking midfield lines or delivering fast balls into attackers
+    while avoiding interceptions. Controls: R1 + Cross / R1 + X (PS) / RB + A (Xbox)'
+  sources:
+  - video:training3.mp4
+  tags:
+  - driven_pass
+  - passing
+  - ground_pass
+  - mechanic
+  reviewed: false
+- id: the-pause-la-pausa
+  detail: 'Temporarily slowing down or stopping movement with the ball carrier delays
+    the attack, drawing defenders out of position and granting off-ball teammates
+    time to make forward runs into open space. Controls: Neutral Left Stick / slow
+    dribble'
+  sources:
+  - video:training3.mp4
+  tags:
+  - la_pausa
+  - the_pause
+  - dribbling
+  - tempo
+  - attacking
+  reviewed: false
+- id: first-time-shots
+  detail: 'Striking shots on the first touch without taking an extra touch catches
+    goalkeepers off guard and prevents defenders from blocking the attempt in tight
+    penalty area situations. Controls: Circle (PS) / B (Xbox) on first touch'
+  sources:
+  - video:training3.mp4
+  tags:
+  - first_time_shot
+  - shooting
+  - finishing
+  - mechanic
+  reviewed: false
+- id: ball-roll-scoop-turn
+  detail: 'Combining a ball roll with a scoop turn enables quick, sharp changes of
+    direction around defenders inside or near the penalty box to create instant shooting
+    or passing lanes. Controls: Hold Right Stick Left/Right, then Square/Circle +
+    X + direction (PS) / X/B + A + direction (Xbox)'
+  sources:
+  - video:training3.mp4
+  tags:
+  - ball_roll
+  - scoop_turn
+  - skill_move
+  - dribbling
+  - skill_move
+  reviewed: false
+- id: first-time-lobbed-pass
+  detail: 'Playing a lobbed pass or lobbed through ball on the first touch lofts the
+    ball over high-pressing defensive lines, unlocking immediate counter-attacking
+    opportunities. Controls: L1 + Triangle (PS) / LB + Y (Xbox) or Square (PS) / X
+    (Xbox) on first touch'
+  sources:
+  - video:training3.mp4
+  tags:
+  - lobbed_pass
+  - lobbed_through_ball
+  - passing
+  - first_time
+  - mechanic
+  reviewed: false
