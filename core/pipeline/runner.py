@@ -33,7 +33,7 @@ def run_pipeline(ctx: PipelineContext, stages: list[Stage] | None = None) -> Non
             ctx.emit("pipeline", ctx.match.status.value, "analysis did not produce a report")
 
     except BudgetExceeded as exc:
-        # Fail loudly and visibly — do not produce partial paid output silently.
+        # Fail loudly and visibly - do not produce partial paid output silently.
         ctx.match.status = MatchStatus.OVER_BUDGET
         ctx.match.warnings.append(str(exc))
         log.error("BUDGET EXCEEDED on match %s: %s", ctx.match.id, exc)

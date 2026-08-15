@@ -86,18 +86,27 @@ class MatchRepository:
         ).scalar_one_or_none()
         return self._to_domain(row) if row else None
 
-    def list(self, game_id: str | None = None, edition: str | None = None, limit: int = 100) -> list[Match]:
+    def list(self, game_id: str | None = None, edition: str | None = None, limit: int = 100,
+             identity: str | None = None) -> list[Match]:
+        """Matches, newest first.
+
+        `identity` scopes the result to one account. Pass it for anything a user
+        sees - without it this returns EVERY account's matches, which is how the
+        match list, trends and "most recent report" used to leak across users.
+        """
         stmt = select(MatchRow).order_by(MatchRow.created_at.desc()).limit(limit)
         if game_id:
             stmt = stmt.where(MatchRow.game_id == game_id)
         if edition:
             stmt = stmt.where(MatchRow.game_edition == edition)
+        if identity:
+            stmt = stmt.where(MatchRow.capture["identity"].astext == identity)
         stmt = stmt.options(selectinload(MatchRow.metrics), selectinload(MatchRow.events))
         return [self._to_domain(r) for r in self.s.execute(stmt).scalars().all()]
 
     def recurring_issues(self, identity: str, limit: int = 8) -> dict:
         """Aggregate this player's weakness tags + recent advice across their last
-        `limit` COMPLETE matches — the memory that makes coaching 'learn you'."""
+        `limit` COMPLETE matches - the memory that makes coaching 'learn you'."""
         if not identity:
             return {}
         stmt = (

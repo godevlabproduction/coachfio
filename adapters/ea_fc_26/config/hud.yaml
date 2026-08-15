@@ -1,4 +1,4 @@
-# EA Sports FC — HUD SCHEMA (pure data).
+# EA Sports FC - HUD SCHEMA (pure data).
 #
 # Coordinates are NORMALIZED fractions of frame width/height, [x, y, w, h],
 # origin top-left. They scale across resolutions because the HUD sits at the same
@@ -7,10 +7,10 @@
 # DEFAULT = the standard CONSOLE in-game HUD (top-left scoreboard), calibrated
 # and visually verified against real PS5 gameplay (1280x720): 3-letter team
 # abbreviations, a dedicated white score panel, clock bottom-left. This is the
-# product's real input — a user's own recorded gameplay.
+# product's real input - a user's own recorded gameplay.
 #
 # The FC Pro esports BROADCAST overlay is a separate `fcpro_broadcast` variant
-# (crest-next-to-score, shifting layout — messy; kept for reference/testing).
+# (crest-next-to-score, shifting layout - messy; kept for reference/testing).
 # Select a variant via capture: {"variant": "fcpro_broadcast"}.
 
 game_id: ea-fc
@@ -24,7 +24,7 @@ stat_screen:
   min_static_frames: 3
 
 regions:
-  # --- console in-game scoreboard (top-left) — VERIFIED ----------------------
+  # --- console in-game scoreboard (top-left) - VERIFIED ----------------------
   # Score digits are black-on-white in their own panel (no crest adjacency).
   - name: score_home
     rect: [0.115, 0.050, 0.024, 0.040]

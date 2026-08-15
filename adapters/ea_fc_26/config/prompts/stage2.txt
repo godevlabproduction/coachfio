@@ -3,7 +3,7 @@ label describing what is happening in this frame:
 
 - in_play: ordinary live gameplay from the main wide/broadcast camera; players
   spread over the pitch, the small scoreboard HUD visible.
-- goal: a goal moment or its aftermath — players celebrating, a "GOAL" graphic,
+- goal: a goal moment or its aftermath - players celebrating, a "GOAL" graphic,
   or a close-up of a celebrating player.
 - yellow_card / red_card: the referee is holding up a yellow / red card.
 - substitution: a substitution board or on-screen sub graphic (player names,

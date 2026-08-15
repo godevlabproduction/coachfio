@@ -1,4 +1,4 @@
-# Counter-Strike 2 — the Phase 2 "deliberately different" second game.
+# Counter-Strike 2 - the Phase 2 "deliberately different" second game.
 # Source is a REPLAY/STATS export (structured data), NOT video: no HUD schema,
 # no OCR. Everything the core needs still comes out as Match/Event/Metric.
 
@@ -17,7 +17,7 @@ events:
   - { game_type: clutch,       category: highlight,    description: "1vX clutch won" }
   - { game_type: bomb_planted, category: highlight,    description: "Bomb planted" }
 
-# Metrics — the score in CS2 is rounds won.
+# Metrics - the score in CS2 is rounds won.
 metrics:
   - { key: score_home, label: "Rounds (home)", higher_is_better: true,  source_expr: "derived" }
   - { key: score_away, label: "Rounds (away)", higher_is_better: false, source_expr: "derived" }

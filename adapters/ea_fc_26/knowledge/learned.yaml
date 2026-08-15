@@ -43,7 +43,7 @@ entries:
   detail: In EA Sports FC 26, Role++ represents elite mastery of a specific FC IQ
     Player Role, directly governing how an AI-controlled player positions themselves
     off the ball. For midfielders, a Role++ designation ensures they execute role-specific
-    tactical behaviors—such as holding deep, making box-to-box runs, or drifting wide—with
+    tactical behaviors-such as holding deep, making box-to-box runs, or drifting wide-with
     maximum intelligence and consistency. This provides superior positional discipline
     and fluid transitions, allowing midfield tactical setups to perform at their highest
     operational effectiveness.
@@ -526,4 +526,325 @@ entries:
   - passing
   - first_time
   - mechanic
+  reviewed: false
+- id: no-playstyle-raw-attributes-only
+  detail: 'A player with no relevant PlayStyle falls back entirely on raw attributes
+    (short passing, standing tackle and so on). Animations are standard and unassisted:
+    heavier touches, slower reactions and a higher error rate under pressure, with
+    no contextual advantage or boosted physics. If a player has no PlayStyle for the
+    action you are asking of them, expect the standard error rate and pick someone
+    else for that pass or shot.'
+  sources:
+  - text:playstyles-tiers-v1
+  tags:
+  - playstyle
+  - tiers
+  - attributes
+  - squad_selection
+  - playstyles
+  reviewed: false
+- id: base-playstyle-grey-badge
+  detail: The standard tier, shown with a grey badge. Gives a noticeable and reliable
+    boost to specific actions - clean trapping on Tiki-Taka, tighter close control
+    on Press Proven - making standard manoeuvres crisper than having nothing. Cost-effective
+    and genuinely useful, but it does not break meta thresholds against heavy defensive
+    pressure.
+  sources:
+  - text:playstyles-tiers-v1
+  tags:
+  - playstyle
+  - tiers
+  - base
+  - grey
+  - squad_selection
+  - playstyles
+  reviewed: false
+- id: gold-playstyle-playstyle-the-tier-that-changes-decisions
+  detail: 'The upgraded tier, shown with a gold badge and written with a "+". It does
+    not merely improve the action, it supercharges it: elite mechanics such as automatic
+    ball-snagging reach on Intercept+ or laser-flat trajectory on Pinged Pass+, and
+    exclusive high-tier animations that bypass the game''s normal error calculations.
+    Players carry very few of them. Treat a gold PlayStyle as a squad-selection fact:
+    the same input from a player who has it and a player who does not are two different
+    passes. Considered essential for competitive Ultimate Team builds.'
+  sources:
+  - text:playstyles-tiers-v1
+  tags:
+  - playstyle
+  - tiers
+  - gold
+  - plus
+  - meta
+  - squad_selection
+  - playstyles
+  reviewed: false
+- id: defensive-meta-playstyles
+  detail: Intercept+ is widely regarded as the single most dominant defensive trait,
+    cutting out tight through-balls and manual passes. Bruiser+ and Anticipate+ are
+    essential for centre-backs and CDMs to win physical duels and land clean standing
+    tackles. Block is underrated for both AI and manual last-ditch blocks inside the
+    penalty area. When coaching defensive positioning, check whether the player involved
+    actually has these before demanding the outcome.
+  sources:
+  - text:playstyles-tiers-v1
+  tags:
+  - playstyle
+  - defending
+  - meta
+  - intercept
+  - bruiser
+  - anticipate
+  - block
+  - gold
+  - defending
+  reviewed: false
+- id: attacking-and-finishing-meta-playstyles
+  detail: Finesse Shot+ is the premier finishing weapon for curled efforts from long
+    range and sharp angles inside or outside the box. Low Driven+ is extremely consistent
+    for powerful low shots drilled past the keeper. Rapid+ and Quick Step+ are the
+    standout traits for wingers and inside forwards bursting past fullbacks on the
+    flank. A finishing instruction is only realistic if the striker has the matching
+    trait.
+  sources:
+  - text:playstyles-tiers-v1
+  tags:
+  - playstyle
+  - shooting
+  - finishing
+  - meta
+  - finesse
+  - low_driven
+  - rapid
+  - quick_step
+  - gold
+  - attacking
+  reviewed: false
+- id: creation-and-midfield-meta-playstyles
+  detail: Incisive Pass+ is vital for CAMs and central midfielders zipping accurate
+    through-balls. Technical+ is close to mandatory for players who rely on tight
+    R1/L1 dribbling to turn in crowded midfield areas. Tiki-Taka+ is crucial for quick
+    one-touch passing sequences in congested spaces. Direct build-up advice through
+    the middle should name the midfielder who has one of these rather than the position
+    generally.
+  sources:
+  - text:playstyles-tiers-v1
+  tags:
+  - playstyle
+  - passing
+  - midfield
+  - meta
+  - incisive
+  - technical
+  - tiki_taka
+  - gold
+  - attacking
+  reviewed: false
+- id: essential-meta-passing-playstyles-pinged-pass-and-incisive-p
+  detail: Pinged Pass accelerates ground passes through dense midfields without causing
+    heavy receiving touches; Incisive Pass delivers sharper, faster through balls
+    into space for attacking runs. BOTH ARE PLAYSTYLES, NOT INPUTS - there is no button
+    for them and no control to give. They passively improve the passes a player who
+    HAS them makes. The driven pass (R1+X / RB+A) and the through ball (Triangle /
+    Y) are the inputs those PlayStyles improve; do not present them as the way to
+    trigger a PlayStyle. The gold + versions are markedly stronger than the base grey
+    ones.
+  sources:
+  - video:training1.mp4
+  - text:playstyles-tiers-v1
+  - user-correction
+  tags:
+  - playstyle
+  - passing
+  - pinged_pass
+  - incisive_pass
+  - meta
+  - do-not-mention
+  reviewed: false
+- id: best-playstyles-for-striker-roles
+  detail: 'Advanced Forward: Finesse Shot+, Low Driven+, Rapid, Incisive Pass. Poacher:
+    Finesse Shot+, Low Driven+, Rapid, Incisive Pass. Target Forward: Finesse Shot+,
+    Enforcer, Precision Header, Low Driven+. False 9: Finesse Shot+, Incisive Pass,
+    Low Driven+, Technical. Finishing traits dominate every striker role - Finesse
+    Shot+ and Low Driven+ are the two that decide whether a chance becomes a goal.
+    Target Forward is the outlier, valuing Precision Header and Enforcer for aerial
+    and physical work.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/
+  tags:
+  - playstyle
+  - role
+  - striker
+  - advanced_forward
+  - poacher
+  - target_forward
+  - false_9
+  - finishing
+  - meta
+  - attacking
+  reviewed: false
+- id: best-playstyles-for-wide-attacking-roles
+  detail: 'Winger: Rapid+, Finesse Shot+, Pinged Pass, Quick Step. Inside Forward:
+    Finesse Shot+, Low Driven+, Rapid+, Quick Step. Wide Playmaker: Finesse Shot+,
+    Incisive Pass, Technical, Tiki Taka+. Wide Midfielder: Rapid+, Quick Step, Pinged
+    Pass, Intercept. Pace traits (Rapid+, Quick Step) define the touchline roles;
+    the Wide Playmaker swaps them for creation traits because it comes inside to build
+    rather than run in behind.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/
+  tags:
+  - playstyle
+  - role
+  - winger
+  - inside_forward
+  - wide_playmaker
+  - wide_midfielder
+  - pace
+  - meta
+  - attacking
+  reviewed: false
+- id: best-playstyles-for-attacking-midfield-roles
+  detail: 'Shadow Striker: Finesse Shot+, Incisive Pass+, Rapid+, Technical. Playmaker
+    (CAM): Finesse Shot+, Incisive Pass+, Low Driven+, Technical. Classic 10: Finesse
+    Shot+, Incisive Pass+, Technical, Tiki Taka+. Half Winger (CAM): Incisive Pass+,
+    Rapid+, Technical, Finesse Shot+. Every CAM role wants Incisive Pass+ and Finesse
+    Shot+ - the through ball and the curled finish are what the position is for. Technical
+    matters because these players receive in traffic and must turn.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/
+  tags:
+  - playstyle
+  - role
+  - cam
+  - shadow_striker
+  - playmaker
+  - classic_10
+  - half_winger
+  - incisive
+  - meta
+  - attacking
+  reviewed: false
+- id: best-playstyles-for-central-midfield-roles
+  detail: 'Box to Box: Incisive Pass, Pinged Pass, Intercept+, Finesse Shot. Playmaker
+    (CM): Incisive Pass, Pinged Pass, Finesse Shot, Tiki Taka+. Deep Lying Playmaker
+    (CM): Intercept+, Pinged Pass, Bruiser, Incisive Pass. Holding (CM): Intercept+,
+    Pinged Pass, Bruiser, Anticipate. Half Winger (CM): Pinged Pass, Intercept+, Quick
+    Step, Tiki Taka+. CM is where passing and screening meet: Pinged Pass moves the
+    ball, Intercept+ wins it back. The deeper the role, the more the balance tips
+    toward Intercept+ and Bruiser.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/
+  tags:
+  - playstyle
+  - role
+  - cm
+  - box_to_box
+  - deep_lying_playmaker
+  - holding
+  - pinged_pass
+  - intercept
+  - meta
+  - general
+  reviewed: false
+- id: best-playstyles-for-defensive-midfield-roles
+  detail: 'Holding (CDM): Intercept+, Pinged Pass+, Bruiser+, Anticipate. Deep Lying
+    Playmaker (CDM): Intercept+, Pinged Pass+, Bruiser+, Incisive Pass. Box Crasher:
+    Incisive Pass, Intercept+, Pinged Pass, Finesse Shot. Centre Half: Intercept+,
+    Bruiser+, Jockey, Anticipate. Wide Half: Bruiser+, Intercept+, Quick Step, Jockey.
+    Intercept+ is the defining CDM trait - it is what turns a screening midfielder
+    into one who actually cuts out the through ball. Pair it with Bruiser+ for the
+    physical duels the position keeps getting into.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/
+  tags:
+  - playstyle
+  - role
+  - cdm
+  - holding
+  - box_crasher
+  - centre_half
+  - intercept
+  - bruiser
+  - screening
+  - meta
+  - defending
+  reviewed: false
+- id: best-playstyles-for-fullback-and-wingback-roles
+  detail: 'Fullback: Bruiser+, Intercept+, Quick Step+, Jockey. Wingback: Intercept+,
+    Pinged Pass+, Quick Step+, Bruiser. Falseback: Intercept+, Pinged Pass+, Anticipate,
+    Bruiser. Inverted Wingback: Incisive Pass, Tiki Taka+, Quick Step, Anticipate.
+    Attacking Wingback: Rapid+, Quick Step, Pinged Pass, Intercept+. Defensive-first
+    fullbacks want Bruiser+/Intercept+/Jockey; the further forward the role pushes,
+    the more it wants pace (Rapid+, Quick Step+) and passing. The Inverted Wingback
+    is the exception - it becomes a midfielder in possession, so it wants creation
+    traits.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/
+  tags:
+  - playstyle
+  - role
+  - fullback
+  - wingback
+  - inverted_wingback
+  - falseback
+  - jockey
+  - meta
+  - defending
+  reviewed: false
+- id: best-playstyles-for-centre-back-roles
+  detail: 'CBs are unified by Intercept+ and Bruiser+ across every role; Anticipate+,
+    Block, Jockey and Slide Tackle form the defensive foundation, with Aerial Fortress
+    the key physical trait. CB Defender - gold: Intercept+, Bruiser+, Anticipate+,
+    Jockey+; then Quick Step, Block, Pinged Pass, Aerial Fortress, Slide Tackle, Tiki
+    Taka, Press Proven, Relentless. CB Stopper - gold: Intercept+, Bruiser+, Anticipate+,
+    Jockey+; then Quick Step, Block, Slide Tackle, Tiki Taka, Pinged Pass, Relentless,
+    Aerial Fortress, First Touch. CB Ball Playing Defender - gold: Intercept+, Bruiser+,
+    Anticipate+, Jockey+; then Quick Step, Block, Pinged Pass, Tiki Taka, First Touch,
+    Press Proven, Aerial Fortress, Slide Tackle. CB Wide Back - gold: Intercept+,
+    Anticipate+, Quick Step+, Jockey+; then Bruiser, Block, Pinged Pass, Aerial Fortress,
+    Slide Tackle, Tiki Taka, Press Proven, Relentless. Wide Back is the only CB role
+    that takes Quick Step+ over Bruiser+, because it defends space out wide rather
+    than duels in the middle. If a centre-back has neither Intercept+ nor Bruiser+,
+    expect to lose duels and get cut open by through balls whatever the positioning.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/ (CB + GK sections)
+  tags:
+  - playstyle
+  - role
+  - centre_back
+  - cb
+  - defender
+  - stopper
+  - ball_playing_defender
+  - wide_back
+  - intercept
+  - bruiser
+  - anticipate
+  - jockey
+  - block
+  - meta
+  - defending
+  reviewed: false
+- id: best-playstyles-for-goalkeeper-roles
+  detail: 'All three keeper roles - Goalkeeper, Ball Playing and Sweeper Keeper -
+    share the SAME gold four: Far Reach+, Footwork+, Rush Out+ and Deflector+. Below
+    that the consistent base across every role is Cross Claimer, Far Throw, Pinged
+    Pass, Long Ball, Tiki Taka, Press Proven, First Touch and Incisive Pass. Because
+    the top traits do not change with the role, pick a keeper on Far Reach and Footwork
+    first and choose the role for how far you want him to sweep, not for which PlayStyles
+    it rewards.'
+  sources:
+  - https://www.fut.gg/playstyles/best-by-role/ (CB + GK sections)
+  tags:
+  - playstyle
+  - role
+  - goalkeeper
+  - gk
+  - sweeper_keeper
+  - ball_playing_keeper
+  - far_reach
+  - footwork
+  - rush_out
+  - deflector
+  - meta
+  - goalkeeper
   reviewed: false

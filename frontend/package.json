@@ -2,7 +2,7 @@
   "name": "coachio",
   "version": "1.0.0",
   "private": true,
-  "description": "Coach.io — AI match coach frontend (Stitch export), served as a static multi-page site.",
+  "description": "Coach.io - AI match coach frontend (Stitch export), served as a static multi-page site.",
   "scripts": {
     "dev": "serve -l 3000 .",
     "start": "serve -l 3000 ."

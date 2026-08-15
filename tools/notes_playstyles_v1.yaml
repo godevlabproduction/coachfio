@@ -1,0 +1,80 @@
+# PlayStyle tiers + the competitive meta, from the user's own notes.
+#
+# Fills a gap the brain had entirely: it mentioned PlayStyles in six places but
+# never explained that they come in tiers, so the coach could not tell a player
+# WHO on their squad can actually execute a piece of advice.
+#
+#   docker compose run --rm api python -m tools.learn_from_text tools/notes_playstyles_v1.yaml
+source: text:playstyles-tiers-v1
+facts:
+
+  # --- the tier system -------------------------------------------------------
+  - title: No PlayStyle - raw attributes only
+    detail: >-
+      A player with no relevant PlayStyle falls back entirely on raw attributes
+      (short passing, standing tackle and so on). Animations are standard and
+      unassisted: heavier touches, slower reactions and a higher error rate under
+      pressure, with no contextual advantage or boosted physics. If a player has
+      no PlayStyle for the action you are asking of them, expect the standard
+      error rate and pick someone else for that pass or shot.
+    category: playstyles
+    tags: [playstyle, tiers, attributes, squad_selection]
+
+  - title: Base PlayStyle (grey badge)
+    detail: >-
+      The standard tier, shown with a grey badge. Gives a noticeable and reliable
+      boost to specific actions - clean trapping on Tiki-Taka, tighter close
+      control on Press Proven - making standard manoeuvres crisper than having
+      nothing. Cost-effective and genuinely useful, but it does not break meta
+      thresholds against heavy defensive pressure.
+    category: playstyles
+    tags: [playstyle, tiers, base, grey, squad_selection]
+
+  - title: Gold PlayStyle / PlayStyle+ - the tier that changes decisions
+    detail: >-
+      The upgraded tier, shown with a gold badge and written with a "+". It does
+      not merely improve the action, it supercharges it: elite mechanics such as
+      automatic ball-snagging reach on Intercept+ or laser-flat trajectory on
+      Pinged Pass+, and exclusive high-tier animations that bypass the game's
+      normal error calculations. Players carry very few of them. Treat a gold
+      PlayStyle as a squad-selection fact: the same input from a player who has
+      it and a player who does not are two different passes. Considered essential
+      for competitive Ultimate Team builds.
+    category: playstyles
+    tags: [playstyle, tiers, gold, plus, meta, squad_selection]
+
+  # --- defensive meta --------------------------------------------------------
+  - title: Defensive meta PlayStyles
+    detail: >-
+      Intercept+ is widely regarded as the single most dominant defensive trait,
+      cutting out tight through-balls and manual passes. Bruiser+ and Anticipate+
+      are essential for centre-backs and CDMs to win physical duels and land clean
+      standing tackles. Block is underrated for both AI and manual last-ditch
+      blocks inside the penalty area. When coaching defensive positioning, check
+      whether the player involved actually has these before demanding the outcome.
+    category: defending
+    tags: [playstyle, defending, meta, intercept, bruiser, anticipate, block, gold]
+
+  # --- attacking / finishing meta -------------------------------------------
+  - title: Attacking and finishing meta PlayStyles
+    detail: >-
+      Finesse Shot+ is the premier finishing weapon for curled efforts from long
+      range and sharp angles inside or outside the box. Low Driven+ is extremely
+      consistent for powerful low shots drilled past the keeper. Rapid+ and Quick
+      Step+ are the standout traits for wingers and inside forwards bursting past
+      fullbacks on the flank. A finishing instruction is only realistic if the
+      striker has the matching trait.
+    category: attacking
+    tags: [playstyle, shooting, finishing, meta, finesse, low_driven, rapid, quick_step, gold]
+
+  # --- creation / midfield meta ---------------------------------------------
+  - title: Creation and midfield meta PlayStyles
+    detail: >-
+      Incisive Pass+ is vital for CAMs and central midfielders zipping accurate
+      through-balls. Technical+ is close to mandatory for players who rely on
+      tight R1/L1 dribbling to turn in crowded midfield areas. Tiki-Taka+ is
+      crucial for quick one-touch passing sequences in congested spaces. Direct
+      build-up advice through the middle should name the midfielder who has one
+      of these rather than the position generally.
+    category: attacking
+    tags: [playstyle, passing, midfield, meta, incisive, technical, tiki_taka, gold]

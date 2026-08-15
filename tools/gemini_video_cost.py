@@ -1,7 +1,7 @@
 """Measure what a NATIVE Gemini video-analysis call actually costs.
 
 Sends a short clip inline to Gemini's generateContent endpoint, asks for a
-coaching report, and prints the REAL token usage + cost — then extrapolates to a
+coaching report, and prints the REAL token usage + cost - then extrapolates to a
 full 15-min match. This is an experiment separate from the frame pipeline.
 
     docker compose run --rm -v "/c/path/to/clips:/clips:ro" api \
@@ -50,7 +50,7 @@ def main() -> None:
     mb = len(raw) / 1e6
     print(f"clip   : {path.name}  ({mb:.1f} MB)   model: {model}   media_res: {res_mode}")
     if mb > 18:
-        print("WARNING: >18MB inline may be rejected — use a shorter clip or the File API.")
+        print("WARNING: >18MB inline may be rejected - use a shorter clip or the File API.")
 
     b64 = base64.standard_b64encode(raw).decode("ascii")
     gen_cfg: dict = {"maxOutputTokens": 800, "temperature": 0}

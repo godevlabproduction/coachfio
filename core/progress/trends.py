@@ -1,4 +1,4 @@
-"""Trend calculation — game-agnostic.
+"""Trend calculation - game-agnostic.
 
 Works purely off `Match.metrics` and `metric.higher_is_better`. It never knows
 whether a metric is possession or accuracy, so this same code serves every

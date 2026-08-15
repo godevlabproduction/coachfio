@@ -4,7 +4,7 @@ A concrete adapter points at a config directory:
 
     config/
       game.yaml       identity, event vocabulary, metric definitions, validation
-      hud.yaml        the HUD schema (regions, formats) — pure data
+      hud.yaml        the HUD schema (regions, formats) - pure data
       prompts/
         stage2.txt    (Phase 1)
         stage3.txt    (Phase 1)
@@ -42,7 +42,7 @@ class ConfigDrivenAdapter(GameAdapter):
 
     @staticmethod
     def _load_yaml(path: Path) -> dict[str, Any]:
-        # hud.yaml is optional — replay/API games (no video) don't have one.
+        # hud.yaml is optional - replay/API games (no video) don't have one.
         if not path.exists():
             return {}
         with open(path, "r", encoding="utf-8") as fh:

@@ -1,4 +1,4 @@
-# Phase 0 — proving OCR reads real footage
+# Phase 0 - proving OCR reads real footage
 
 Phase 0 answers exactly one question: **can local OCR read the FC 26 HUD (score,
 clock, final stat screen) reliably enough to build on?** Everything here exists
@@ -15,7 +15,7 @@ cd web && npm install && npm run dev # http://localhost:5173
 Drop a clip → frames are extracted **in the browser** → uploaded → the worker
 runs Stage 1 → raw JSON appears, and the match joins the trends table.
 
-### B. CLI (fastest loop for calibration — no DB, no queue)
+### B. CLI (fastest loop for calibration - no DB, no queue)
 The CLI is the tool you'll actually use to tune the HUD schema. It runs the same
 core code against a clip and prints JSON.
 
@@ -54,7 +54,7 @@ Open the PNG. For each box:
   (raise the browser/CLI extraction resolution)
 
 Re-run until every box sits on its value and the printed reads are correct.
-`region.rect` is the only thing you touch — no code.
+`region.rect` is the only thing you touch - no code.
 
 ## How to judge "reliable enough"
 
@@ -66,8 +66,8 @@ Run `analyze` on several real matches and compare against what you can see:
   0.4 as a likely stale schema / miscalibration rather than emitting garbage.
 
 If the score and stat-screen numbers come out right across a handful of clips,
-Phase 0 has passed and Phase 1 (Stages 2–3, accounts, billing) is worth building.
-If they don't, we fix extraction before anything else exists — which is the whole
+Phase 0 has passed and Phase 1 (Stages 2-3, accounts, billing) is worth building.
+If they don't, we fix extraction before anything else exists - which is the whole
 point of doing this first.
 
 ## When a game patch moves the HUD
@@ -75,4 +75,4 @@ point of doing this first.
 `hud.yaml` carries `schema_version`. If a patch shifts the HUD, parse_confidence
 drops and the match gains a warning naming the schema version. That's the signal
 to grab a new frame, re-run `overlay`, nudge the rects, and bump `schema_version`
-— never silently ship misread numbers.
+- never silently ship misread numbers.

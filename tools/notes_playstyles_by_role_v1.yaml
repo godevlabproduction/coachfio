@@ -1,0 +1,96 @@
+# Best PlayStyles per FC IQ role - distilled from fut.gg.
+#
+# The source ranks ~12 PlayStyles per role; only the top few change a decision, so
+# each fact keeps the leading 3-4 and marks the gold (+) ones. This is what lets
+# the coach say "your CDM should have Intercept+" instead of generic advice.
+#
+#   docker compose run --rm api python -m tools.learn_from_text tools/notes_playstyles_by_role_v1.yaml
+source: https://www.fut.gg/playstyles/best-by-role/
+facts:
+
+  - title: Best PlayStyles for striker roles
+    detail: >-
+      Advanced Forward: Finesse Shot+, Low Driven+, Rapid, Incisive Pass.
+      Poacher: Finesse Shot+, Low Driven+, Rapid, Incisive Pass.
+      Target Forward: Finesse Shot+, Enforcer, Precision Header, Low Driven+.
+      False 9: Finesse Shot+, Incisive Pass, Low Driven+, Technical.
+      Finishing traits dominate every striker role - Finesse Shot+ and Low Driven+
+      are the two that decide whether a chance becomes a goal. Target Forward is
+      the outlier, valuing Precision Header and Enforcer for aerial and physical work.
+    category: attacking
+    tags: [playstyle, role, striker, advanced_forward, poacher, target_forward, false_9, finishing, meta]
+
+  - title: Best PlayStyles for wide attacking roles
+    detail: >-
+      Winger: Rapid+, Finesse Shot+, Pinged Pass, Quick Step.
+      Inside Forward: Finesse Shot+, Low Driven+, Rapid+, Quick Step.
+      Wide Playmaker: Finesse Shot+, Incisive Pass, Technical, Tiki Taka+.
+      Wide Midfielder: Rapid+, Quick Step, Pinged Pass, Intercept.
+      Pace traits (Rapid+, Quick Step) define the touchline roles; the Wide
+      Playmaker swaps them for creation traits because it comes inside to build
+      rather than run in behind.
+    category: attacking
+    tags: [playstyle, role, winger, inside_forward, wide_playmaker, wide_midfielder, pace, meta]
+
+  - title: Best PlayStyles for attacking midfield roles
+    detail: >-
+      Shadow Striker: Finesse Shot+, Incisive Pass+, Rapid+, Technical.
+      Playmaker (CAM): Finesse Shot+, Incisive Pass+, Low Driven+, Technical.
+      Classic 10: Finesse Shot+, Incisive Pass+, Technical, Tiki Taka+.
+      Half Winger (CAM): Incisive Pass+, Rapid+, Technical, Finesse Shot+.
+      Every CAM role wants Incisive Pass+ and Finesse Shot+ - the through ball and
+      the curled finish are what the position is for. Technical matters because
+      these players receive in traffic and must turn.
+    category: attacking
+    tags: [playstyle, role, cam, shadow_striker, playmaker, classic_10, half_winger, incisive, meta]
+
+  - title: Best PlayStyles for central midfield roles
+    detail: >-
+      Box to Box: Incisive Pass, Pinged Pass, Intercept+, Finesse Shot.
+      Playmaker (CM): Incisive Pass, Pinged Pass, Finesse Shot, Tiki Taka+.
+      Deep Lying Playmaker (CM): Intercept+, Pinged Pass, Bruiser, Incisive Pass.
+      Holding (CM): Intercept+, Pinged Pass, Bruiser, Anticipate.
+      Half Winger (CM): Pinged Pass, Intercept+, Quick Step, Tiki Taka+.
+      CM is where passing and screening meet: Pinged Pass moves the ball, Intercept+
+      wins it back. The deeper the role, the more the balance tips toward Intercept+
+      and Bruiser.
+    category: general
+    tags: [playstyle, role, cm, box_to_box, deep_lying_playmaker, holding, pinged_pass, intercept, meta]
+
+  - title: Best PlayStyles for defensive midfield roles
+    detail: >-
+      Holding (CDM): Intercept+, Pinged Pass+, Bruiser+, Anticipate.
+      Deep Lying Playmaker (CDM): Intercept+, Pinged Pass+, Bruiser+, Incisive Pass.
+      Box Crasher: Incisive Pass, Intercept+, Pinged Pass, Finesse Shot.
+      Centre Half: Intercept+, Bruiser+, Jockey, Anticipate.
+      Wide Half: Bruiser+, Intercept+, Quick Step, Jockey.
+      Intercept+ is the defining CDM trait - it is what turns a screening midfielder
+      into one who actually cuts out the through ball. Pair it with Bruiser+ for the
+      physical duels the position keeps getting into.
+    category: defending
+    tags: [playstyle, role, cdm, holding, box_crasher, centre_half, intercept, bruiser, screening, meta]
+
+  - title: Best PlayStyles for fullback and wingback roles
+    detail: >-
+      Fullback: Bruiser+, Intercept+, Quick Step+, Jockey.
+      Wingback: Intercept+, Pinged Pass+, Quick Step+, Bruiser.
+      Falseback: Intercept+, Pinged Pass+, Anticipate, Bruiser.
+      Inverted Wingback: Incisive Pass, Tiki Taka+, Quick Step, Anticipate.
+      Attacking Wingback: Rapid+, Quick Step, Pinged Pass, Intercept+.
+      Defensive-first fullbacks want Bruiser+/Intercept+/Jockey; the further forward
+      the role pushes, the more it wants pace (Rapid+, Quick Step+) and passing.
+      The Inverted Wingback is the exception - it becomes a midfielder in possession,
+      so it wants creation traits.
+    category: defending
+    tags: [playstyle, role, fullback, wingback, inverted_wingback, falseback, jockey, meta]
+
+  - title: Best PlayStyles for centre-back roles
+    detail: >-
+      CB Defender: Intercept+, Bruiser+, Anticipate+, Jockey, then Quick Step,
+      Block, Pinged Pass, Aerial Fortress. Centre-backs are unified by Intercept+
+      and Bruiser+ across every CB role - if a centre-back has neither, expect to
+      get beaten in duels and cut open by through balls regardless of positioning.
+      Block is underrated for last-ditch work inside the box.
+    category: defending
+    tags: [playstyle, role, centre_back, cb, defender, stopper, ball_playing_defender,
+           intercept, bruiser, anticipate, block, meta]

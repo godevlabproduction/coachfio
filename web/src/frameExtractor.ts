@@ -1,4 +1,4 @@
-// Client-side frame extraction — THE core cost decision.
+// Client-side frame extraction - THE core cost decision.
 //
 // A 15-minute capture is 1-4 GB. We never upload it. Instead we seek through the
 // video in the browser with a <video> element + <canvas>, downscale + JPEG each

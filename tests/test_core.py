@@ -1,4 +1,4 @@
-"""Pure-logic tests — no OCR, ffmpeg, DB, or network. Run in the backend image:
+"""Pure-logic tests - no OCR, ffmpeg, DB, or network. Run in the backend image:
     docker compose run --rm api pytest
 """
 from __future__ import annotations
@@ -27,7 +27,7 @@ def test_fc26_interpret_score_and_stats():
     adapter = EaFc26Adapter()
     # Realistic 1fps sampling: each score persists across several frames, the way
     # a real HUD does. A score must be corroborated (not a single frame) before it
-    # counts — that's what makes the pipeline robust to transient OCR phantoms.
+    # counts - that's what makes the pipeline robust to transient OCR phantoms.
     readings = []
 
     def phase(home, away, start_frame, n=4):
@@ -111,7 +111,7 @@ def test_no_game_branching_in_core():
     """The design rule, enforced: /core must not branch on a specific game.
 
     We scan executable lines (comments stripped) for game-id string literals and
-    for `game[_id] == ...` comparisons — the concrete 'if game == "fc26"' smell
+    for `game[_id] == ...` comparisons - the concrete 'if game == "fc26"' smell
     the brief warns about. Prose mentioning football in docstrings is fine; a
     hardcoded game id in code is not.
     """

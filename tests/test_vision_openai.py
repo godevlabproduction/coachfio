@@ -1,6 +1,6 @@
 """The OpenAI-compatible vision engine: request shape, JSON parse, cost from rates.
 
-No network — we monkeypatch the stdlib POST helper with a canned response.
+No network - we monkeypatch the stdlib POST helper with a canned response.
 """
 import core.ai.vision as vision
 from core.ai.vision import OpenAICompatVisionModel, build_vision, get_vision_model

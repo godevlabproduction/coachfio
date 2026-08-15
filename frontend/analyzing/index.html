@@ -1,236 +1,96 @@
-<!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Coach.io - Processing Match</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&amp;family=Hanken+Grotesk:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "error-container": "#93000a",
-                        "tertiary-fixed-dim": "#c8c6c5",
-                        "on-tertiary-container": "#424141",
-                        "primary-fixed-dim": "#3ce36a",
-                        "on-tertiary-fixed": "#1c1b1b",
-                        "secondary-fixed": "#9cf0ff",
-                        "surface-variant": "#202020",
-                        "secondary-container": "#00e3fd",
-                        "secondary": "#bdf4ff",
-                        "on-primary-fixed": "#002108",
-                        "inverse-primary": "#006e2a",
-                        "on-secondary-container": "#00616d",
-                        "on-secondary-fixed": "#001f24",
-                        "surface-container-lowest": "#000000",
-                        "surface-tint": "#3ce36a",
-                        "surface-dim": "#000000",
-                        "error": "#ffb4ab",
-                        "on-secondary": "#00363d",
-                        "surface-container-low": "#0a0a0a",
-                        "tertiary-fixed": "#e5e2e1",
-                        "inverse-surface": "#e2e2e2",
-                        "on-surface": "#e2e2e2",
-                        "secondary-fixed-dim": "#00daf3",
-                        "surface-container-high": "#181818",
-                        "on-primary": "#003912",
-                        "tertiary": "#cbc8c8",
-                        "primary-container": "#00c853",
-                        "tertiary-container": "#afadac",
-                        "surface": "#000000",
-                        "on-error": "#690005",
-                        "on-error-container": "#ffdad6",
-                        "surface-container-highest": "#202020",
-                        "surface-bright": "#2a2a2a",
-                        "background": "#000000",
-                        "on-background": "#e2e2e2",
-                        "inverse-on-surface": "#2f3131",
-                        "primary": "#3fe56c",
-                        "outline": "#869583",
-                        "on-secondary-fixed-variant": "#004f58",
-                        "on-tertiary": "#313030",
-                        "on-tertiary-fixed-variant": "#474646",
-                        "on-surface-variant": "#bbcbb8",
-                        "surface-container": "#101010",
-                        "primary-fixed": "#69ff87",
-                        "on-primary-fixed-variant": "#00531e",
-                        "outline-variant": "#3c4a3c",
-                        "on-primary-container": "#004c1b"
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    spacing: {
-                        "margin-mobile": "20px",
-                        "gutter": "24px",
-                        "container-max": "1440px",
-                        "unit": "8px",
-                        "margin-desktop": "64px"
-                    },
-                    fontFamily: {
-                        "label-sm": ["JetBrains Mono"],
-                        "body-md": ["Hanken Grotesk"],
-                        "body-lg": ["Hanken Grotesk"],
-                        "display-lg": ["Barlow Condensed"],
-                        "headline-lg": ["Barlow Condensed"],
-                        "headline-lg-mobile": ["Barlow Condensed"]
-                    },
-                    fontSize: {
-                        "label-sm": ["12px", { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" }],
-                        "body-md": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
-                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
-                        "display-lg": ["48px", { lineHeight: "1.1", fontWeight: "700" }],
-                        "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "700" }],
-                        "headline-lg-mobile": ["24px", { lineHeight: "1.2", fontWeight: "700" }]
-                    }
-                }
-            }
-        }
-    </script>
-<style>
-        .pitch-lines {
-            background-image:
-                linear-gradient(to right, #222222 1px, transparent 1px),
-                linear-gradient(to bottom, #222222 1px, transparent 1px);
-            background-size: 100px 100px;
-            background-position: 0 0;
-            animation: grid-drift 18s linear infinite;
-        }
-        @keyframes grid-drift {
-            0% { background-position: 0 0; }
-            100% { background-position: 100px 100px; }
-        }
-        
-        .pulse-ring {
-            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
-        
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 229, 108, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(63, 229, 108, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 229, 108, 0); }
-        }
-
-        .glow-effect {
-            box-shadow: 0 0 12px 2px rgba(63, 229, 108, 0.3);
-        }
-    </style>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coachfio - Analyzing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/app.css">
 </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col antialiased relative overflow-hidden">
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 h-[72px] bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-white/10 hidden md:block">
-<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full max-w-container-max mx-auto">
-<a class="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary uppercase tracking-tighter" href="/">
-                Coach.io
-            </a>
-<div class="flex space-x-8 font-body-md text-body-md h-full items-center">
-<a class="text-primary dark:text-primary border-b-2 border-primary h-full flex items-center px-1" href="/upload/">Upload</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors h-full flex items-center px-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/report/">Reports</a>
-<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors h-full flex items-center px-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/trends/">Trends</a>
-</div>
-<div class="flex items-center text-primary dark:text-primary">
-<span class="material-symbols-outlined hover:text-primary dark:hover:text-primary-fixed-dim transition-all cursor-pointer active:scale-95 duration-200 transition-transform text-2xl">account_circle</span>
-</div>
-</div>
-</nav>
-<!-- Main Content -->
-<main class="flex-grow flex flex-col justify-center items-center relative z-10 pt-[72px] px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto h-[calc(100vh-72px)]">
-<!-- Pitch Background Overlay -->
-<div class="absolute inset-0 z-[-1] opacity-20 pitch-lines pointer-events-none"></div>
-<div class="absolute inset-0 z-[-1] bg-gradient-to-t from-background via-transparent to-background pointer-events-none"></div>
-<div class="absolute inset-0 z-[-1] bg-gradient-to-r from-background via-transparent to-background pointer-events-none"></div>
-<!-- Processing Canvas -->
-<div class="w-full max-w-4xl flex flex-col items-center">
-<!-- Video Analysis visual (Abstract) -->
-<div class="w-full h-64 md:h-80 bg-surface-container-low rounded-lg border border-outline-variant/30 mb-12 relative overflow-hidden flex items-center justify-center glow-effect shadow-2xl">
-<!-- Inner grid/scanner effect simulating AI parsing video -->
-<div class="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(63,229,108,0.2)_1px,transparent_1px)] bg-[size:100%_4px]"></div>
-<div class="flex flex-col items-center z-10">
-<span class="material-symbols-outlined text-primary text-6xl mb-4" style="font-variation-settings: 'FILL' 1;">
-                        smart_display
-                    </span>
-<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2 tracking-wide">ANALYZING MATCH DATA</h1>
-<div class="font-label-sm text-label-sm text-secondary px-4 py-1.5 rounded-full bg-black/50 border border-secondary/50">
-                        EST. TIME REMAINING: 02:45
-                    </div>
-</div>
-<!-- Scanning line -->
-<div class="absolute top-0 left-0 w-full h-1 bg-primary opacity-50 blur-[2px] animate-[scan_3s_ease-in-out_infinite]"></div>
-</div>
-<!-- Horizontal Stepper -->
-<div class="w-full relative px-4 md:px-12">
-<!-- Track Line -->
-<div class="absolute top-1/2 left-4 right-4 md:left-12 md:right-12 h-[2px] bg-surface-variant -translate-y-1/2 z-0"></div>
-<!-- Progress Line -->
-<div class="absolute top-1/2 left-4 md:left-12 h-[2px] bg-primary -translate-y-1/2 z-0" style="width: 25%;"></div>
-<div class="flex justify-between relative z-10">
-<!-- Step 1: Done -->
-<div class="flex flex-col items-center group w-24">
-<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary mb-3 shadow-[0_0_8px_rgba(63,229,108,0.5)] border-2 border-primary-fixed-dim">
-<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
-</div>
-<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider text-center">Uploading</span>
-</div>
-<!-- Step 2: Active -->
-<div class="flex flex-col items-center group w-24">
-<div class="w-10 h-10 rounded-full bg-surface-dim border-2 border-primary flex items-center justify-center text-primary mb-3 pulse-ring glow-effect">
-<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">visibility</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider text-center">Watching</span>
-</div>
-<!-- Step 3: Pending -->
-<div class="flex flex-col items-center group w-24 opacity-50">
-<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-surface-variant flex items-center justify-center text-on-surface-variant mb-3">
-<span class="material-symbols-outlined text-[20px]">psychology</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Coaching</span>
-</div>
-<!-- Step 4: Pending -->
-<div class="flex flex-col items-center group w-24 opacity-50">
-<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-surface-variant flex items-center justify-center text-on-surface-variant mb-3">
-<span class="material-symbols-outlined text-[20px]">school</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Learning</span>
-</div>
-<!-- Step 5: Pending -->
-<div class="flex flex-col items-center group w-24 opacity-50">
-<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-surface-variant flex items-center justify-center text-on-surface-variant mb-3">
-<span class="material-symbols-outlined text-[20px]">flag</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Done</span>
-</div>
-</div>
-</div>
-<!-- Loading Details Snippet -->
-<div class="mt-16 text-center">
-<p class="font-label-sm text-label-sm text-tertiary-fixed-dim max-w-md mx-auto leading-relaxed opacity-70">
-                    Extracting player positioning, tracking pass accuracy, and evaluating defensive lines. Please keep this window open.
-                </p>
-</div>
-</div>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark"><span class="material-symbols-outlined filled">sports_soccer</span></span>
+      Coachfio
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="/upload/" data-nav="/upload/">Upload</a>
+      <a class="nav__link" href="/report/" data-nav="/report/">Report</a>
+      <a class="nav__link" href="/moment/" data-nav="/moment/">Moments</a>
+      <a class="nav__link" href="/statistics/" data-nav="/statistics/">Statistics</a>
+    </nav>
+    <div class="appbar__end">
+      <a class="btn btn--primary btn--sm" href="/upload/">
+        <span class="material-symbols-outlined">add</span>New analysis
+      </a>
+      <a class="nav__link" href="/account/" data-nav="/account/">Account</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="container page">
+  <div class="reveal" style="max-width:560px;margin-inline:auto">
+
+    <div class="text-center">
+      <p class="eyebrow">Analyzing</p>
+      <h1 class="t-display" style="margin-top:8px" data-cx-heading>Watching your match</h1>
+      <p class="muted" style="margin-top:10px" data-cx-step>Starting up</p>
+    </div>
+
+    <div style="margin-top:32px">
+      <div class="row-between t-sm" style="margin-bottom:8px">
+        <span class="muted">Progress</span>
+        <span class="mono" data-cx-pct>0%</span>
+      </div>
+      <div class="progress">
+        <div class="progress__bar" data-cx-bar style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:32px">
+      <div class="steps">
+        <div class="step" data-step="upload">
+          <span class="step__dot"><span class="material-symbols-outlined">upload</span></span>
+          Uploading to the coach
+        </div>
+        <div class="step" data-step="watch">
+          <span class="step__dot"><span class="material-symbols-outlined">visibility</span></span>
+          Watching the full match
+        </div>
+        <div class="step" data-step="score">
+          <span class="step__dot"><span class="material-symbols-outlined">scoreboard</span></span>
+          Reading the scoreboard
+        </div>
+        <div class="step" data-step="write">
+          <span class="step__dot"><span class="material-symbols-outlined">edit_note</span></span>
+          Writing your report
+        </div>
+      </div>
+    </div>
+
+    <p class="faint t-sm text-center" style="margin-top:24px">
+      A full match takes about 2-3 minutes. You can leave this page - the report is saved.
+    </p>
+
+    <div data-cx-error hidden style="margin-top:24px"></div>
+
+  </div>
 </main>
-<style>
-        @keyframes scan {
-            0% { top: -10%; }
-            50% { top: 110%; }
-            100% { top: -10%; }
-        }
-    </style>
-<script>
-        // Simulate AI processing, then hand off to the finished report
-        setTimeout(function () {
-            window.location.href = '/report/';
-        }, 4000);
-    </script>
+
+<nav class="tabbar" aria-label="Primary">
+  <a class="tabbar__item" href="/upload/" data-nav="/upload/"><span class="material-symbols-outlined">upload</span>Upload</a>
+  <a class="tabbar__item" href="/report/" data-nav="/report/"><span class="material-symbols-outlined">analytics</span>Report</a>
+  <a class="tabbar__item" href="/moment/" data-nav="/moment/"><span class="material-symbols-outlined">play_circle</span>Moments</a>
+  <a class="tabbar__item" href="/statistics/" data-nav="/statistics/"><span class="material-symbols-outlined">trending_up</span>Statistics</a>
+  <a class="tabbar__item" href="/account/" data-nav="/account/"><span class="material-symbols-outlined">person</span>Account</a>
+</nav>
+
 <script src="/coach.js"></script>
-</body></html>
+</body>
+</html>

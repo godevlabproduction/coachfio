@@ -9,8 +9,32 @@ so the trailing-window aggregation can't silently regress.
 from adapters.base.hud_schema import HudRegion
 from adapters.base.interface import RegionReading
 from adapters.ea_fc_26.adapter import EaFc26Adapter
+from core.pipeline.stages import GOAL_READ_LEAD_S, _mmss
 
 adapter = EaFc26Adapter()
+
+
+class TestGoalTimestampLead:
+    """The scoreboard is a LAGGING indicator - it only changes once the ball is
+    already in, often after a cut to the celebration. So a scoreboard-derived goal
+    time is always late, and is backed off at the source to land on the build-up.
+    """
+
+    def test_lead_is_ten_seconds(self):
+        assert GOAL_READ_LEAD_S == 10
+
+    def test_lead_is_applied_and_clamped_at_zero(self):
+        # The expression used in _read_score_timeline.
+        def shifted(read_at: int) -> int:
+            return max(0, int(read_at) - GOAL_READ_LEAD_S)
+
+        assert shifted(75) == 65
+        assert shifted(10) == 0
+        assert shifted(4) == 0      # would be -6 without the clamp
+        assert shifted(0) == 0
+
+    def test_shifted_time_still_formats_as_mmss(self):
+        assert _mmss(max(0, 75 - GOAL_READ_LEAD_S)) == "01:05"
 
 _CLOCK = HudRegion(name="clock", rect=(0.0, 0.0, 0.05, 0.05), meta={"role": "clock"})
 _HOME = HudRegion(name="score_home", rect=(0.1, 0.0, 0.05, 0.05), meta={"role": "score", "team": "home"})

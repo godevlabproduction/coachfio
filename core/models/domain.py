@@ -1,9 +1,9 @@
 """The four things the core understands. Deliberately game-agnostic.
 
-    Match   — a bounded session with a start, end, and outcome
-    Event   — a timestamped thing that happened
-    Metric  — a number extracted from the match
-    Insight — a pattern found across many matches
+    Match   - a bounded session with a start, end, and outcome
+    Event   - a timestamped thing that happened
+    Metric  - a number extracted from the match
+    Insight - a pattern found across many matches
 
 Adapters produce these from raw input; the dashboard, progress tracking,
 billing, and storage consume them and never change when a game is added.
@@ -78,12 +78,12 @@ class Insight(BaseModel):
 
 
 class Match(BaseModel):
-    """A bounded session. Game identity is a plain id + edition — the core never
+    """A bounded session. Game identity is a plain id + edition - the core never
     interprets it, it just carries it so the right adapter can be looked up."""
 
     id: str = Field(default_factory=_uuid)
 
-    # Adapter routing — opaque to the core.
+    # Adapter routing - opaque to the core.
     game_id: str
     game_edition: str
     adapter_version: str | None = None

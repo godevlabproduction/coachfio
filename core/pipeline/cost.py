@@ -2,7 +2,7 @@
 
 The brief's line in the sand: total API cost per 15-minute match must stay under
 $0.25. We scale the cap linearly with match length, log every charge, and FAIL
-LOUDLY the instant a charge would breach the cap — never silently overspend.
+LOUDLY the instant a charge would breach the cap - never silently overspend.
 """
 from __future__ import annotations
 

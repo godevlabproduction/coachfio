@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coachfio - Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<!-- No app nav here on purpose: signed out, there is nowhere else to go. -->
+<main id="main" class="auth">
+  <a class="brand" href="/" style="justify-content:center;margin-bottom:28px">
+    <span class="brand__mark"><span class="material-symbols-outlined filled">sports_soccer</span></span>
+    Coachfio
+  </a>
+  <div data-cx-auth>
+    <div class="card">
+      <div class="skeleton skeleton--title"></div>
+      <div class="skeleton skeleton--text"></div>
+    </div>
+  </div>
+</main>
+<script src="/coach.js"></script>
+</body>
+</html>

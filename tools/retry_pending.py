@@ -60,7 +60,7 @@ def main() -> None:
                 still.append(mid)
         pending = still
         if pending:
-            print(f"round {rnd}: still pending {[m[:8] for m in pending]} (Gemini video still down?) — sleeping 120s",
+            print(f"round {rnd}: still pending {[m[:8] for m in pending]} (Gemini video still down?) - sleeping 120s",
                   flush=True)
             time.sleep(120)
     print(f"DONE. remaining unprocessed: {[m[:8] for m in pending]}", flush=True)

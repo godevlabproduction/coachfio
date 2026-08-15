@@ -1,0 +1,70 @@
+# FC 26 PLAYER PROFILES - which toolkit actually makes a card useful in a given
+# position. The headline point: the best player is NOT the highest overall. Role
+# familiarity, PlayStyles, body type, pace distribution, stamina, weak foot and
+# defensive animations matter more than the rating on the card.
+#
+# These are hint-selected into the prompt (only the positions the match actually
+# involved), because six full profiles on every report would crowd out the
+# observations. Keep each entry dense and self-contained.
+meta:
+  principle: >-
+    Judge a player by the toolkit for the job, not by overall rating. Coach a
+    player-fit point only when the footage shows the mismatch (a Lengthy CAM
+    losing tight turns, a striker with no weak foot skewing every finish).
+
+entries:
+  - id: striker_profile
+    match: [striker, st, centre forward, center forward, number 9, finishing, one on one]
+    title: Striker toolkit
+    detail: >-
+      Want ~90+ effective pace or excellent acceleration, high finishing and
+      composure, a 4- or 5-star weak foot, strong attacking positioning, and
+      enough strength to hold off centre-backs. Best PlayStyles: Finesse Shot,
+      Low Driven Shot, First Touch, Technical, Rapid. Advanced Forward
+      familiarity helps. Pick a LENGTHY striker if you attack open space over
+      long distances; pick an explosive or highly agile one if you rely on tight
+      turns, quick combinations and short bursts.
+    tags: [striker, forward, finishing, pace, weak-foot, playstyles, lengthy]
+  - id: winger_profile
+    match: [winger, wide, lw, rw, wide cam, cut inside, one v one out wide]
+    title: Winger / wide CAM toolkit
+    detail: >-
+      Want explosive acceleration (or very strong Controlled), high agility,
+      balance and dribbling, plus stamina for repeated defensive recovery. Best
+      PlayStyles: Technical, Rapid, Quick Step, First Touch, Tiki Taka - add
+      Finesse Shot if the player cuts inside, and good passing if used as a wide
+      CAM. Small, responsive attackers are favoured in the meta because they turn
+      faster and create separation in tight areas.
+    tags: [winger, wide, dribbling, agility, acceleration, stamina, playstyles]
+  - id: midfield_profile
+    match: [midfielder, cam, cm, midfield, playmaker, box to box, between the lines]
+    title: CAM / midfielder toolkit
+    detail: >-
+      Want ball control and dribbling under pressure, short passing and vision,
+      stamina, and defensive awareness if the player is a two-way midfielder.
+      Best PlayStyles: Incisive Pass, Tiki Taka, Pinged Pass, Technical, First
+      Touch. Playmaker or Shadow Striker familiarity helps. Build the unit with
+      complementary profiles - one anchor, one progressive passer, one runner -
+      and avoid three slow playmakers with weak defensive movement.
+    tags: [midfield, cam, cdm, passing, vision, stamina, playstyles, balance]
+  - id: centre_back_profile
+    match: [centre back, center back, cb, defender, back line, played through, turned]
+    title: Centre-back toolkit
+    detail: >-
+      Prioritise recovery pace, defensive awareness, strength, reactions, good
+      height and reach, and the Anticipate, Intercept, Jockey and Block
+      PlayStyles. Defender or Ball-Playing Defender familiarity helps. Do NOT
+      pick a centre-back on sprint speed alone - they also need reliable
+      defensive animations, positioning, and the ability to TURN when defending
+      through balls.
+    tags: [centre-back, defender, defending, pace, strength, reactions, playstyles, turning]
+  - id: fullback_profile
+    match: [fullback, full back, lb, rb, wingback, wing back, overlap, cutback conceded]
+    title: Fullback toolkit
+    detail: >-
+      Want pace and stamina, defensive awareness, Jockey and Intercept, good
+      reactions and agility, passing if used as an Inverted Wingback, and
+      strength if facing powerful wingers. A heavily attacking fullback is not
+      automatically meta: if BOTH fullbacks attack, the shape needs a Centre-Half,
+      a Holding CDM or some other covering mechanism behind them.
+    tags: [fullback, wingback, defending, pace, stamina, jockey, rest-defence, roles]

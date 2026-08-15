@@ -1,4 +1,4 @@
-# FC 26 gameplay MECHANICS — distilled facts (paraphrased) + exact controls.
+# FC 26 gameplay MECHANICS - distilled facts (paraphrased) + exact controls.
 # NOT a verbatim copy of any doc: short factual entries a coach can cite, each
 # with a source. Grow via tools/ingest_knowledge.py. Controls are PlayStation /
 # Xbox.
@@ -6,8 +6,8 @@ meta:
   game: "EA Sports FC 26"
   current_title_update: "1.4.0"
   modes:
-    competitive: "FUT / Clubs / Online — responsive, consistent, less randomness (mandatory online)"
-    authentic: "Career/offline default — realism, strategic pacing, weather"
+    competitive: "FUT / Clubs / Online - responsive, consistent, less randomness (mandatory online)"
+    authentic: "Career/offline default - realism, strategic pacing, weather"
   source: "https://www.ea.com/games/ea-sports-fc/fc-26/news/pitch-notes-fc26-gameplay-deep-dive"
 
 entries:
@@ -15,12 +15,44 @@ entries:
     area: defending
     title: Jockey / contain
     detail: >-
-      Hold L2/LT to jockey — stay goal-side, delay the attacker and shepherd them
+      Hold L2/LT to jockey - stay goal-side, delay the attacker and shepherd them
       wide instead of diving in. Jockey movement was made more agile in FC 26 and
       faster in Title Update 1.1; sprint-jockey with L2+R2/LT+RT to keep up with
       pace while staying on your feet.
     controls: "Hold L2/LT (jockey); L2+R2 / LT+RT (sprint jockey)"
     tags: [defending, contain, positioning, transition, one-v-one]
+  - id: playstyle_role_input_distinction
+    area: general
+    title: PlayStyle vs Role vs Input - three different things
+    detail: >-
+      Keep these separate; conflating them produces advice a player cannot act on.
+      An INPUT is a button you press (driven pass R1+X, through ball △/Y, finesse
+      R1+○). A PLAYSTYLE is a passive trait a player either has or does not
+      (Pinged Pass, Incisive Pass, Finesse Shot, Intercept) - it has NO button and
+      you must never give a control for one; it silently improves the inputs that
+      player makes. A ROLE is an FC IQ positional job assigned in tactics
+      (Advanced Forward, Inverted Wingback, Box Crasher) - also not a button.
+      PlayStyles come in tiers: none (raw attributes), base/grey (reliable boost)
+      and gold "+" (game-changing, rare). Because of this, WHO executes an action
+      matters as much as which button: name the player who has the trait rather
+      than telling everyone to attempt the same pass.
+    tags: [playstyle, role, controls, inputs, tiers, squad_selection, do-not-mention]
+  - id: context_sensitive_inputs
+    area: defending
+    title: The same button does different things with and without the ball
+    detail: >-
+      FC 26 inputs are POSSESSION-SENSITIVE. With the ball ○/B shoots (or clears
+      when deep in your own half); WITHOUT the ball ○/B is the stand tackle. □/X
+      is pass/cross in possession and slide tackle out of it. △/Y is a through
+      ball in possession and rushes the keeper out of it. NEVER coach an
+      attacking input for a defending situation - telling a player who does not
+      have the ball to "shoot" or "clear with ○/B" is wrong and impossible to
+      execute; while the opponent is dribbling, ○/B is a tackle. When the
+      opponent has the ball, the only correct inputs are jockey (L2/LT), manual
+      switching (Right Stick), second-man contain (L1/LB) and a timed stand
+      tackle (○/B).
+    controls: "In possession: ○/B shoot|clear, □/X pass, △/Y through ball. Defending: ○/B stand tackle, □/X slide, △/Y keeper rush"
+    tags: [defending, controls, inputs, do-not-mention, tackling, clearance]
   - id: tackling
     area: defending
     title: Standing & slide tackles
@@ -43,7 +75,7 @@ entries:
     area: ball_control
     title: Shield trapping & first-touch precision
     detail: >-
-      Hold L2/LT as you receive to shield-trap — prioritises body position over a
+      Hold L2/LT as you receive to shield-trap - prioritises body position over a
       perfect touch, protecting the ball under pressure. Also improves first-touch
       control at speed (a slight speed trade-off).
     controls: "Hold L2/LT while receiving"
@@ -62,7 +94,7 @@ entries:
     title: Timed Finishing REMOVED
     detail: >-
       Timed Finishing (the second shot-button tap for a green-timed shot) was
-      REMOVED in FC 26 — do NOT coach it. Finishing is now about shot selection,
+      REMOVED in FC 26 - do NOT coach it. Finishing is now about shot selection,
       position and composure, not timing the tap.
     tags: [shooting, removed, do-not-mention]
   - id: agile_dribbling_removed
@@ -70,7 +102,7 @@ entries:
     title: Agile Dribbling REMOVED
     detail: >-
       The L2+R2 Agile Dribbling mechanic was REMOVED. Close control now comes from
-      Dynamic/Shield Dribbling and skill moves — do NOT coach Agile Dribbling.
+      Dynamic/Shield Dribbling and skill moves - do NOT coach Agile Dribbling.
     tags: [dribbling, removed, do-not-mention]
   - id: acceleration_types
     area: attacking
@@ -79,13 +111,30 @@ entries:
       Players fall into Explosive (sharp bursts over short distance), Lengthy
       (build speed over distance) or Controlled. Use Explosive players for tight
       first-yard breaks; give Lengthy players a runway rather than tight turns.
-    tags: [dribbling, pace, player-fit, acceleration]
+      Reported Lengthy requirements: Strength >= 65, Acceleration >= 40, Strength
+      at least 4 higher than Agility, and roughly 183cm+ (men) / 164cm+ (women).
+      Databases disagree on the exact height cut-off, so check the actual card
+      rather than assuming every tall player is Lengthy.
+    tags: [dribbling, pace, player-fit, acceleration, lengthy, explosive, height, strength]
+  - id: lengthy_when_it_helps
+    area: general
+    title: When Lengthy helps and when it hurts
+    detail: >-
+      Lengthy changes HOW a player accelerates; it does not make them faster
+      everywhere. It suits centre-backs defending long runs, strong strikers
+      running in behind, fullbacks in open-field recoveries and midfielders
+      covering ground. It is the wrong pick for small dribblers, CAMs receiving
+      in crowded areas, wingers who need the first yard immediately, players with
+      poor agility/balance, and defenders who must turn against agile attackers.
+      Sprint speed, reactions, agility, strength, PlayStyles and role all still
+      apply - never coach a player swap on acceleration type alone.
+    tags: [player-fit, acceleration, lengthy, dribbling, defending, turning, agility]
   - id: explosive_sprint
     area: attacking
     title: Explosive sprint & knock-ons
     detail: >-
       R2/RT gives explosive acceleration in all directions; a knock-on (R2 + push
-      into space) beats a defender for pace but sacrifices close control — use in
+      into space) beats a defender for pace but sacrifices close control - use in
       open space, not in traffic.
     controls: "R2/RT (sprint); R2 + direction (knock-on)"
     tags: [dribbling, pace, space]
@@ -95,7 +144,7 @@ entries:
     detail: >-
       Aim through-balls into the LANE between defenders (not straight at a runner);
       first-time passes are faster in short-range. Through-pass accuracy behind you
-      (135°/180°) is reduced in Competitive — avoid blind backward through-balls.
+      (135°/180°) is reduced in Competitive - avoid blind backward through-balls.
     controls: "△/Y (through ball); L1+△ / LB+Y (lofted through)"
     tags: [passing, through-ball, build-up, competitive]
   - id: shielding_move
@@ -119,17 +168,17 @@ entries:
     area: attacking
     title: Finesse shot
     detail: >-
-      Finesse shots are strong this patch — hold R1/RB and shoot from around a 45°
+      Finesse shots are strong this patch - hold R1/RB and shoot from around a 45°
       angle to curl it past the keeper into the far corner. Best with a striker who
       has finishing/curl; take an extra touch to set the angle if you have time.
     controls: "Hold R1/RB + ○/B (finesse)"
     tags: [shooting, finishing, finesse, far-post]
   - id: low_driven_power
     area: attacking
-    title: Low driven shot — power & aim
+    title: Low driven shot - power & aim
     detail: >-
       Load about 2.5 power bars, aim at the FAR post, facing goal. It's a sharp, low,
-      precise strike keepers rarely stop — ideal from the edge of the box and from
+      precise strike keepers rarely stop - ideal from the edge of the box and from
       cutbacks.
     controls: "Double-tap ○/B, ~2.5 bars, aim far post"
     tags: [shooting, finishing, low-driven, edge-of-box, cutback]
@@ -137,7 +186,7 @@ entries:
     area: attacking
     title: First-time shots from cutbacks
     detail: >-
-      First-time shots are especially effective from CUTBACKS and short corners —
+      First-time shots are especially effective from CUTBACKS and short corners -
       the keeper can't reset. Line the striker up at the penalty spot and hit it first
       time rather than taking a touch under pressure.
     tags: [shooting, finishing, cutback, first-time, corners]
@@ -155,7 +204,7 @@ entries:
     title: Manual runs to unlock defences
     detail: >-
       Trigger a manual run (L1/LB, or flick the Right Stick for a directed run) with a
-      fast striker to create through-ball chances and drag markers out of shape — the
+      fast striker to create through-ball chances and drag markers out of shape - the
       key to breaking a low block.
     controls: "L1/LB (player run); Right Stick flick (directed run)"
     tags: [attacking, runs, movement, low-block, penetration]
@@ -165,7 +214,7 @@ entries:
     title: Orient your first touch (left stick)
     detail: >-
       Before the ball arrives, HOLD the left stick toward the direction you want your
-      player to turn — the receive is oriented that way, so you're set up for a shot or
+      player to turn - the receive is oriented that way, so you're set up for a shot or
       pass much faster. Huge in the opponent's box: face goal on the touch instead of
       taking a slow settling touch.
     controls: "Hold Left Stick toward your target BEFORE receiving"
@@ -176,6 +225,6 @@ entries:
     detail: >-
       Constantly send your wingers into runs (L1/LB) and combine with the striker via
       give-and-go one-twos, especially on the COUNTER right after you win the ball in
-      your own half — that's when the space is biggest.
+      your own half - that's when the space is biggest.
     controls: "L1/LB (send runner); one-two / give-and-go passes"
     tags: [attacking, wingers, runs, counter, give-and-go, transition]

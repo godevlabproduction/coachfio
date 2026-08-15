@@ -1,336 +1,234 @@
-<!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Coach.io - Home</title>
-<!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,700;0,800;1,400&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "tertiary": "#cbc8c8",
-                        "outline-variant": "#3c4a3c",
-                        "on-primary-fixed": "#002108",
-                        "on-primary-fixed-variant": "#00531e",
-                        "inverse-on-surface": "#2f3131",
-                        "surface": "#000000",
-                        "primary-fixed": "#69ff87",
-                        "surface-bright": "#2a2a2a",
-                        "on-secondary-fixed-variant": "#004f58",
-                        "tertiary-container": "#afadac",
-                        "on-error": "#690005",
-                        "outline": "#869583",
-                        "surface-container-high": "#181818",
-                        "on-tertiary-fixed": "#1c1b1b",
-                        "surface-container-lowest": "#000000",
-                        "tertiary-fixed-dim": "#c8c6c5",
-                        "on-primary": "#003912",
-                        "on-tertiary": "#313030",
-                        "surface-tint": "#3ce36a",
-                        "on-surface": "#e2e2e2",
-                        "surface-variant": "#202020",
-                        "error-container": "#93000a",
-                        "on-error-container": "#ffdad6",
-                        "error": "#ffb4ab",
-                        "surface-container-highest": "#202020",
-                        "primary-fixed-dim": "#3ce36a",
-                        "primary": "#3fe56c",
-                        "on-secondary": "#00363d",
-                        "on-secondary-container": "#00616d",
-                        "on-primary-container": "#004c1b",
-                        "on-secondary-fixed": "#001f24",
-                        "inverse-primary": "#006e2a",
-                        "surface-container": "#101010",
-                        "surface-container-low": "#0a0a0a",
-                        "secondary": "#bdf4ff",
-                        "secondary-container": "#00e3fd",
-                        "secondary-fixed-dim": "#00daf3",
-                        "inverse-surface": "#e2e2e2",
-                        "on-surface-variant": "#bbcbb8",
-                        "surface-dim": "#000000",
-                        "on-tertiary-fixed-variant": "#474646",
-                        "on-tertiary-container": "#424141",
-                        "background": "#000000",
-                        "primary-container": "#00c853",
-                        "secondary-fixed": "#9cf0ff",
-                        "on-background": "#e2e2e2",
-                        "tertiary-fixed": "#e5e2e1"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "unit": "8px",
-                        "gutter": "24px",
-                        "container-max": "1440px",
-                        "margin-desktop": "64px",
-                        "margin-mobile": "20px"
-                    },
-                    "fontFamily": {
-                        "display-lg": ["Barlow Condensed", "sans-serif"],
-                        "headline-lg-mobile": ["Barlow Condensed", "sans-serif"],
-                        "label-sm": ["JetBrains Mono", "monospace"],
-                        "body-lg": ["Hanken Grotesk", "sans-serif"],
-                        "headline-lg": ["Barlow Condensed", "sans-serif"],
-                        "body-md": ["Hanken Grotesk", "sans-serif"]
-                    },
-                    "fontSize": {
-                        "display-lg": ["48px", { "lineHeight": "1.1", "fontWeight": "700" }],
-                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
-                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
-                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
-                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
-                    },
-                    backgroundImage: {
-                        'pitch-lines': 'linear-gradient(to right, rgba(34, 34, 34, 0.5) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 34, 34, 0.5) 1px, transparent 1px)'
-                    }
-                }
-            }
-        }
-    </script>
-<style>
-        body {
-            background-color: theme('colors.background');
-            color: theme('colors.on-background');
-            font-family: theme('fontFamily.body-md');
-        }
-        
-        .bg-pitch {
-            background-size: 100px 100px;
-        }
-
-        .ambient-glow {
-            box-shadow: 0 0 40px -10px theme('colors.primary');
-        }
-
-        .ambient-glow-subtle {
-            box-shadow: 0 0 20px -10px theme('colors.primary');
-        }
-
-        /* Gaming HUD motion */
-        .bg-pitch-lines {
-            animation: grid-drift 18s linear infinite;
-        }
-        @keyframes grid-drift {
-            0% { background-position: 0 0; }
-            100% { background-position: 100px 100px; }
-        }
-
-        .glow-orb {
-            animation: orb-breathe 5s ease-in-out infinite;
-        }
-        @keyframes orb-breathe {
-            0%, 100% { opacity: 0.24; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(1.08); }
-        }
-
-        .glow-text {
-            animation: text-breathe 3.2s ease-in-out infinite;
-        }
-        @keyframes text-breathe {
-            0%, 100% { text-shadow: 0 0 10px rgba(63, 229, 108, 0.5), 0 0 24px rgba(63, 229, 108, 0.25); }
-            50% { text-shadow: 0 0 18px rgba(63, 229, 108, 0.85), 0 0 40px rgba(63, 229, 108, 0.5); }
-        }
-
-        .send-btn-glow {
-            animation: send-breathe 2.4s ease-in-out infinite;
-        }
-        @keyframes send-breathe {
-            0%, 100% { box-shadow: 0 0 10px -4px #3fe56c; }
-            50% { box-shadow: 0 0 22px 2px #3fe56c; }
-        }
-
-        /* Custom scrollbar for chat area */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: theme('colors.surface-container-highest');
-            border-radius: theme('borderRadius.full');
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: theme('colors.outline');
-        }
-    </style>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coachfio - Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/app.css">
 </head>
-<body class="bg-background text-on-background bg-pitch bg-pitch-lines min-h-screen flex flex-col relative overflow-x-hidden">
-<!-- Ambient background glow behind central area -->
-<div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-30 z-0">
-<div class="glow-orb w-[600px] h-[600px] bg-primary rounded-full blur-[150px]"></div>
-</div>
-<!-- TopNavBar (Shared Component) -->
-<!-- Applying exact styles from JSON: style_component_shape, style_bg_color, style_separation_logic -->
-<nav class="fixed top-0 w-full z-50 h-[72px] bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-white/10 flat no shadows">
-<!-- style_shell_layout -->
-<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-full max-w-container-max mx-auto">
-<!-- Brand / Logo -->
-<!-- style_brand_logo -->
-<a class="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary uppercase tracking-tighter flex items-center gap-2" href="/">
-<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
-                Coach.io
-            </a>
-<!-- Navigation Links (Hidden on mobile per md:hidden rule in instructions, but using TopAppBar logic here) -->
-<div class="hidden md:flex items-center gap-6">
-<!-- None active on 'Home' as it's not a destination tab -->
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/upload/">
-                    Upload
-                </a>
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/report/">
-                    Reports
-                </a>
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:text-primary dark:hover:text-primary-fixed-dim transition-all active:scale-95 duration-200 transition-transform" href="/trends/">
-                    Trends
-                </a>
-</div>
-<!-- Trailing Icon -->
-<div class="flex items-center gap-4">
-<button class="text-on-surface hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-2xl">account_circle</span>
-</button>
-</div>
-</div>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-grow pt-[104px] pb-32 px-margin-mobile md:px-margin-desktop flex flex-col items-center relative z-10 max-w-container-max mx-auto w-full">
-<!-- Header Section -->
-<div class="text-center mb-12 flex flex-col items-center w-full max-w-3xl">
-<!-- Game Selector -->
-<div class="mb-6 relative inline-block text-left">
-<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high border border-outline-variant rounded-full hover:border-primary transition-colors font-label-sm text-label-sm text-on-surface" id="game-selector-btn">
-<span class="material-symbols-outlined text-[16px] text-secondary">sports_esports</span>
-<span>EA SPORTS FC 26</span>
-<span class="material-symbols-outlined text-[16px]">expand_more</span>
-</button>
-<!-- Simple dropdown logic placeholder -->
-<div class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-48 rounded-lg shadow-lg bg-surface-container-highest ring-1 ring-black ring-opacity-5 focus:outline-none z-50" id="game-selector-menu">
-<div aria-labelledby="options-menu" aria-orientation="vertical" class="py-1" role="menu">
-<a class="block px-4 py-2 text-sm text-primary hover:bg-surface-variant" href="#" role="menuitem">EA SPORTS FC 26</a>
-<a class="block px-4 py-2 text-sm text-on-surface hover:bg-surface-variant" href="#" role="menuitem">UFL</a>
-<a class="block px-4 py-2 text-sm text-on-surface hover:bg-surface-variant" href="#" role="menuitem">eFootball</a>
-</div>
-</div>
-</div>
-<!-- Hero Heading -->
-<h1 class="font-display-lg text-display-lg text-on-surface uppercase tracking-tight mb-4 drop-shadow-lg">
-                HOW CAN I HELP YOU <span class="text-primary glow-text">LEVEL UP</span> TODAY?
-            </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
-                Your AI tactician is ready. Upload match footage, ask for strategic advice, or analyze your latest performance data.
-            </p>
-</div>
-<!-- Quick Actions Bento Grid -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-12">
-<!-- Action Card 1 -->
-<a class="group relative flex flex-col items-start p-6 bg-surface-container-low rounded-lg border-l-4 border-l-secondary border border-surface hover:border-outline-variant transition-all hover:bg-surface-container overflow-hidden" href="/upload/">
-<div class="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="p-2 bg-secondary/10 rounded-md mb-4 group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-secondary">bar_chart</span>
-</div>
-<h3 class="font-body-md font-bold text-on-surface mb-1">Analyze Last Match</h3>
-<p class="font-body-md text-sm text-on-surface-variant text-left">Upload footage for tactical breakdown.</p>
-</a>
-<!-- Action Card 2 -->
-<a class="group relative flex flex-col items-start p-6 bg-surface-container-low rounded-lg border-l-4 border-l-primary border border-surface hover:border-outline-variant transition-all hover:bg-surface-container overflow-hidden" href="/trends/">
-<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="p-2 bg-primary/10 rounded-md mb-4 group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-primary">security</span>
-</div>
-<h3 class="font-body-md font-bold text-on-surface mb-1">Defend Far-Post</h3>
-<p class="font-body-md text-sm text-on-surface-variant text-left">Quick tips to stop meta crosses.</p>
-</a>
-<!-- Action Card 3 -->
-<a class="group relative flex flex-col items-start p-6 bg-surface-container-low rounded-lg border-l-4 border-l-tertiary-fixed-dim border border-surface hover:border-outline-variant transition-all hover:bg-surface-container overflow-hidden" href="/report/">
-<div class="absolute inset-0 bg-gradient-to-br from-tertiary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="p-2 bg-tertiary/10 rounded-md mb-4 group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-tertiary-fixed-dim">compare_arrows</span>
-</div>
-<h3 class="font-body-md font-bold text-on-surface mb-1">Compare Tactics</h3>
-<p class="font-body-md text-sm text-on-surface-variant text-left">Evaluate 4-2-3-1 vs 4-4-2 variants.</p>
-</a>
-</div>
-<!-- AI Chat Interface (Central Focus) -->
-<div class="w-full max-w-3xl mt-auto">
-<div class="bg-surface-container-high/80 backdrop-blur-md rounded-xl p-2 border border-outline-variant ambient-glow-subtle flex flex-col relative focus-within:ambient-glow focus-within:border-primary transition-all duration-300">
-<!-- Chat Input Area -->
-<div class="relative">
-<textarea class="w-full bg-transparent border-none text-on-surface font-body-md placeholder-on-surface-variant/50 focus:ring-0 resize-none p-4" placeholder="Ask Coach AI anything... e.g. 'How do I break down a low block?'" rows="2"></textarea>
-</div>
-<!-- Input Actions -->
-<div class="flex justify-between items-center px-2 py-2 border-t border-surface-variant/50 mt-2">
-<div class="flex gap-2">
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-variant" title="Upload Video">
-<span class="material-symbols-outlined text-[20px]">movie</span>
-</button>
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-variant" title="Attach Data">
-<span class="material-symbols-outlined text-[20px]">attach_file</span>
-</button>
-</div>
-<button class="send-btn-glow flex items-center gap-2 px-6 py-2 bg-primary text-on-primary-fixed font-label-sm font-bold rounded-full hover:bg-primary-fixed-dim hover:ambient-glow-subtle transition-all active:scale-95" onclick="window.location.href='/analyzing/'">
-                        SEND
-                        <span class="material-symbols-outlined text-[18px]">send</span>
-</button>
-</div>
-</div>
-<p class="text-center font-label-sm text-[10px] text-on-surface-variant/50 mt-4 uppercase tracking-widest">
-                AI Coaching models updated for Season 3 Meta
-            </p>
-</div>
-</main>
-<!-- BottomNavBar (Shared Component - Mobile Only) -->
-<!-- Active Logic: 'Home' intent doesn't strictly match the json tabs. Since it's a dashboard/home, no specific tab is 'active'. But typically 'Profile' or 'Upload' might be. Let's keep them inactive to prioritize the canvas as per rules. -->
-<nav class="fixed bottom-0 w-full z-50 md:hidden bg-surface-container-high dark:bg-surface-container-high border-t border-outline-variant shadow-lg p-2 pb-safe flex justify-around items-center">
-<!-- Labels array: ["Upload", "Reports", "Trends", "Profile"] -->
-<!-- Icons array: ["cloud_upload", "analytics", "trending_up", "person"] -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-variant active:scale-90 transition-transform duration-150 p-2 rounded-lg" href="/upload/">
-<span class="material-symbols-outlined text-2xl mb-1">cloud_upload</span>
-<span>Upload</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-variant active:scale-90 transition-transform duration-150 p-2 rounded-lg" href="/report/">
-<span class="material-symbols-outlined text-2xl mb-1">analytics</span>
-<span>Reports</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-variant active:scale-90 transition-transform duration-150 p-2 rounded-lg" href="/trends/">
-<span class="material-symbols-outlined text-2xl mb-1">trending_up</span>
-<span>Trends</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-variant active:scale-90 transition-transform duration-150 p-2 rounded-lg" href="#">
-<span class="material-symbols-outlined text-2xl mb-1">person</span>
-<span>Profile</span>
-</a>
-</nav>
-<script>
-        // Simple dropdown toggle logic
-        const gameBtn = document.getElementById('game-selector-btn');
-        const gameMenu = document.getElementById('game-selector-menu');
-        
-        gameBtn.addEventListener('click', () => {
-            gameMenu.classList.toggle('hidden');
-        });
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (event) => {
-            if (!gameBtn.contains(event.target) && !gameMenu.contains(event.target)) {
-                gameMenu.classList.add('hidden');
-            }
-        });
-    </script>
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark"><span class="material-symbols-outlined filled">sports_soccer</span></span>
+      Coachfio
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="/upload/" data-nav="/upload/">Upload</a>
+      <a class="nav__link" href="/report/" data-nav="/report/">Report</a>
+      <a class="nav__link" href="/moment/" data-nav="/moment/">Moments</a>
+      <a class="nav__link" href="/statistics/" data-nav="/statistics/">Statistics</a>
+    </nav>
+    <div class="appbar__end">
+      <a class="btn btn--primary btn--sm" href="/upload/">
+        <span class="material-symbols-outlined">add</span>New analysis
+      </a>
+      <a class="nav__link" href="/account/" data-nav="/account/">Account</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="container page">
+
+  <section class="section reveal">
+    <p class="eyebrow" data-cx-game>EA Sports FC 26</p>
+    <h1 class="t-display" style="margin-top:10px">Upload a match. Get coached on it.</h1>
+    <p class="muted" style="margin-top:10px;max-width:60ch">
+      Coachfio watches your full match video and returns a personal breakdown - what you did
+      well, the mistakes that repeat, and the exact moments to rewatch.
+    </p>
+    <div class="row" style="margin-top:20px">
+      <a class="btn btn--primary btn--lg" href="/upload/">
+        <span class="material-symbols-outlined">upload</span>Upload a match
+      </a>
+      <a class="btn btn--secondary btn--lg" href="/statistics/">View statistics</a>
+    </div>
+  </section>
+
+  <!-- Asymmetric: one lead card + two beside it, so this does not read as the
+       same three-card grid as the steps further down. -->
+  <section class="section">
+    <div class="feature-grid reveal-list">
+      <div class="feature feature--lead">
+        <span class="feature__icon"><span class="material-symbols-outlined">trending_up</span></span>
+        <h2 class="feature__title">Level up your game</h2>
+        <p class="feature__text">Every match you upload makes the coaching sharper. Coachfio
+          remembers the habits that keep costing you goals and tells you which one to fix first
+          - not twenty things at once.</p>
+        <div class="feature__foot">
+          <span class="badge badge--win">One priority per match</span>
+        </div>
+      </div>
+
+      <div class="feature-grid__side">
+        <div class="feature">
+          <span class="feature__icon"><span class="material-symbols-outlined">military_tech</span></span>
+          <h3 class="feature__title">Improve your skill level</h3>
+          <p class="feature__text">Amateur, intermediate or pro - the same match, explained the
+            way you'll actually be able to use it.</p>
+        </div>
+        <div class="feature">
+          <span class="feature__icon"><span class="material-symbols-outlined">replay</span></span>
+          <h3 class="feature__title">Learn from your mistakes</h3>
+          <p class="feature__text">Every point is anchored to the second it happened, so you
+            rewatch the mistake instead of trying to remember it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The promises above are abstract; these are the actual habits it finds. -->
+  <section class="section">
+    <div class="section__head">
+      <h2 class="t-section">What it catches</h2>
+      <span class="faint t-xs">counted across every match</span>
+    </div>
+    <div class="catch-row reveal">
+      <span class="catch"><span class="material-symbols-outlined">shield</span>Diving in with your centre-back</span>
+      <span class="catch"><span class="material-symbols-outlined">sports_soccer</span>Cutbacks across your six-yard box</span>
+      <span class="catch"><span class="material-symbols-outlined">swap_horiz</span>Switching to the wrong defender</span>
+      <span class="catch"><span class="material-symbols-outlined">speed</span>Holding sprint while jockeying</span>
+      <span class="catch"><span class="material-symbols-outlined">arrow_forward</span>Rushing the killer pass</span>
+      <span class="catch"><span class="material-symbols-outlined">group</span>Both fullbacks caught forward</span>
+      <span class="catch"><span class="material-symbols-outlined">timeline</span>Losing your shape after conceding</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <h2 class="t-section">What's in every report</h2>
+      <span class="faint t-xs">and you can download it as a PDF</span>
+    </div>
+    <div class="card">
+      <div class="checklist">
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>Executive diagnosis</strong><br>
+            <span>Your biggest strength, your biggest repeating mistake, and the one habit
+              worth fixing first.</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>Event log</strong><br>
+            <span>Each key moment: what you did, the better option that was actually available,
+              and the exact correction.</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>Attacking &amp; defensive analysis</strong><br>
+            <span>Build-up angles, width, third-man runs, CDM positioning, player switching,
+              cutback prevention.</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>Goal by goal</strong><br>
+            <span>How every goal was scored or conceded - and for the ones against you, how to
+              stop it happening again.</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>The exact input to use</strong><br>
+            <span>"Jockey with L2/LT", "right-stick switch before the pass" - real FC 26 controls,
+              not "defend better".</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>A three-priority practice plan</strong><br>
+            <span>Each with a drill, how many matches to do it for, and a measurable success
+              metric you can tick off.</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>In-game trigger phrases</strong><br>
+            <span>Short lines to tell yourself mid-match - when you concede a counter, when they
+              park a low block.</span></div></div>
+        <div class="checklist__item"><span class="material-symbols-outlined">check_circle</span>
+          <div><strong>What to record next</strong><br>
+            <span>The behaviour to practise, the one not to change, and the metrics to compare -
+              so the next report can tell you if it worked.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <h2 class="t-section">Beyond the report</h2>
+    </div>
+    <div class="grid grid-3 reveal-list">
+      <div class="card">
+        <div class="card__head">
+          <span class="tile tile--info"><span class="material-symbols-outlined">play_circle</span></span>
+          <h3 class="card__title">Rewatch the moment</h3>
+        </div>
+        <p class="muted t-sm">Every timestamp is clickable - it jumps your own match video
+          straight to the second the coach is talking about.</p>
+      </div>
+      <div class="card">
+        <div class="card__head">
+          <span class="tile tile--accent"><span class="material-symbols-outlined">insights</span></span>
+          <h3 class="card__title">Progress across matches</h3>
+        </div>
+        <p class="muted t-sm">Every metric plotted against your own average, plus which habits
+          keep repeating and which ones you've actually fixed.</p>
+      </div>
+      <div class="card">
+        <div class="card__head">
+          <span class="tile"><span class="material-symbols-outlined">checklist</span></span>
+          <h3 class="card__title">Your practice board</h3>
+        </div>
+        <p class="muted t-sm">The drills from your latest report become a checklist you tick
+          off as you work through them.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head"><h2 class="t-section">How it works</h2></div>
+    <div class="how reveal-list">
+      <div class="how__item">
+        <span class="how__n">1</span>
+        <h3 class="how__title">Upload</h3>
+        <p class="how__text">Drop in an MP4 of your match and pick which side you played.</p>
+      </div>
+      <div class="how__item">
+        <span class="how__n">2</span>
+        <h3 class="how__title">The coach watches</h3>
+        <p class="how__text">It reads the whole match end to end, including the scoreboard,
+          and times every goal.</p>
+      </div>
+      <div class="how__item">
+        <span class="how__n">3</span>
+        <h3 class="how__title">Get your report</h3>
+        <p class="how__text">Strengths, repeat mistakes and drills - each linked to the moment
+          it happened.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- The AI is the default, not the ceiling. Deliberately factual about how it
+       works: coaches are real people with Coachfio accounts, the player chooses
+       one, and the coach has to accept - no implied marketplace of vetted pros. -->
+  <section class="section">
+    <div class="band reveal">
+      <span class="band__icon"><span class="material-symbols-outlined">supervisor_account</span></span>
+      <div>
+        <h2 class="band__title">Want a real coach too?</h2>
+        <p class="band__text">The AI watches every match you upload. If you want a human as well,
+          pick a coach from your locker and send a request - once they accept, they can see your
+          form and the habits that keep repeating, and you can message them directly. You choose
+          what they see, and you can disconnect any time.</p>
+      </div>
+      <div class="band__actions">
+        <a class="btn btn--primary" href="/locker/">Find a coach</a>
+        <a class="btn btn--secondary" href="/signin/?signup=1">I'm a coach</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar" aria-label="Primary">
+  <a class="tabbar__item" href="/upload/" data-nav="/upload/"><span class="material-symbols-outlined">upload</span>Upload</a>
+  <a class="tabbar__item" href="/report/" data-nav="/report/"><span class="material-symbols-outlined">analytics</span>Report</a>
+  <a class="tabbar__item" href="/moment/" data-nav="/moment/"><span class="material-symbols-outlined">play_circle</span>Moments</a>
+  <a class="tabbar__item" href="/statistics/" data-nav="/statistics/"><span class="material-symbols-outlined">trending_up</span>Statistics</a>
+  <a class="tabbar__item" href="/account/" data-nav="/account/"><span class="material-symbols-outlined">person</span>Account</a>
+</nav>
+
 <script src="/coach.js"></script>
-</body></html>
+</body>
+</html>

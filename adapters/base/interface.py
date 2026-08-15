@@ -19,8 +19,8 @@ from adapters.base.hud_schema import HudRegion, HudSchema
 class GameIdentity(BaseModel):
     game_id: str                 # stable, e.g. "ea-fc"
     display_name: str            # "EA Sports FC 26"
-    franchise: str               # "ea-fc" — annual editions share a franchise
-    edition: str                 # "26" — adapters are versioned PER EDITION
+    franchise: str               # "ea-fc" - annual editions share a franchise
+    edition: str                 # "26" - adapters are versioned PER EDITION
     platforms: list[str] = Field(default_factory=list)   # ["ps5","xbox","pc"]
     supported_sources: list[SourceType] = Field(default_factory=lambda: [SourceType.VIDEO])
 
@@ -99,6 +99,27 @@ class GameAdapter(ABC):
         weaknesses consistently and the longitudinal loop can aggregate them."""
         return []
 
+    def skill_survey(self) -> list[dict]:
+        """Optional questions whose answers HINT at how good the player is, so the
+        app can suggest a coaching level instead of asking them to self-assess.
+
+        Game-specific by nature (competitive ladders differ per title), which is
+        why it lives here and not in core. Shape:
+            [{"key": str, "label": str, "help": str,
+              "options": [{"value": str, "label": str}],
+              "locked_by": {"key": str, "values": [str], "reason": str}}]
+        `locked_by` disables this question while another answer is in that set.
+        """
+        return []
+
+    def suggest_skill_level(self, answers: dict) -> dict | None:
+        """Map survey answers to a SUGGESTED skill level.
+
+        Returns {"level": str, "reason": str} or None when there is not enough to
+        go on. It is only ever a suggestion - the player always chooses.
+        """
+        return None
+
     def name_badge_regions(self) -> dict | None:
         """Normalized (x,y,w,h) regions of the on-ball NAME badges, keyed by
         scoreboard side: {"home": rect, "away": rect}. Used to OCR the actual
@@ -162,7 +183,7 @@ class GameAdapter(ABC):
 
     def coaching_schema(self) -> dict[str, Any]:
         """Structured schema for a whole-match coaching report (Stage 3). One
-        report per match — recurring mistakes, positioning, decisions, drills."""
+        report per match - recurring mistakes, positioning, decisions, drills."""
         _arr = {"type": "array", "items": {"type": "string"}}
         return {
             "type": "object",
@@ -181,7 +202,7 @@ class GameAdapter(ABC):
             "additionalProperties": False,
         }
 
-    # Convenience derived from identity — the core routes on these.
+    # Convenience derived from identity - the core routes on these.
     @property
     def key(self) -> str:
         ident = self.identity()

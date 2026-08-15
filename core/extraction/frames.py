@@ -36,7 +36,7 @@ def load_frame_image(jpeg_bytes: bytes) -> np.ndarray:
 
 
 def encode_jpeg(image_bgr: np.ndarray, max_width: int = 640, quality: int = 70) -> bytes:
-    """Downscale to <= max_width and JPEG-encode — used to send frames to the
+    """Downscale to <= max_width and JPEG-encode - used to send frames to the
     vision models. Downscaling hard is the whole cost strategy: 640x360 is enough
     to classify a scene (Stage 2); Stage 3 uses a larger width on a few frames."""
     h, w = image_bgr.shape[:2]

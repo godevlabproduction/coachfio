@@ -2,7 +2,7 @@
 
 The frame index and capture timestamp are encoded in the key itself, so the
 worker can reconstruct the ordered, timestamped frame list purely by listing the
-prefix — no manifest, no append races during parallel upload."""
+prefix - no manifest, no append races during parallel upload."""
 from __future__ import annotations
 
 import re

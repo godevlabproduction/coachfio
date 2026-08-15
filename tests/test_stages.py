@@ -378,3 +378,40 @@ def test_highlights_disabled_without_object_store():
     # _ctx sets no object_store -> the clip stage must not run (needs storage).
     ctx = _ctx(ScriptedVision(lambda n, s: {}))
     assert HighlightClips().enabled(ctx) is False
+
+
+# --- report template: schema -> stored payload -------------------------------
+# Regression cover for a silent data-loss bug. The coaching payload is assembled
+# key by key rather than saved verbatim, so adding a section to the schema is only
+# half the change. When the template landed, the model answered all eleven new
+# sections and the writer copied none of them - the stored report came out
+# SHORTER than the one it replaced, and nothing raised.
+
+def test_every_schema_section_is_carried_into_the_payload():
+    """The two lists must not drift. If they do, the model does the work and the
+    writer throws it away, which is invisible until someone reads a report."""
+    from core.pipeline.stages import _TEMPLATE_KEYS, _report_template_props
+
+    assert set(_TEMPLATE_KEYS) == set(_report_template_props()), (
+        "a section exists in the schema but is not copied into the stored payload "
+        "(or vice versa)"
+    )
+
+
+def test_template_sections_survive_into_the_payload():
+    from core.pipeline.stages import _report_template_props, _template_payload
+
+    response = {k: {"filled": True} for k in _report_template_props()}
+    response["summary"] = "ignored here"
+    carried = _template_payload(response)
+    assert set(carried) == set(_report_template_props())
+
+
+def test_empty_tactical_changes_is_carried_but_other_empties_are_not():
+    """An empty tactical_changes is a real answer ('the video does not implicate
+    your tactics') and the report prints it. An empty attacking block is just an
+    unanswered section and should not occupy space in the payload."""
+    from core.pipeline.stages import _template_payload
+
+    carried = _template_payload({"tactical_changes": [], "attacking": {}, "defending": None})
+    assert carried == {"tactical_changes": []}

@@ -1,4 +1,4 @@
-"""OllamaVisionModel — payload shape + response parsing, with the HTTP call
+"""OllamaVisionModel - payload shape + response parsing, with the HTTP call
 mocked so no server is needed."""
 import core.ai.vision as vision
 from core.ai.vision import OllamaVisionModel, get_vision_model

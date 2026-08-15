@@ -1,0 +1,49 @@
+# CB and GK roles - read from the fut.gg screenshot the user supplied, which
+# covers the two sections the page fetch truncated.
+#
+# Gold diamond = PlayStyle+ (gold tier); white diamond = base tier. Recorded in
+# the site's own ranked order, golds first.
+#
+#   docker compose run --rm api python -m tools.learn_from_text tools/notes_playstyles_cb_gk_v1.yaml
+source: https://www.fut.gg/playstyles/best-by-role/ (CB + GK sections)
+facts:
+
+  # Same title as the earlier, incomplete entry so this REPLACES it rather than
+  # sitting alongside a thinner version (add_learned dedupes on slug(title)).
+  - title: Best PlayStyles for centre-back roles
+    detail: >-
+      CBs are unified by Intercept+ and Bruiser+ across every role; Anticipate+,
+      Block, Jockey and Slide Tackle form the defensive foundation, with Aerial
+      Fortress the key physical trait.
+      CB Defender - gold: Intercept+, Bruiser+, Anticipate+, Jockey+; then Quick
+      Step, Block, Pinged Pass, Aerial Fortress, Slide Tackle, Tiki Taka, Press
+      Proven, Relentless.
+      CB Stopper - gold: Intercept+, Bruiser+, Anticipate+, Jockey+; then Quick
+      Step, Block, Slide Tackle, Tiki Taka, Pinged Pass, Relentless, Aerial
+      Fortress, First Touch.
+      CB Ball Playing Defender - gold: Intercept+, Bruiser+, Anticipate+,
+      Jockey+; then Quick Step, Block, Pinged Pass, Tiki Taka, First Touch, Press
+      Proven, Aerial Fortress, Slide Tackle.
+      CB Wide Back - gold: Intercept+, Anticipate+, Quick Step+, Jockey+; then
+      Bruiser, Block, Pinged Pass, Aerial Fortress, Slide Tackle, Tiki Taka,
+      Press Proven, Relentless. Wide Back is the only CB role that takes Quick
+      Step+ over Bruiser+, because it defends space out wide rather than duels
+      in the middle.
+      If a centre-back has neither Intercept+ nor Bruiser+, expect to lose duels
+      and get cut open by through balls whatever the positioning.
+    category: defending
+    tags: [playstyle, role, centre_back, cb, defender, stopper, ball_playing_defender,
+           wide_back, intercept, bruiser, anticipate, jockey, block, meta]
+
+  - title: Best PlayStyles for goalkeeper roles
+    detail: >-
+      All three keeper roles - Goalkeeper, Ball Playing and Sweeper Keeper -
+      share the SAME gold four: Far Reach+, Footwork+, Rush Out+ and Deflector+.
+      Below that the consistent base across every role is Cross Claimer, Far
+      Throw, Pinged Pass, Long Ball, Tiki Taka, Press Proven, First Touch and
+      Incisive Pass. Because the top traits do not change with the role, pick a
+      keeper on Far Reach and Footwork first and choose the role for how far you
+      want him to sweep, not for which PlayStyles it rewards.
+    category: goalkeeper
+    tags: [playstyle, role, goalkeeper, gk, sweeper_keeper, ball_playing_keeper,
+           far_reach, footwork, rush_out, deflector, meta]

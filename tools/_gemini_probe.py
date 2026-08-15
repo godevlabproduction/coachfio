@@ -1,5 +1,5 @@
-"""Throwaway: verify the configured 'openai' engine (Gemini) actually works —
-auth, model name, image handling — with ONE tiny synthetic frame. No upload.
+"""Throwaway: verify the configured 'openai' engine (Gemini) actually works -
+auth, model name, image handling - with ONE tiny synthetic frame. No upload.
 
     docker compose run --rm api python -m tools._gemini_probe
 """

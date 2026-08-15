@@ -33,7 +33,7 @@ def main() -> None:
     print(f"final status: {status}")
 
     if status != "complete":
-        print("not complete — no PDF written.")
+        print("not complete - no PDF written.")
         sys.exit(0 if status else 1)
 
     from tools.export_pdf import _report_for, build

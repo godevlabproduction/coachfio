@@ -22,6 +22,10 @@ dependencies = [
     "anthropic>=0.40",
     "pillow>=10.3",
     "pyyaml>=6.0",
+    # PDF export of the coaching report. Pure Python on purpose: an HTML-to-PDF
+    # engine (WeasyPrint) would drag cairo/pango/harfbuzz into the image for a
+    # document that is structured text.
+    "reportlab>=4.1",
 ]
 
 [project.optional-dependencies]

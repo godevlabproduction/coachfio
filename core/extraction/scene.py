@@ -2,7 +2,7 @@
 
 Two jobs in Phase 0:
   1. Find scene changes (goal cutaways, replays, menus, the stat screen).
-  2. Find STATIC RUNS — stretches where consecutive frames barely change. A
+  2. Find STATIC RUNS - stretches where consecutive frames barely change. A
      full-time / match-facts screen holds still, so a long static run is the
      prime candidate for "this is the stat screen".
 """

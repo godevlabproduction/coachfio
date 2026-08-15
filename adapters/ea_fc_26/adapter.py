@@ -1,4 +1,4 @@
-"""EA Sports FC 26 adapter — the ~10% code.
+"""EA Sports FC 26 adapter - the ~10% code.
 
 Everything declarative (identity, HUD schema, vocabulary, metrics, generic
 validation) is in ./config/*.yaml and handled by ConfigDrivenAdapter. This file
@@ -22,7 +22,7 @@ _CONFIG = Path(__file__).parent / "config"
 _MAX_PLAUSIBLE_SCORE = 19
 # A value must appear in at least this many frames to be accepted as a real score.
 _MIN_SCORE_SUPPORT = 3
-# Trailing window (in live frames) used to decide the FINAL score by majority —
+# Trailing window (in live frames) used to decide the FINAL score by majority -
 # the end-of-match scoreboard state, robust to transient mid-match phantoms.
 _SCORE_WINDOW = 15
 
@@ -53,13 +53,84 @@ class EaFc26Adapter(ConfigDrivenAdapter):
 
     def coaching_playbook(self, hints: str = "") -> str:
         """FC 26 knowledge grounding (mechanics/tactics/remedies/meta). Lives in
-        the adapter — core stays game-agnostic."""
+        the adapter - core stays game-agnostic."""
         from adapters.ea_fc_26.knowledge_base import build_playbook
         return build_playbook(hints)
 
     def issue_vocabulary(self) -> list[dict]:
         from adapters.ea_fc_26.knowledge_base import issue_tags
         return issue_tags()
+
+    # --- competitive standing -> suggested coaching level ---------------------
+    # Division Rivals runs Division 10 (lowest) up to Division 1, then Elite.
+    # FUT Champions is a weekend bracket you qualify for; a player sitting in the
+    # bottom divisions realistically isn't playing it, so that question is locked
+    # for Divisions 7-10 rather than inviting a meaningless answer.
+    _DIVISIONS = ["elite"] + [f"div{i}" for i in range(1, 11)]
+    _NO_CHAMPS_DIVISIONS = {"div7", "div8", "div9", "div10"}
+
+    def skill_survey(self) -> list[dict]:
+        def div_label(v: str) -> str:
+            return "Elite Division" if v == "elite" else "Division " + v[3:]
+
+        return [
+            {
+                "key": "division",
+                "label": "Division Rivals",
+                "help": "Where you normally sit, not your best ever week.",
+                "options": [{"value": v, "label": div_label(v)} for v in self._DIVISIONS],
+            },
+            {
+                "key": "champs_wins",
+                "label": "FUT Champions wins",
+                "help": "Your usual number of wins out of 15.",
+                "options": [
+                    {"value": "1-4", "label": "1-4 wins"},
+                    {"value": "5-8", "label": "5-8 wins"},
+                    {"value": "9-12", "label": "9-12 wins"},
+                    {"value": "13-15", "label": "13-15 wins"},
+                ],
+                "locked_by": {
+                    "key": "division",
+                    "values": sorted(self._NO_CHAMPS_DIVISIONS),
+                    "reason": "Set a division above 7 to record a Champs result.",
+                },
+            },
+        ]
+
+    def suggest_skill_level(self, answers: dict) -> dict | None:
+        """Division sets the floor; a strong Champs record can only raise it.
+
+        Deliberately one-directional: a bad weekend says little (illness, off-meta
+        squad, playing tired), whereas 13 wins is hard to achieve by accident.
+        """
+        division = str((answers or {}).get("division") or "").strip().lower()
+        if division not in self._DIVISIONS:
+            return None
+
+        if division == "elite" or division in ("div1", "div2"):
+            level, reason = "pro", f"{'Elite Division' if division == 'elite' else 'Division ' + division[3:]} is competitive football"
+        elif division in ("div3", "div4", "div5", "div6"):
+            level, reason = "intermediate", f"Division {division[3:]} players know the fundamentals"
+        else:
+            level, reason = "amateur", f"Division {division[3:]} is where the basics still decide games"
+
+        wins = str((answers or {}).get("champs_wins") or "").strip()
+        if division not in self._NO_CHAMPS_DIVISIONS and wins:
+            rank = {"amateur": 0, "intermediate": 1, "pro": 2}
+            if wins == "13-15":
+                bumped, why = "pro", "13+ Champs wins is elite finishing"
+            elif wins == "9-12":
+                bumped, why = ("pro" if division in ("elite", "div1", "div2", "div3", "div4")
+                               else "intermediate"), "9-12 Champs wins is a strong record"
+            elif wins == "5-8":
+                bumped, why = "intermediate", "5-8 Champs wins means the fundamentals are there"
+            else:
+                bumped, why = level, ""
+            if rank[bumped] > rank[level]:
+                level, reason = bumped, why
+
+        return {"level": level, "reason": reason}
 
     def name_badge_regions(self) -> dict | None:
         # FC-Pro broadcast overlay: on-ball name badges sit at the bottom corners.
@@ -100,7 +171,7 @@ class EaFc26Adapter(ConfigDrivenAdapter):
 
         # --- 1. Score over time -> final score + goal/concede events ----------
         # A score is "what the scoreboard shows at the END of the match", NOT the
-        # highest number ever read. OCR of a single frame is noisy — a set-piece
+        # highest number ever read. OCR of a single frame is noisy - a set-piece
         # sequence, a crest beside the digit, or a downscaled frame can produce a
         # confident phantom (e.g. an "8" held for ~6 frames while the true score
         # is 1). Taking max(confirmed) lets any such phantom win permanently.
@@ -117,7 +188,7 @@ class EaFc26Adapter(ConfigDrivenAdapter):
             for r in match_readings:
                 if r.region.meta.get("role") != "score" or r.region.meta.get("team") != team:
                     continue
-                # Gate on live play — but if the clock never read (unusual), fall
+                # Gate on live play - but if the clock never read (unusual), fall
                 # back to using all frames rather than returning nothing.
                 if live_frames and r.frame_index not in live_frames:
                     continue
@@ -138,7 +209,7 @@ class EaFc26Adapter(ConfigDrivenAdapter):
             # Most frequent wins; ties broken toward the higher score.
             final_score[team] = max(tallies, key=lambda v: (tallies[v], v))
 
-            # Confirmed increments across the whole match, capped at the final —
+            # Confirmed increments across the whole match, capped at the final -
             # this is what turns into goal/concede events. A value must clear the
             # corroboration bar AND be consistent with the final score.
             by_val: dict[int, list[float]] = {}
@@ -247,5 +318,5 @@ class EaFc26Adapter(ConfigDrivenAdapter):
                 if e.category == EventCategory.SCORE_CHANGE and e.payload.get("team") == team
             ]
             if any(b is not None and a is not None and b < a for a, b in zip(vals, vals[1:])):
-                warnings.append(f"Score for {team} decreased between snapshots — likely OCR misread.")
+                warnings.append(f"Score for {team} decreased between snapshots - likely OCR misread.")
         return warnings

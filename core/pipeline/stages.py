@@ -6,7 +6,7 @@ Stage 3 (larger vision model) deep-reads only the handful of important moments.
 
 Stages 2 & 3 are OFF by default (settings flags) so Phase 0 behaviour is
 unchanged; when on, every model call is budget-checked BEFORE it runs and the
-actual token cost is charged after — the match can never silently overspend.
+actual token cost is charged after - the match can never silently overspend.
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ from core.pipeline.context import PipelineContext
 from core.pipeline.cost import BudgetExceeded
 from core.storage.frame_keys import frame_prefix
 
-# Which core categories are worth a Stage 3 deep read. Game-AGNOSTIC — these are
+# Which core categories are worth a Stage 3 deep read. Game-AGNOSTIC - these are
 # core categories, not game words.
 _IMPORTANT = {EventCategory.SCORE_CHANGE, EventCategory.DISCIPLINE, EventCategory.HIGHLIGHT}
 
@@ -112,7 +112,7 @@ def _read_final_score(video_bytes: bytes, settings) -> dict | None:
     frames = _extract_frames(video_bytes, every_s=every, max_frames=48)
     if len(frames) < 2:
         return None
-    late = frames[len(frames) * 2 // 3:]      # final third — where the final score lives
+    late = frames[len(frames) * 2 // 3:]      # final third - where the final score lives
     vm = build_vision(settings)
     schema = {"type": "object", "properties": {"home": {"type": "integer"},
                                                "away": {"type": "integer"}}}
@@ -143,7 +143,7 @@ def _mmss(secs: int) -> str:
 
 def _clamp_point_times(items: list[str], dur_s: float) -> list[str]:
     """Strip trailing (MM:SS) timestamps that fall outside the video's real duration
-    — the single-call model sometimes reports the IN-GAME match clock (0-90') by
+    - the single-call model sometimes reports the IN-GAME match clock (0-90') by
     mistake, which would make a 'jump to moment' seek to nowhere. Keeps only the
     timestamps that are actually within the clip."""
     if not dur_s or dur_s <= 0:
@@ -175,7 +175,7 @@ def _reconcile_goals(det_goals: list[dict], model_goals: list[dict]) -> list[dic
         entry = {
             "time": g["time"],
             "type": g["type"],
-            "summary": summary or ("Goal conceded — see the moment for detail."
+            "summary": summary or ("Goal conceded - see the moment for detail."
                                    if g["type"] == "conceded" else "Goal scored."),
         }
         fix = str(m.get("fix") or "").strip()
@@ -187,12 +187,180 @@ def _reconcile_goals(det_goals: list[dict], model_goals: list[dict]) -> list[dic
     return out
 
 
+# Grounding rules shared by both coaching prompts.
+#
+# Written against three real failures a player caught in a live report:
+#   - a "strength" praising width from the wingers, when he had simply passed
+#     inside to a midfielder - the concept was invented, not observed;
+#   - a "mistake" prescribing a recycle to the fullbacks, when no fullback was
+#     anywhere on screen - the fix came from the remedy library, not the video;
+#   - a "mistake" describing a midfielder dragged wide to press, when the whole
+#     attack came through the middle - a fabricated spatial detail.
+#
+# The common cause was quota pressure ("4-6 items per list") plus a remedy list
+# that read as a menu. Fewer, true points beat a full list of invented ones.
+# The report TEMPLATE the player asked for, in prompt form. Shared by both the
+# single-call and two-pass paths.
+#
+# The DECISION METRICS rule is the important one. The player asked for hard counts
+# (pass direction ratios, touches before passing, turnovers by zone). Gemini
+# samples the video at roughly 1fps and cannot actually count those, so asked
+# plainly it will produce confident fiction - the same failure that made
+# `goals_for` disagree with the scoreboard. So the metrics are strings and the
+# model is told, in as many words, that "not measurable" is the correct answer
+# when it could not count. Precision the footage cannot support is worse than an
+# admitted gap, because the player would train against it.
+_TEMPLATE_INSTRUCTIONS = (
+    "REPORT STRUCTURE - fill EVERY section below. A section you genuinely cannot "
+    "support from the video gets an honest 'not visible in this footage', never a "
+    "plausible guess.\n"
+    "- match_context: mode, both formations, result, score_by_phase (how the score "
+    "moved through the match), technical_issues (lag/gameplay problems you can "
+    "actually see), sample_quality (what this footage does and does not show) and "
+    "confidence (high/medium/low + why).\n"
+    "- diagnosis: the FIVE headline answers - biggest strength, biggest REPEATABLE "
+    "mistake, the single habit with the highest improvement value, the main "
+    "TACTICAL problem and the main MECHANICAL problem. Tactical = shape, roles, "
+    "instructions. Mechanical = the input/technique itself.\n"
+    "- event_log: the most important moments, AT MOST 12, ordered by time. For each: "
+    "time, phase (build-up/attack/transition/defence/set piece), ball_location, "
+    "selected_player, best_option (what was actually available), what_i_did, why it "
+    "succeeded or failed, the exact correction, severity (low/medium/high) and "
+    "repeat_count (how many times this same thing happened in the match).\n"
+    "- attacking / defending: one or two sentences per field, each anchored to "
+    "something you saw. 'not visible in this footage' where it was not.\n"
+    "- elite_comparison: compare BEHAVIOURS, never inputs. Do not claim a "
+    "professional uses a specific button unless this video proves it. Only compare "
+    "against pros described in the knowledge above; list any pro you were asked "
+    "about but hold no reference data for in reference_gaps. Give habits already "
+    "shown, habits missing, and the SMALLEST realistic version to practise first.\n"
+    "- practice_plan: EXACTLY three, ranked by value. Each needs problem, drill, "
+    "reps (a number of repetitions or matches), success_metric (measurable), the "
+    "common mistake when practising it, and a short correction_phrase to say to "
+    "yourself.\n"
+    "- tactical_changes: ONLY if this video PROVES the tactic contributed to the "
+    "problem. If it does not, return an EMPTY list - that is the correct answer, "
+    "and guessing here is actively harmful. When you do change something, give all "
+    "of: current_setting, new_setting, problem_it_solves, the new_weakness_created, "
+    "and reverse_when.\n"
+    "- next_video_test: what to record next - match type, formation, ONE behaviour "
+    "to practise, ONE behaviour NOT to change, the metrics to compare, and the "
+    "minimum sample size.\n"
+    "\n"
+    "DO NOT REPEAT YOURSELF. Each section answers a DIFFERENT question, and they "
+    "are read in order: the summary says what happened; the diagnosis names the "
+    "single biggest cause; the event log gives the individual incidents; attacking "
+    "and defending describe the PATTERN across those incidents; the practice plan "
+    "says what to do about it. So do not restate the diagnosis inside "
+    "attacking/defending, do not repeat an event_log entry as a bullet elsewhere, "
+    "and do not describe one mistake three times in different words. If a section "
+    "has nothing to add beyond what an earlier one said, write less rather than "
+    "padding it. The result must read as ONE document, short enough to take in "
+    "over a coffee - not five overlapping ones.\n"
+)
+
+_EVIDENCE_RULES = (
+    "EVIDENCE - these override any request for a certain number of points:\n"
+    "- Report ONLY what you can actually see happen in this video. Never state an "
+    "action, a run, a position or an outcome you did not observe.\n"
+    "- Each point must be anchored to a specific moment you watched: who did it, "
+    "what they did, and where relative to the goals. If you cannot anchor it, DROP "
+    "the point.\n"
+    "- Prefer FEWER, well-evidenced points over filling a list. An empty list is "
+    "correct if nothing in that category actually happened. Never invent a strength "
+    "to balance the report.\n"
+    "- Only prescribe an option that was genuinely AVAILABLE at that moment. Do not "
+    "say 'pass to the fullback' or 'switch to the winger' unless that player was on "
+    "screen and open. If the better option was to wait, say that instead.\n"
+    "- Do not label a standard, effective play a mistake because it carried risk. "
+    "Judge it by what actually happened and whether a better option existed.\n"
+)
+
+# Seconds subtracted from a scoreboard-derived goal time. The scoreboard changes
+# after the goal, so the raw read is always late; this points the timestamp at the
+# build-up instead. Applied at the source so every consumer - the report chips,
+# the moment viewer, the deep-goal reads - agrees on when the goal was.
+GOAL_READ_LEAD_S = 10
+
+
+# Most goals a single side can plausibly add between two consecutive TRUSTED
+# reads. Deliberately flat rather than scaled by the gap between reads: a crest or
+# jersey number misread as a big number produces exactly the kind of large jump
+# this rejects, and widening the cap over long gaps lets those through.
+_MAX_LATE_GOALS = 3
+
+
+def _trusted_runs(runs: list[dict]) -> list[dict]:
+    """Pick the monotonic non-decreasing chain of scoreboard values we believe.
+
+    This used to be "trust a value once it is seen twice", which rejects phantom
+    digits on the theory that a phantom shows up for one read and then reverts. The
+    theory is right; the test for it was wrong. In a HIGH-SCORING match the real
+    score also changes on every read, so every genuine value late in the match is a
+    singleton and got binned - and then the true full-time score was compared
+    against a stale baseline and rejected as an implausible jump. A real 15-minute
+    11-3 match came back 2-5 that way, and the error grows with the scoreline, which
+    is the worst direction for it to fail in.
+
+    So the test is now the property that actually separates the two: a phantom GOES
+    BACKWARDS, a real score never does. A run is trusted when it does not decrease
+    against the last trusted value, the jump is plausible, and it is corroborated -
+    either seen twice, or followed later by a read at least as high (nothing ever
+    contradicted it). The final run is admitted on a single read, because the video
+    ends and a closing goal can only ever be sampled once.
+    """
+    out: list[dict] = []
+    ch = ca = 0
+    for i, r in enumerate(runs):
+        h, a = r["v"]
+        if h < ch or a < ca:
+            continue                     # reverts - replay, cutscene or phantom
+        if h == ch and a == ca:
+            continue                     # no change to record
+        # The cap guards INCREMENTS between trusted reads. The first value we accept
+        # is a baseline, not an increment - the video can open mid-match or the first
+        # sample can land after several goals - so capping it against 0-0 would throw
+        # the whole match away.
+        if out and (h - ch > _MAX_LATE_GOALS or a - ca > _MAX_LATE_GOALS):
+            continue                     # implausible jump - treat as a misread
+        corroborated = r["count"] >= 2 or i == len(runs) - 1 or any(
+            later["v"][0] >= h and later["v"][1] >= a for later in runs[i + 1:]
+        )
+        if not corroborated:
+            continue
+        out.append(r)
+        ch, ca = h, a
+    return out
+
+
+def _restate_result(d: dict, outcome: dict, side: str) -> None:
+    """Rewrite the report's MATCH CONTEXT result line from the authoritative score.
+
+    The model states a result from watching; the scoreboard timeline derives one by
+    reading the HUD. Both end up in the same document - the timeline as the match
+    title, the model's as the report's opening line - and nothing checked that they
+    agreed. A real report went out titled 5-2 and opened with "11-3 Win".
+
+    Written from the PLAYER's perspective (their goals first), which is how the
+    title renders it, so the two read identically.
+    """
+    ctx = d.get("match_context")
+    if not isinstance(ctx, dict):
+        return
+    h, a = outcome.get("score_home"), outcome.get("score_away")
+    if not isinstance(h, int) or not isinstance(a, int):
+        return
+    gf, ga = (a, h) if side == "away" else (h, a)
+    verdict = "Win" if gf > ga else ("Loss" if gf < ga else "Draw")
+    ctx["result"] = f"{gf}-{ga} {verdict}"
+
+
 def _read_score_timeline(video_bytes: bytes, settings) -> dict | None:
     """Deterministically reconstruct WHEN each goal happened by reading the
     scoreboard across the WHOLE match and watching the score change.
 
     The score is monotonic non-decreasing during a match, so every confirmed
-    increment of the home (or away) number is exactly one home (or away) goal —
+    increment of the home (or away) number is exactly one home (or away) goal -
     giving us the goal COUNT, TIME and SIDE without asking the model to guess
     (long matches make it hallucinate a goal-count). Robust to the same phantom
     digits `interpret()` fights: a value is only trusted once it forms a PLATEAU
@@ -214,48 +382,109 @@ def _read_score_timeline(video_bytes: bytes, settings) -> dict | None:
     # lighter "middle mode" can trade goal-timing precision for fewer requests.
     n = max(8, int(getattr(settings, "gemini_score_max_frames", 60)))
     every = max(4.0, dur / n) if dur else 6.0
-    frames = _extract_frames(video_bytes, every_s=every, max_frames=n)
+    # Ask for MORE frames than the interval count. With `every = dur/n`, exactly n
+    # frames only reach (n-1)*every - the final dur/n of the video (6% at n=16, ~38s
+    # on a 10-minute match) was never sampled at all, so a late goal was invisible
+    # and the final score came back one short. ffmpeg simply stops at EOF, so the
+    # spare frames cost nothing on short clips and guarantee we read the end.
+    frames = _extract_frames(video_bytes, every_s=every, max_frames=n + 2)
     if len(frames) < 3:
         return None
     vm = build_vision(settings)
-    schema = {"type": "object", "properties": {"home": {"type": "integer"},
-                                               "away": {"type": "integer"}}}
-    prompt = ("This is a crop of an FC 26 match scoreboard (home team on the TOP row, away "
-              "team on the BOTTOM row). Read the two score NUMBERS exactly. Reply JSON "
-              "{home:int, away:int}. If this is not a normal in-match scoreboard, omit them.")
+    # Crops are sent in BATCHES. One image per request meant ~60 round-trips to
+    # read two digits each, and that single phase was 75% of the whole analysis
+    # (220s of a 295s run) while costing 15% of the money - it was queueing, not
+    # computing. Each item carries its own index so a short or reordered response
+    # cannot silently shift every goal's timestamp.
+    schema = {"type": "object", "properties": {"reads": {"type": "array", "items": {
+        "type": "object",
+        "properties": {"i": {"type": "integer"}, "home": {"type": "integer"},
+                       "away": {"type": "integer"}},
+        "required": ["i"]}}}}
+    batch = max(1, int(getattr(settings, "gemini_score_batch", 6)))
+    workers = max(1, int(getattr(settings, "gemini_score_workers", 10)))
 
-    def _read_one(pair):
-        idx, img = pair
+    def _read_batch(job):
+        start, imgs = job
+        prompt = (
+            f"These are {len(imgs)} crops of an FC 26 match scoreboard, in order. The "
+            f"home team is the TOP row and the away team the BOTTOM row. For EACH image "
+            f"read the two score NUMBERS exactly.\n"
+            f"Reply JSON {{\"reads\": [{{\"i\": 0, \"home\": int, \"away\": int}}, ...]}} "
+            f"with i = the image's position in this batch, starting at 0. Return one entry "
+            f"per image, in order. If an image is not a normal in-match scoreboard (a replay, "
+            f"a cutscene, a menu), return its entry with i only and omit home/away."
+        )
         try:
             res = vm.generate(model=settings.stage2_model, prompt=prompt,
-                              images_jpeg=[_scoreboard_crop(img)], schema=schema, max_tokens=1500)
-            h, a = _plausible_score(res.data.get("home")), _plausible_score(res.data.get("away"))
+                              images_jpeg=[_scoreboard_crop(im) for im in imgs],
+                              schema=schema, max_tokens=1500)
             cost = getattr(res, "cost_usd", 0.0) or 0.0
-            if h is not None and a is not None:
-                return idx, (h, a), cost
-            return idx, None, cost
-        except Exception:  # noqa: BLE001
-            return idx, None, 0.0
+            out = []
+            for item in (res.data or {}).get("reads", []) or []:
+                if not isinstance(item, dict):
+                    continue
+                i = item.get("i")
+                if not isinstance(i, int) or not (0 <= i < len(imgs)):
+                    continue        # an index we cannot place is worse than a gap
+                h, a = _plausible_score(item.get("home")), _plausible_score(item.get("away"))
+                out.append((start + i, (h, a) if h is not None and a is not None else None))
+            return out, cost
+        except Exception:  # noqa: BLE001 - a lost batch is a gap, not a failure
+            return [], 0.0
 
-    seq: list = [None] * len(frames)
-    read_cost = 0.0
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        for idx, val, cost in ex.map(_read_one, list(enumerate(frames))):
-            seq[idx] = val
-            read_cost += cost
+    def _read_all(imgs: list) -> tuple[dict[int, tuple | None], float]:
+        """Read every crop, in parallel batches. Returns {index: value} + cost."""
+        jobs = [(i, imgs[i:i + batch]) for i in range(0, len(imgs), batch)]
+        got: dict[int, tuple | None] = {}
+        spent = 0.0
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            for reads, cost in ex.map(_read_batch, jobs):
+                for idx, val in reads:
+                    got[idx] = val
+                spent += cost
+        return got, spent
 
+    read, read_cost = _read_all(frames)
+    # (seconds, value) rather than frame index, so the closing sweep below can add
+    # samples at a different granularity and still sort into the same timeline.
+    samples: list[tuple[float, tuple]] = [
+        (i * every, v) for i, v in sorted(read.items()) if v is not None
+    ]
+    if not samples:
+        return None
+
+    # CLOSING SWEEP. Recordings usually run past the whistle into the post-match
+    # menus, so the last stretch of the video reads as nothing. The problem is what
+    # sits in the gap: a goal in stoppage time lands between the final live sample
+    # and the menu, and at one read every 15s that is enough to lose it. A real
+    # match ended 3-11 with the 11th scored at 91:21 and was reported 3-10 - the
+    # read was right, the moment was simply never sampled. So once the coarse pass
+    # has found where play stops, re-read that window finely. Bounded to one extra
+    # batch, and skipped entirely when the video ends while still live.
+    last_live_i = max(i for i, v in read.items() if v is not None)
+    if last_live_i + 1 < len(frames) and dur:
+        lo = last_live_i * every
+        hi = min(dur, lo + 2 * every)
+        fine_every = max(1.0, (hi - lo) / batch)
+        tail = _extract_frames(video_bytes, every_s=fine_every, max_frames=batch,
+                               start_s=lo)
+        if tail:
+            tail_read, tail_cost = _read_all(tail)
+            read_cost += tail_cost
+            samples += [(lo + i * fine_every, v)
+                        for i, v in sorted(tail_read.items()) if v is not None]
+
+    samples.sort(key=lambda s: s[0])
     # Compress consecutive equal reads (ignoring gaps) into plateaus, keeping the
-    # first frame index (=timestamp) of each plateau.
+    # first timestamp of each plateau.
     runs: list[dict] = []
-    for idx, v in enumerate(seq):
-        if v is None:
-            continue
+    for secs, v in samples:
         if runs and runs[-1]["v"] == v:
             runs[-1]["count"] += 1
         else:
-            runs.append({"v": v, "start": idx, "count": 1})
-    # Only trust plateaus seen at least twice -> drops single-frame phantoms.
-    kept = [r for r in runs if r["count"] >= 2]
+            runs.append({"v": v, "start_s": secs, "count": 1})
+    kept = _trusted_runs(runs)
     if not kept:
         return None
 
@@ -268,7 +497,12 @@ def _read_score_timeline(video_bytes: bytes, settings) -> dict | None:
         h, a = r["v"]
         if h < ch or a < ca or (h == ch and a == ca):
             continue
-        secs = int(round(r["start"] * every))
+        # The scoreboard is a LAGGING indicator: it only ticks over once the ball
+        # is already in, and often not until the broadcast has cut to the
+        # celebration. Reading it therefore always lands after the action that
+        # matters. Back the timestamp off so it points at the build-up - the pass
+        # and the run that created the goal - rather than the restart.
+        secs = max(0, int(round(r["start_s"])) - GOAL_READ_LEAD_S)
         for _ in range(h - ch):
             goals.append({"secs": secs, "time": _mmss(secs), "side": "home"})
         for _ in range(a - ca):
@@ -283,7 +517,7 @@ def _read_score_timeline(video_bytes: bytes, settings) -> dict | None:
 def _extract_window_jpegs(video_bytes: bytes, center_s: float, pre_s: float,
                           post_s: float, fps: float) -> list[bytes]:
     """Extract JPEG frames from the [center-pre, center+post] window of the video
-    (via a fast ffmpeg seek) — the few seconds around a single goal."""
+    (via a fast ffmpeg seek) - the few seconds around a single goal."""
     start = max(0.0, center_s - pre_s)
     span = pre_s + post_s
     out: list[bytes] = []
@@ -322,16 +556,20 @@ _DEEP_GOAL_SCHEMA = {
 
 def _lite_report_schema() -> dict:
     """Report schema for SINGLE-CALL mode: the one video call fills the coaching
-    lists directly (plain strings — no evidence-id mapping, since there is no
+    lists directly (plain strings - no evidence-id mapping, since there is no
     separate observation log to cite)."""
     strs = {"type": "array", "items": {"type": "string"}}
     return {
         "type": "object",
         "properties": {
             "summary": {"type": "string"},
+            # positioning_issues / decision_patterns / practice_drills were dropped
+            # here: ATTACKING/DEFENDING ANALYSIS and PRACTICE PLAN in the template
+            # below cover the same ground, and keeping both made the model write
+            # the same finding twice in two different voices.
             "strengths": strs, "recurring_mistakes": strs,
-            "positioning_issues": strs, "decision_patterns": strs, "practice_drills": strs,
             "weakness_tags": strs,
+            **_report_template_props(),
             "score": {"type": "object",
                       "properties": {"home": {"type": "integer"}, "away": {"type": "integer"}}},
             "formation": {"type": "string"},
@@ -347,7 +585,7 @@ def _lite_report_schema() -> dict:
             }},
         },
         "required": ["summary", "strengths", "recurring_mistakes",
-                     "positioning_issues", "decision_patterns", "practice_drills"],
+                     "diagnosis", "event_log", "practice_plan"],
     }
 
 
@@ -419,7 +657,7 @@ def _deep_read_goals(video_bytes: bytes, settings, goals: list[dict], side: str,
 
 def _stats_to_metrics(ctx: PipelineContext, stats: dict) -> None:
     """Turn observed stats into Metric objects so the trends system tracks them
-    across matches. Additive — doesn't affect the coaching text."""
+    across matches. Additive - doesn't affect the coaching text."""
     if not stats:
         return
     metrics = list(ctx.match.metrics)
@@ -433,10 +671,123 @@ def _stats_to_metrics(ctx: PipelineContext, stats: dict) -> None:
     ctx.match.metrics = metrics
 
 
+# Carry the template sections from the model response into the STORED payload.
+#
+# This exists because the payload is hand-assembled key by key rather than saved
+# verbatim, so adding a field to the schema is only half the job - without this
+# the model answered every new section and the writer silently dropped all of
+# them, producing a report SHORTER than the one it replaced. Any future section
+# added to _report_template_props() must be listed here too.
+_TEMPLATE_KEYS = (
+    "match_context", "diagnosis", "event_log", "attacking",
+    "defending", "elite_comparison", "practice_plan",
+    "tactical_changes", "next_video_test",
+)
+
+
+def _template_payload(d: dict) -> dict:
+    """The template sections present in `d`, ready to splat into a payload dict.
+
+    `tactical_changes` is kept even when empty: an empty list is the correct
+    answer when the video does not implicate the tactics, and the report renders
+    that as a finding. Absent means 'not asked'; empty means 'asked, no change'.
+    """
+    out = {}
+    for k in _TEMPLATE_KEYS:
+        v = d.get(k)
+        if v or (k == "tactical_changes" and isinstance(v, list)):
+            out[k] = v
+    return out
+
+
+# The report STRUCTURE the player asked for, shared by both the single-call and
+# two-pass schemas so the two paths can never drift into different documents.
+#
+# Everything here is a STRING, including the counts in `decision_metrics`. That is
+# deliberate. Gemini samples the video at roughly 1fps, so it cannot actually
+# count touches before a pass or classify every pass direction - typed as integers
+# it would fill them with confident invention, which is exactly how `goals_for`
+# ended up disagreeing with the scoreboard. As strings the model can answer
+# "not measurable from this footage", and the prompt tells it to prefer that over
+# a guess. An honest gap is useful; a fabricated number is worse than nothing.
+def _report_template_props() -> dict:
+    s = {"type": "string"}
+
+    def obj(props: dict, required: list[str] | None = None) -> dict:
+        out = {"type": "object", "properties": props}
+        if required:
+            out["required"] = required
+        return out
+
+    def arr(props: dict, required: list[str]) -> dict:
+        return {"type": "array",
+                "items": {"type": "object", "properties": props, "required": required}}
+
+    return {
+        "match_context": obj({
+            "mode": s, "opponent_formation": s, "my_formation": s, "result": s,
+            "score_by_phase": s,          # e.g. "0-0 to 15', 1-2 by HT, 2-4 FT"
+            "technical_issues": s,        # connection / gameplay problems seen
+            "sample_quality": s,          # what the footage does and does not show
+            "confidence": s,              # high | medium | low + why
+        }),
+        "diagnosis": obj({
+            "biggest_strength": s,
+            "biggest_repeatable_mistake": s,
+            "highest_value_habit": s,     # the one habit worth most improvement
+            "main_tactical_problem": s,
+            "main_mechanical_problem": s,
+        }),
+        # One entry per important event. Capped in the prompt, not the schema:
+        # an uncapped log on a 90-minute capture becomes the whole response.
+        "event_log": arr({
+            "time": s, "phase": s,        # build-up|attack|transition|defence|set piece
+            "ball_location": s, "selected_player": s, "best_option": s,
+            "what_i_did": s, "why": s, "correction": s,
+            "severity": s,                # low | medium | high
+            "repeat_count": s,            # how often this recurred in the match
+        }, ["time", "phase", "what_i_did", "correction", "severity"]),
+        "attacking": obj({
+            "build_up_angles": s, "use_of_width": s, "half_space_occupation": s,
+            "third_man_runs": s, "striker_movement": s, "cam_movement": s,
+            "overlaps_underlaps": s, "cutback_creation": s, "shot_selection": s,
+            "rushes_final_action": s,
+        }),
+        "defending": obj({
+            "shape": s, "cdm_positioning": s, "centre_back_movement": s,
+            "player_switching": s, "jockey_and_sprint_usage": s, "pressing_angles": s,
+            "through_ball_prevention": s, "cutback_prevention": s,
+            "recovery_after_losing_possession": s, "fullback_exposure": s,
+        }),
+        "elite_comparison": obj({
+            "habits_already_shown": {"type": "array", "items": s},
+            "habits_missing": {"type": "array", "items": s},
+            "smallest_next_step": s,
+            "reference_gaps": s,          # pros we hold no reference data for
+        }),
+        # Exactly three, ranked. More than three is a wish list, not a plan.
+        "practice_plan": arr({
+            "problem": s, "drill": s, "reps": s, "success_metric": s,
+            "common_mistake": s, "correction_phrase": s,
+        }, ["problem", "drill", "success_metric"]),
+        # May legitimately be empty: the instruction is to change nothing unless
+        # the video PROVES the tactic contributed.
+        "tactical_changes": arr({
+            "current_setting": s, "new_setting": s, "problem_it_solves": s,
+            "new_weakness_created": s, "reverse_when": s,
+        }, ["current_setting", "new_setting", "problem_it_solves"]),
+        "next_video_test": obj({
+            "match_type": s, "formation": s, "behaviour_to_practise": s,
+            "behaviour_not_to_change": s, "metrics_to_compare": s,
+            "minimum_sample_size": s,
+        }),
+    }
+
+
 def _video_report_schema() -> dict:
     """Coaching report where every point cites the observation IDs it's based on.
     Citing IDs is easy for the model AND lets us attach real timestamps ourselves
-    (deterministic) — grounding the point and exposing divergence from the log."""
+    (deterministic) - grounding the point and exposing divergence from the log."""
     item = {
         "type": "object",
         "properties": {"point": {"type": "string"},
@@ -448,18 +799,18 @@ def _video_report_schema() -> dict:
         "type": "object",
         "properties": {
             "summary": {"type": "string"}, "strengths": arr, "recurring_mistakes": arr,
-            "positioning_issues": arr, "decision_patterns": arr, "practice_drills": arr,
-            # Weakness tags from the controlled vocabulary — fuel for the "learns
+            **_report_template_props(),
+            # Weakness tags from the controlled vocabulary - fuel for the "learns
             # you" longitudinal loop (aggregated across the player's matches).
             "weakness_tags": {"type": "array", "items": {"type": "string"}},
-            # Final score fallback — the synthesis reliably knows it even when the
+            # Final score fallback - the synthesis reliably knows it even when the
             # watch pass fails to fill the score field.
             "score": {"type": "object",
                       "properties": {"home": {"type": "integer"}, "away": {"type": "integer"}}},
-            # The user's formation if identifiable (e.g. "4-2-3-1") — aggregated
+            # The user's formation if identifiable (e.g. "4-2-3-1") - aggregated
             # across matches to learn how they set up.
             "formation": {"type": "string"},
-            # Goal-by-goal breakdown (NEW section — additive, does not change the 5
+            # Goal-by-goal breakdown (NEW section - additive, does not change the 5
             # coaching lists). One entry per goal, scored or conceded.
             "goals": {"type": "array", "items": {"type": "object", "properties": {
                 "time": {"type": "string"},
@@ -476,8 +827,93 @@ def _video_report_schema() -> dict:
             }},
         },
         "required": ["summary", "strengths", "recurring_mistakes",
-                     "positioning_issues", "decision_patterns", "practice_drills"],
+                     "diagnosis", "event_log", "practice_plan"],
     }
+
+
+# How a report is pitched, per skill level. Game-agnostic on purpose: it talks
+# about the PLAYER (what they already know, what needs explaining), never about
+# football. The adapter's playbook supplies the game specifics.
+#
+# This exists because the same footage has to become a different report. An
+# amateur cannot act on "your CDM's rest-defence position invites the counter";
+# a pro is wasting their time reading what a through ball is.
+_SKILL_BRIEFS = {
+    "amateur": (
+        "The player is a BEGINNER. Write so someone who has played only a little "
+        "can follow it.\n"
+        "- Plain, everyday language. No jargon, no abbreviations, no meta terms. If "
+        "a technical word is unavoidable, define it in the same sentence.\n"
+        "- Explain WHY something went wrong in simple cause-and-effect, then give ONE "
+        "clear thing to do instead. Assume they do not know standard positioning "
+        "concepts - teach them briefly.\n"
+        "- Keep it to 3-4 points per list, the highest-impact ones only. A long list "
+        "is useless to a beginner.\n"
+        "- Be encouraging and concrete. Never imply they should already know this."
+    ),
+    "intermediate": (
+        "The player is INTERMEDIATE. They know the fundamentals and the standard "
+        "inputs; do not teach the basics.\n"
+        "- Assume the common mechanics and terminology are understood. Name them "
+        "without explaining them.\n"
+        "- Focus on HABITS, decisions and repeated patterns rather than one-off "
+        "errors - what they keep doing, and the better option available at that "
+        "moment.\n"
+        "- 4-6 points per list, each with the specific input or positioning to use "
+        "instead.\n"
+        "- Direct and practical."
+    ),
+    "pro": (
+        "The player is ADVANCED/COMPETITIVE. Write for someone who already has full "
+        "command of the mechanics.\n"
+        "- Skip all fundamentals. Never explain a basic mechanic or define a term. "
+        "Use the game's competitive vocabulary freely.\n"
+        "- Go after marginal gains: tempo, risk management, opponent reads and "
+        "tendencies, rest defence, decision quality under pressure, and where they "
+        "are losing small edges repeatedly.\n"
+        "- Be dense and precise - 5-7 points per list, no filler, no praise that "
+        "isn't load-bearing.\n"
+        "- It is fine to be blunt about a costly habit."
+    ),
+}
+
+
+def _player_block(capture: dict | None) -> str:
+    """Prompt block calibrating the report to who is reading it: their experience
+    level, and the control scheme whose inputs they actually use."""
+    from core.models.enums import SkillLevel
+
+    cap = capture or {}
+    level = SkillLevel.parse(cap.get("skill_level"))
+    control = str(cap.get("control_scheme", "")).strip()
+
+    lines = ["HOW TO PITCH THIS REPORT (follow exactly - the reader depends on it):",
+             _SKILL_BRIEFS[level.value],
+             # Every model reaches for em dashes, and readers now treat them as a
+             # tell that nobody wrote this. Cleaning the codebase does nothing on
+             # its own: the report body is generated, so the rule has to be here.
+             "- PUNCTUATION: never use an em dash or an en dash. Use a plain "
+             "hyphen '-', a comma, or start a new sentence. This applies to every "
+             "field you write."]
+    # Coach-uploaded footage carries the athlete's name. The reader is then the
+    # COACH, not the player - "you dived in with the CB" would address the wrong
+    # human. Third person, named. Orthogonal to skill_level on purpose: role
+    # decides who is spoken to, skill decides how densely.
+    athlete = str(cap.get("athlete") or "").strip()
+    if athlete:
+        lines.append(
+            f"- THE READER IS A COACH reviewing footage of their player, '{athlete}'. "
+            f"Write every point in the THIRD person about {athlete} ('{athlete} dives "
+            f"in with the CB', never 'you'). Skip explanations of what the coach "
+            f"obviously knows; keep the observations dense and specific so the coach "
+            f"can relay them."
+        )
+    if control:
+        lines.append(
+            f"- The player uses {control} controls. Give inputs for {control} "
+            f"wherever schemes differ; never give an input from another scheme."
+        )
+    return "\n".join(lines) + "\n\n"
 
 
 def _history_block(history: dict | None, vocab: list[dict]) -> str:
@@ -492,10 +928,10 @@ def _history_block(history: dict | None, vocab: list[dict]) -> str:
     prof = []
     if history.get("squad"):
         prof.append("Their regular squad (from past matches): " + ", ".join(history["squad"])
-                    + " — use these names; treat a name not here (and not in this match's roster) "
+                    + " - use these names; treat a name not here (and not in this match's roster) "
                     "as the opponent or a misread.")
     if history.get("formation"):
-        prof.append(f"They usually line up in {history['formation']} — coach within that shape.")
+        prof.append(f"They usually line up in {history['formation']} - coach within that shape.")
     if prof:
         out.append("\nWHO THIS PLAYER IS (learned over " + str(n) + " matches):\n" + "\n".join(prof))
     if history.get("issues"):
@@ -503,7 +939,7 @@ def _history_block(history: dict | None, vocab: list[dict]) -> str:
         out.append(
             f"\nTHEIR RECURRING PROBLEMS: {recur}.\n"
             f"If any of these show up AGAIN this match, SAY it is recurring and that earlier "
-            f"advice hasn't stuck — escalate or try a DIFFERENT fix, don't just repeat yourself."
+            f"advice hasn't stuck - escalate or try a DIFFERENT fix, don't just repeat yourself."
         )
         if history.get("recent_advice"):
             out.append("Advice you gave them very recently (check if it worked): "
@@ -560,7 +996,7 @@ def _merge_passes(pass_lists: list[list[str]], window: int = 12) -> list[dict]:
             if items[j][0] - it[0] > window:
                 break
             if items[j][2] in {c[2] for c in cluster}:
-                continue  # same viewing already represented — want cross-pass support
+                continue  # same viewing already represented - want cross-pass support
             if len(it[3] & items[j][3]) >= 2:
                 cluster.append(items[j])
                 used[j] = True
@@ -568,6 +1004,25 @@ def _merge_passes(pass_lists: list[list[str]], window: int = 12) -> list[dict]:
         merged.append({"secs": it[0], "note": rep[1], "support": len({c[2] for c in cluster})})
     merged.sort(key=lambda m: m["secs"])
     return merged
+
+
+def _clean_points(items) -> list[str]:
+    """Strip leading classification tags from coaching points.
+
+    Earlier prompts asked the model to prefix mistakes with '[Mechanical]' or
+    '[Decision]'. Nothing consumed those tags and they rendered raw in the report
+    ("[Decision] You forced risky vertical through-balls..."). The instruction is
+    gone, but old reports and a model that remembers the habit still emit them.
+    """
+    out = []
+    for it in items or []:
+        s = str(it).strip()
+        if not s:
+            continue
+        s = re.sub(r"^\[[A-Za-z /-]{3,20}\]\s*", "", s).strip()
+        if s:
+            out.append(s)
+    return out
 
 
 def _flatten_report(d: dict, observations: list[str], drop_unsupported: bool = False) -> dict:
@@ -751,7 +1206,7 @@ class Stage1LocalExtraction(Stage):
 
     def _run_non_video(self, ctx: PipelineContext) -> None:
         """Replay/API source: the adapter parses raw bytes straight into
-        metrics/events/outcome — no frames, no OCR, no cost."""
+        metrics/events/outcome - no frames, no OCR, no cost."""
         ctx.emit(self.name, "running", f"ingesting {ctx.match.source_type.value} source")
         if ctx.source_bytes is None:
             ctx.match.warnings.append("no source data uploaded")
@@ -877,11 +1332,15 @@ class Stage3CoachingReport(Stage):
                 kind="coaching_report",
                 summary=str(d.get("summary", "")),
                 payload={
-                    "strengths": d.get("strengths", []),
-                    "recurring_mistakes": d.get("recurring_mistakes", []),
-                    "positioning_issues": d.get("positioning_issues", []),
-                    "decision_patterns": d.get("decision_patterns", []),
-                    "practice_drills": d.get("practice_drills", []),
+                    "strengths": _clean_points(d.get("strengths")),
+                    "recurring_mistakes": _clean_points(d.get("recurring_mistakes")),
+                    # The frame/OCR pipeline keeps its own three sections: its
+                    # schema was not restructured to the template, so these are
+                    # the only place it reports positioning and decisions.
+                    "positioning_issues": _clean_points(d.get("positioning_issues")),
+                    "decision_patterns": _clean_points(d.get("decision_patterns")),
+                    "practice_drills": _clean_points(d.get("practice_drills")),
+                    **_template_payload(d),
                     "player_side": ctx.match.capture.get("player_side", "unknown"),
                     "frames_reviewed": frames_reviewed,
                     "segments_read": segments,
@@ -938,9 +1397,9 @@ class Stage3CoachingReport(Stage):
 
     # --- "full" mode: map (read each segment) then reduce (synthesise) ----------
     # Cost design: the MAP step (read each segment) uses the cheap model
-    # (stage2_model, e.g. Haiku) — perception is cheap; the REDUCE step (one
+    # (stage2_model, e.g. Haiku) - perception is cheap; the REDUCE step (one
     # synthesis over all notes) uses the strong model (stage3_model, e.g. Sonnet)
-    # — reasoning is where the quality is. Both are budget-checked and charged.
+    # - reasoning is where the quality is. Both are budget-checked and charged.
     def _run_full(self, ctx: PipelineContext, live) -> None:
         s, adapter = ctx.settings, ctx.adapter
         side = ctx.match.capture.get("player_side", "the player")
@@ -976,7 +1435,7 @@ class Stage3CoachingReport(Stage):
                 break
             t0, t1 = win[0].timestamp_ms // 1000, win[-1].timestamp_ms // 1000
             span = f"{t0 // 60:02d}:{t0 % 60:02d}-{t1 // 60:02d}:{t1 % 60:02d}"
-            # Note: we DON'T assert the OCR score here — the model READS the
+            # Note: we DON'T assert the OCR score here - the model READS the
             # scoreboard itself so we can correct OCR from what's on screen.
             prompt = (
                 f"You are analysing the '{side}' player's match. IMAGE 1 is a ZOOMED crop of the "
@@ -987,7 +1446,7 @@ class Stage3CoachingReport(Stage):
                 f"literally (a thin '1' is not an '8'). If IMAGE 1 is not a normal in-match "
                 f"scoreboard (intro/replay/menu/cutscene), omit the scores.\n"
                 f"2) From IMAGES 2+, note concrete, specific things you SEE about the '{side}' "
-                f"player: positioning, decisions, passing/movement, defensive shape — both good "
+                f"player: positioning, decisions, passing/movement, defensive shape - both good "
                 f"and bad. Be terse and factual.\n\n"
                 f"Reply with ONLY a flat JSON object using these EXACT keys (do NOT nest under "
                 f"'scoreboard'): {{\"score_home\": <int or omit>, \"score_away\": <int or omit>, "
@@ -1012,7 +1471,7 @@ class Stage3CoachingReport(Stage):
             if obs:
                 notes.append(f"[{span}] " + " | ".join(str(o) for o in obs if o))
 
-        if not notes:  # couldn't read anything within budget — try the pooled read as a fallback
+        if not notes:  # couldn't read anything within budget - try the pooled read as a fallback
             self._run_sample(ctx)
             return
 
@@ -1027,7 +1486,7 @@ class Stage3CoachingReport(Stage):
         syn = (
             f"{facts}\n\n{playbook}\n\nBelow are chronological observations from reading the WHOLE "
             f"match segment by segment:\n\n" + "\n".join(notes) +
-            f"\n\n{lens}\n\nSynthesise ONE coaching report over the WHOLE match — find the "
+            f"\n\n{lens}\n\nSynthesise ONE coaching report over the WHOLE match - find the "
             f"RECURRING patterns across segments, not one-off moments. Be BALANCED: include "
             f"what the player did WELL in 'strengths', not only mistakes."
         )
@@ -1043,9 +1502,9 @@ class Stage3CoachingReport(Stage):
                 d, model = res.data, res.model
             except BudgetExceeded:
                 d = None
-        if d is None:  # no budget to synthesise — hand back the raw segment notes as the report
+        if d is None:  # no budget to synthesise - hand back the raw segment notes as the report
             ctx.match.warnings.append("Out of budget before synthesis; report is the raw segment notes.")
-            d = {"summary": "Whole-match read (unsynthesised — budget reached).",
+            d = {"summary": "Whole-match read (unsynthesised - budget reached).",
                  "recurring_mistakes": notes, "positioning_issues": [],
                  "decision_patterns": [], "practice_drills": []}
         self._emit_report(ctx, d, frames_reviewed=len(dense), segments=len(notes),
@@ -1058,7 +1517,7 @@ class Stage3CoachingReport(Stage):
         OCR of a tiny score region is noisy (we saw a real 4-1 read as 4-8). The
         vision model reading the full scoreboard is a strong second opinion; the
         end-of-match value is the trailing majority of its reads. We only override
-        when there's genuine support and the two actually disagree — otherwise OCR
+        when there's genuine support and the two actually disagree - otherwise OCR
         stands."""
         if len(boards) < 2:
             return
@@ -1069,7 +1528,7 @@ class Stage3CoachingReport(Stage):
         oh = ctx.match.outcome.get("score_home")
         oa = ctx.match.outcome.get("score_away")
         if (vh, va) == (oh, oa):
-            return  # OCR and vision agree — nothing to do
+            return  # OCR and vision agree - nothing to do
 
         result = "draw" if vh == va else (
             "win" if (vh > va) == (side == "home") else "loss"
@@ -1106,7 +1565,7 @@ class Stage3CoachingReport(Stage):
                 goals.append(f"{e.game_event_type} ~{secs // 60:02d}:{secs % 60:02d}")
         goals_txt = "; ".join(goals) if goals else "none read"
         return (
-            "MATCH FACTS (from scoreboard OCR — trust over the images):\n"
+            "MATCH FACTS (from scoreboard OCR - trust over the images):\n"
             f"- the player is the '{side}' side\n"
             f"- final score: {score} ({result} for the player)\n"
             f"- scoring events: {goals_txt}"
@@ -1209,7 +1668,6 @@ class GeminiVideoCoaching(Stage):
 
         adapter = ctx.adapter
         side = ctx.match.capture.get("player_side", "home")
-        where = "top/left" if side == "home" else "bottom/right"
         lens = adapter.stage_prompt(3) or ""
         model = GeminiVideoModel(
             api_key=s.openai_api_key,
@@ -1218,7 +1676,7 @@ class GeminiVideoCoaching(Stage):
         )
 
         # SINGLE-CALL mode: one Gemini call over the whole video -> the report. No
-        # multi-pass watch, no scoreboard/roster/deep-goal/self-learning extras — so
+        # multi-pass watch, no scoreboard/roster/deep-goal/self-learning extras - so
         # a match is ~1 request and can't trip the rate limit. Chosen via config.
         if not s.gemini_video_two_pass:
             self._run_single_call(ctx, model, adapter, side, lens)
@@ -1229,54 +1687,54 @@ class GeminiVideoCoaching(Stage):
         sbadge = "LEFT" if side == "home" else "RIGHT"
         obadge = "RIGHT" if side == "home" else "LEFT"
         observe_prompt = (
-            f"Watch this ENTIRE match video. This is a human-vs-human match — BOTH teams have a "
+            f"Watch this ENTIRE match video. This is a human-vs-human match - BOTH teams have a "
             f"controlled-player arrow/gamertag, so do NOT use the arrow to pick the user. The user "
             f"is the '{side}' team; use the rules below to identify it and coach ONLY that team.\n"
-            f"STEP 0 — IDENTIFY THE USER'S ('{side}') TEAM (get this RIGHT before anything else):\n"
+            f"STEP 0 - IDENTIFY THE USER'S ('{side}') TEAM (get this RIGHT before anything else):\n"
             f"  - The scoreboard (top-left) lists two teams: HOME on the TOP row, AWAY on the "
-            f"BOTTOM row. The user is '{side}', i.e. the {srow} row — note that team's 3-letter "
+            f"BOTTOM row. The user is '{side}', i.e. the {srow} row - note that team's 3-letter "
             f"abbreviation.\n"
             f"  - The bottom bar has TWO on-ball NAME badges: the LEFT badge is the HOME team's "
             f"player and the RIGHT badge is the AWAY team's player. So the USER'S player names come "
-            f"ONLY from the {sbadge} badge. The {obadge} badge is the OPPONENT — NEVER use it or its "
+            f"ONLY from the {sbadge} badge. The {obadge} badge is the OPPONENT - NEVER use it or its "
             f"names for the user.\n"
             f"  - Identify the '{side}' team's KIT COLOUR (watch their goalkeeper, or their players "
             f"when the {sbadge} badge is active). Follow the team by KIT across half-time: at "
             f"half-time teams switch ENDS (attack the other way) but keep the SAME kit and the SAME "
-            f"scoreboard row — never re-identify by pitch side.\n"
+            f"scoreboard row - never re-identify by pitch side.\n"
             f"  - Fill 'your_team' with kit (colour), abbrev, scoreboard_side ('{side}').\n\n"
-            f"NAME the user's players (read them from the correct badge) — I want specific names. "
+            f"NAME the user's players (read them from the correct badge) - I want specific names. "
             f"Only if you truly cannot read a name, use the role ('your CB', 'your striker'). Never "
             f"invent a name and never use an opponent's name.\n\n"
             f"Produce a DENSE, chronological log of 20-35 CONCRETE, SPECIFIC observations about the "
             f"USER'S team across the whole match. Each observation MUST have 'time' (MM:SS you saw "
             f"it) and 'note' = WHO (named user player), WHAT they did, and WHERE (relative to the "
-            f"user's own goal vs the opponent's goal — NOT left/right, since ends switch at "
+            f"user's own goal vs the opponent's goal - NOT left/right, since ends switch at "
             f"half-time). Cover build-up/passing, attacking movement and chances, defensive shape "
-            f"and marking, transitions, and individual duels — BOTH good and bad, with mistakes. "
+            f"and marking, transitions, and individual duels - BOTH good and bad, with mistakes. "
             f"When a mistake happens, note the DEFENSIVE/attacking action that was needed (e.g. a "
             f"manual switch to a specific player, a jockey, a clearance). Only report what you "
             f"ACTUALLY see; if you can't place a timestamp, skip it.\n"
             f"Also read the on-screen scoreboard for the FINAL score (home vs away).\n"
             f"Finally, list in 'knowledge_gaps' up to 5 FC 26-SPECIFIC things you saw but are NOT "
-            f"certain about (a mechanic, animation, player role, UI element, or term) — phrase each "
+            f"certain about (a mechanic, animation, player role, UI element, or term) - phrase each "
             f"as a question to look up, e.g. 'What does the X role do in FC 26?'."
         )
-        # Compress ONCE (small, fast upload) — big speed/cost win on large clips.
+        # Compress ONCE (small, fast upload) - big speed/cost win on large clips.
         if s.gemini_video_compress:
             ctx.emit(self.name, "compressing", "shrinking the video for a fast upload")
             video_bytes = _compress_video(ctx.source_bytes)
         else:
             video_bytes = ctx.source_bytes
 
-        # Deterministic ROSTER read (OCR the name badges) — kicked off in parallel
+        # Deterministic ROSTER read (OCR the name badges) - kicked off in parallel
         # with the upload/watch so it adds little wall-time. Gives the coach the REAL
         # squad per side, so it can't call an opponent one of "your" players.
         roster_future = None
         regions = adapter.name_badge_regions()
         # Roster OCR is LOCAL (PaddleOCR, no API) so it runs parallel with the watch
         # for free. The scoreboard timeline makes many Gemini calls, so it is NOT run
-        # here — firing it alongside the watch saturates the rate limit and 429s the
+        # here - firing it alongside the watch saturates the rate limit and 429s the
         # watch. It runs AFTER the watch instead (below).
         if s.enable_roster_ocr and regions and ctx.ocr is not None and ctx.source_bytes:
             from concurrent.futures import ThreadPoolExecutor as _TPE
@@ -1290,7 +1748,7 @@ class GeminiVideoCoaching(Stage):
             )
 
         # Upload ONCE, then run N viewings (self-consistency) IN PARALLEL against the
-        # same file — so 2 viewings cost ~one upload + parallel reads.
+        # same file - so 2 viewings cost ~one upload + parallel reads.
         passes = max(1, s.gemini_video_watch_passes)
         pass_lists: list[list[str]] = []
         scores: list[tuple] = []
@@ -1397,7 +1855,7 @@ class GeminiVideoCoaching(Stage):
         if roster_future is not None:
             _side_ex.shutdown(wait=False)
 
-        # Deterministic FINAL SCORE + GOAL TIMELINE from hi-res scoreboard crops —
+        # Deterministic FINAL SCORE + GOAL TIMELINE from hi-res scoreboard crops -
         # run NOW (after the watch) so its many small calls don't starve the watch's
         # rate limit. The model hallucinates the score/goal-count in long matches;
         # watching the score change gives exact goal times + sides.
@@ -1453,20 +1911,8 @@ class GeminiVideoCoaching(Stage):
             facts = self._score_facts(ctx.match, side)
             playbook = adapter.coaching_playbook(" ".join(observations))
             history = _history_block(ctx.player_history, adapter.issue_vocabulary())
-            # Player context (control scheme + skill level) -> calibrate inputs/depth.
-            control = str(ctx.match.capture.get("control_scheme", "")).strip()
-            skill = str(ctx.match.capture.get("skill_level", "")).strip()
-            player_ctx = ""
-            if control:
-                player_ctx += (f"The player uses {control} controls — give button/stick inputs for "
-                               f"{control} where schemes differ. ")
-            if skill:
-                deep = skill.lower() in ("pro", "competitive", "elite")
-                player_ctx += (f"Skill level: {skill} — "
-                               + ("skip fundamentals; go deep, meta-aware and advanced."
-                                  if deep else "explain the fundamentals clearly and simply."))
-            if player_ctx:
-                player_ctx = "PLAYER CONTEXT: " + player_ctx + "\n\n"
+            # Calibrate the report to the reader's experience level.
+            player_ctx = _player_block(ctx.match.capture)
 
             roster_block = ""
             if my_roster:
@@ -1475,27 +1921,27 @@ class GeminiVideoCoaching(Stage):
                     f"{', '.join(my_roster)}. "
                     + (f"The OPPONENT's players include: {', '.join(opp_roster)}. " if opp_roster else "")
                     + "Attribute actions to YOUR players by name. If a name is NOT in your squad "
-                    "list, that player is the OPPONENT — refer to your own man by ROLE ('your CB'), "
+                    "list, that player is the OPPONENT - refer to your own man by ROLE ('your CB'), "
                     "and NEVER credit an opponent's action to you.\n\n"
                 )
-            # Deterministic goal log (read from the scoreboard) — when we have it,
+            # Deterministic goal log (read from the scoreboard) - when we have it,
             # the goal COUNT/TIME/SIDE are FACTS; the model only writes the colour.
             if det_goals:
                 log = "; ".join(
                     f"G{i + 1} [{g['time']}] {g['type']}" for i, g in enumerate(det_goals)
                 )
                 goals_instr = (
-                    f"GOALS (AUTHORITATIVE — read from the scoreboard, do not question): there were "
+                    f"GOALS (AUTHORITATIVE - read from the scoreboard, do not question): there were "
                     f"EXACTLY {len(det_goals)} goals, in this order: {log}. Return 'goals' with EXACTLY "
                     f"these {len(det_goals)} entries IN THIS ORDER; copy each entry's 'time' and 'type' "
                     f"VERBATIM (do not add, drop, reorder or re-time any). For each, write 'summary' "
                     f"(what happened + which of YOUR players was involved, from the observations nearest "
                     f"that time) and, for 'conceded' goals, a 'fix'. If no observation covers a goal, give "
-                    f"a brief general summary — but keep the time and type exactly.\n"
+                    f"a brief general summary - but keep the time and type exactly.\n"
                 )
             else:
                 goals_instr = (
-                    f"GOALS: the FINAL SCORE is authoritative — the 'goals' list must total EXACTLY "
+                    f"GOALS: the FINAL SCORE is authoritative - the 'goals' list must total EXACTLY "
                     f"(home + away) goals and NO MORE. Do NOT infer a goal from an attacking move or a "
                     f"chance; only count actual goals consistent with the scoreline. Each entry: time "
                     f"(MM:SS), type ('scored'|'conceded'), summary (what happened + which player), and "
@@ -1516,25 +1962,30 @@ class GeminiVideoCoaching(Stage):
                 f"and logged these NUMBERED, time-stamped observations about the '{side}' player:\n\n"
                 f"{numbered}\n\n{corr_note}{lens}\n\n"
                 f"Synthesise ONE deep coaching report. Talk DIRECTLY to the player as 'you', like a "
-                f"coach — for each point say what you did, WHY it helped or hurt, and exactly what to "
+                f"coach - for each point say what you did, WHY it helped or hurt, and exactly what to "
                 f"do instead. Find RECURRING patterns, be BALANCED (real strengths AND weaknesses), "
-                f"4-6 items per list.\n"
+                f"{_EVIDENCE_RULES}"
                 f"NAME the user's players (use the names in the observations, e.g. 'Cancelo drifted "
                 f"inside'). CONTROLS: for every mistake/weakness, prescribe the EXACT FC 26 input the "
-                f"user should have used at that moment, drawn from the knowledge above — e.g. "
+                f"user should have used at that moment, drawn from the knowledge above - e.g. "
                 f"'manual-switch (Right Stick flick) to your CB before their through-ball', 'jockey "
                 f"with L2/LT instead of lunging', 'clear with the shoot button (not a pass)'. Be "
                 f"specific about the button/stick, not vague.\n"
+                f"NAME THE OUTLET. When the fix is 'pass to someone else', say WHO - the player's "
+                f"name or shirt number from the observations, not 'a wide man' or 'the free player'. "
+                f"And say what that pass is FOR: 'switch to your left winger and hold him level with "
+                f"their six-yard box so their back line drops, which opens the space for your "
+                f"striker' is coachable; 'use the width' is not.\n"
                 f"COACHING METHOD: diagnose the recurring PATTERN, give its ROOT CAUSE (why it cost "
                 f"you), lead with the single BIGGEST fix first, and where the OPPONENT exploited you "
                 f"name the specific COUNTER. Reference a meta principle, a formation/role tweak, or "
                 f"the PRO REFERENCE from the knowledge above when it fits.\n"
-                f"ERROR TYPE: classify each mistake and PREFIX it — '[Mechanical]' = wrong INPUT for "
+                f"ERROR TYPE: classify each mistake and PREFIX it - '[Mechanical]' = wrong INPUT for "
                 f"the situation (fix = the exact button/stick to press, practised in isolation) or "
                 f"'[Decision]' = right input but wrong READ (fix = the positioning/game-sense "
                 f"reasoning, not a button). The fix must match the type.\n"
-                f"META CAVEAT: any formation/meta/'current-meta' advice may go stale after a patch — "
-                f"mark it '(meta — verify post-patch)'.\n"
+                f"META CAVEAT: any formation/meta/'current-meta' advice may go stale after a patch - "
+                f"mark it '(meta - verify post-patch)'.\n"
                 f"GROUNDING RULE: base every point ONLY on the observations above. For each item set "
                 f"'evidence_ids' = the numbers of the observations it is based on (e.g. [4, 12]). Do "
                 f"NOT claim anything not supported by an observation. Practice-drill items may have "
@@ -1543,9 +1994,10 @@ class GeminiVideoCoaching(Stage):
                 f"this player's weaknesses this match (exact tag strings only). And set 'score' = the "
                 f"FINAL score {{home, away}} you read from the scoreboard/observations.\n"
                 f"{goals_instr}"
-                f"STATS: set 'stats' with integer counts you observed — shots, big_chances, goals_for, "
+                f"STATS: set 'stats' with integer counts you observed - shots, big_chances, goals_for, "
                 f"goals_against, goals_conceded_from_crosses, defensive_errors. "
-                f"FORMATION: set 'formation' = the user's shape if you can tell (e.g. '4-2-3-1'), else ''."
+                f"FORMATION: set 'formation' = the user's shape if you can tell (e.g. '4-2-3-1'), else ''.\n"
+                f"{_TEMPLATE_INSTRUCTIONS}"
             )
             ctx.emit(self.name, "synthesising", f"deep coaching write-up on {s.gemini_video_synth_model}")
             try:
@@ -1569,7 +2021,7 @@ class GeminiVideoCoaching(Stage):
                     model_used, synth_cost = syn_res.model, syn_res.cost_usd
                 else:
                     ctx.match.warnings.append(
-                        "synthesis returned no summary (likely truncated) — using raw observation log."
+                        "synthesis returned no summary (likely truncated) - using raw observation log."
                     )
             except Exception as exc:  # noqa: BLE001
                 ctx.match.warnings.append(f"video synthesis failed, using raw log: {exc}")
@@ -1584,20 +2036,21 @@ class GeminiVideoCoaching(Stage):
             d = {"summary": "Whole-match video read (observation log).",
                  "recurring_mistakes": observations[:8], "strengths": [],
                  "positioning_issues": [], "decision_patterns": [], "practice_drills": []}
-        # The scoreboard goal timeline is deterministic — keep it even when the
+        # The scoreboard goal timeline is deterministic - keep it even when the
         # synthesis failed to fill in the descriptions.
         if det_goals and not d.get("goals"):
             d["goals"] = _reconcile_goals(det_goals, [])
+        # Same authority rule as the single-call path: the title and the report body
+        # must not be able to state different scores.
+        _restate_result(d, ctx.match.outcome, side)
 
         ctx.match.insights = [
             Insight(
                 scope="match", kind="coaching_report", summary=str(d.get("summary", "")),
                 payload={
-                    "strengths": d.get("strengths", []),
-                    "recurring_mistakes": d.get("recurring_mistakes", []),
-                    "positioning_issues": d.get("positioning_issues", []),
-                    "decision_patterns": d.get("decision_patterns", []),
-                    "practice_drills": d.get("practice_drills", []),
+                    "strengths": _clean_points(d.get("strengths")),
+                    "recurring_mistakes": _clean_points(d.get("recurring_mistakes")),
+                    **_template_payload(d),
                     "player_side": side, "analysis": "gemini_video",
                     "your_team": your_team,
                     "roster": my_roster,
@@ -1615,7 +2068,7 @@ class GeminiVideoCoaching(Stage):
                     "evidence_log": observations[:30],
                 },
                 model=model_used,
-                # Honest cost of THIS report: every model call that fed it —
+                # Honest cost of THIS report: every model call that fed it -
                 # watch + synthesis + scoreboard/goal-timeline reads + deep goal reads.
                 cost_usd=round(watch_cost + synth_cost + score_cost + deep_cost, 6),
             )
@@ -1669,43 +2122,40 @@ class GeminiVideoCoaching(Stage):
         obadge = "RIGHT" if side == "home" else "LEFT"
         playbook = adapter.coaching_playbook("")
         history = _history_block(ctx.player_history, adapter.issue_vocabulary())
-        control = str(ctx.match.capture.get("control_scheme", "")).strip()
-        skill = str(ctx.match.capture.get("skill_level", "")).strip()
-        player_ctx = ""
-        if control:
-            player_ctx += f"The player uses {control} controls — give inputs for {control}. "
-        if skill:
-            deep = skill.lower() in ("pro", "competitive", "elite")
-            player_ctx += (f"Skill level: {skill} — "
-                           + ("go deep, meta-aware." if deep else "explain fundamentals simply."))
+        player_ctx = _player_block(ctx.match.capture)
 
         prompt = (
             f"You are an elite EA Sports FC 26 coach. Watch this ENTIRE match video and coach the "
             f"'{side}' team (the user). This is human-vs-human, so do NOT use the controlled-player "
             f"arrow to pick the user.\n"
             f"IDENTIFY THE USER'S TEAM FIRST: the scoreboard (top-left) shows HOME on the TOP row and "
-            f"AWAY on the BOTTOM — the user is '{side}', the {srow} row. The bottom bar's {sbadge} "
-            f"on-ball name badge is the USER'S player; the {obadge} badge is the OPPONENT — never "
+            f"AWAY on the BOTTOM - the user is '{side}', the {srow} row. The bottom bar's {sbadge} "
+            f"on-ball name badge is the USER'S player; the {obadge} badge is the OPPONENT - never "
             f"credit the opponent's actions to the user. Follow the user's team by KIT colour across "
             f"half-time (ends switch, kit + scoreboard row stay).\n\n"
             f"{player_ctx}\n\n{playbook}\n\n{history}\n\n{lens}\n\n"
             f"Write ONE deep coaching report, talking DIRECTLY to the player as 'you'. For each point: "
             f"what you did, WHY it helped/hurt, and the EXACT FC 26 input or positioning to use instead. "
-            f"Find RECURRING patterns, be BALANCED (real strengths AND weaknesses), 4-6 items per list. "
-            f"NAME the user's players (read from the {sbadge} badge); never invent names. "
-            f"Prefix each mistake '[Mechanical]' (wrong input) or '[Decision]' (wrong read). Mark any "
-            f"meta/formation advice '(meta — verify post-patch)'.\n"
-            f"TIMESTAMPS: END every item in strengths, recurring_mistakes, positioning_issues and "
-            f"decision_patterns with the VIDEO timestamp(s) where you saw it, in parentheses — e.g. "
+            f"Find RECURRING patterns and be BALANCED (real strengths AND weaknesses).\n"
+            f"{_EVIDENCE_RULES}"
+            f"NAME the user's players (read from the {sbadge} badge); never invent names. Mark any "
+            f"meta/formation advice '(meta - verify post-patch)'.\n"
+            f"NAME THE OUTLET. When the fix is 'pass to someone else', say WHO - the player's name "
+            f"or shirt number, not 'a wide man'. And say what the pass is FOR: 'switch to your left "
+            f"winger and hold him level with their six-yard box so their back line drops, opening "
+            f"space for your striker' is coachable; 'use the width' is not.\n"
+            f"TIMESTAMPS: END every item in strengths and recurring_mistakes with the VIDEO "
+            f"timestamp(s) where you saw it, in parentheses - e.g. "
             f"'... jockey instead. (03:12)' or '... (01:40, 06:05)'. This MUST be the elapsed position "
             f"in THIS video clip (time from the start of the clip), NOT the in-game match clock shown on "
             f"the scoreboard. The clip is only a few minutes long, so every timestamp must be within the "
-            f"clip's real duration. This lets the player jump to the exact moment — every point needs at least one.\n"
+            f"clip's real duration. This lets the player jump to the exact moment - every point needs at least one.\n"
             f"Read the on-screen scoreboard for the FINAL score and set 'score' {{home, away}}. The "
-            f"'goals' list must total EXACTLY (home+away) goals — one entry each: time (MM:SS), type "
+            f"'goals' list must total EXACTLY (home+away) goals - one entry each: time (MM:SS), type "
             f"('scored'|'conceded'), summary (what happened + which player), and a 'fix' for conceded "
             f"ones. Set 'stats' (integer counts you saw), 'formation' if identifiable, and "
-            f"'weakness_tags' (2-5 from the tag list above)."
+            f"'weakness_tags' (2-5 from the tag list above).\n"
+            f"{_TEMPLATE_INSTRUCTIONS}"
         )
 
         if s.gemini_video_compress:
@@ -1713,6 +2163,17 @@ class GeminiVideoCoaching(Stage):
             video_bytes = _compress_video(ctx.source_bytes)
         else:
             video_bytes = ctx.source_bytes
+
+        # The scoreboard read and the coaching read need nothing from each other -
+        # one wants frames, the other the uploaded video - but they ran back to
+        # back, so the whole scoreboard phase was dead time added to the total.
+        # Started here and collected after, it hides inside the coaching call.
+        score_pool = score_future = None
+        if s.gemini_score_read and ctx.source_bytes:
+            from concurrent.futures import ThreadPoolExecutor as _TPE
+            ctx.emit(self.name, "scoring", "reading the scoreboard timeline")
+            score_pool = _TPE(max_workers=1)
+            score_future = score_pool.submit(_read_score_timeline, ctx.source_bytes, s)
 
         ctx.emit(self.name, "running", f"single-call coaching read on {s.gemini_video_model}")
         # The file is uploaded once (prepare); retry the generate on an empty/truncated
@@ -1737,7 +2198,7 @@ class GeminiVideoCoaching(Stage):
             d = res.data or {}
             if d.get("summary"):
                 break
-            ctx.emit(self.name, "retry", "empty response — retrying the coaching read")
+            ctx.emit(self.name, "retry", "empty response - retrying the coaching read")
 
         if not d.get("summary"):
             ctx.match.warnings.append("single-call report returned no summary (truncated?). Try again.")
@@ -1758,10 +2219,10 @@ class GeminiVideoCoaching(Stage):
         # accurate final score + timed goal-by-goal, without the deep per-goal reads.
         goals = d.get("goals", [])
         score_cost = 0.0
-        if s.gemini_score_read and ctx.source_bytes:
-            ctx.emit(self.name, "scoring", "reading the scoreboard timeline")
+        if score_future is not None:
             try:
-                timeline = _read_score_timeline(ctx.source_bytes, s)
+                # Already running; usually finished while the coaching read worked.
+                timeline = score_future.result(timeout=300)
                 if timeline and timeline.get("final"):
                     sb = timeline["final"]
                     score_cost = timeline.get("cost_usd", 0.0) or 0.0
@@ -1777,16 +2238,25 @@ class GeminiVideoCoaching(Stage):
                              f"scoreboard: {sb['home']}-{sb['away']} ({len(det_goals)} goals timed)")
             except Exception as exc:  # noqa: BLE001
                 ctx.match.warnings.append(f"scoreboard score read failed: {exc}")
+            finally:
+                if score_pool is not None:
+                    score_pool.shutdown(wait=False)
+
+        # The report's MATCH CONTEXT line and the match title came from two
+        # independent sources - the model's own read while watching, and the
+        # deterministic scoreboard timeline - with nothing reconciling them. When
+        # they disagreed the document contradicted itself: a real report was headed
+        # 5-2 and opened with "11-3 Win". The timeline is the authority (that is the
+        # entire reason it exists), so restate the result from it.
+        _restate_result(d, ctx.match.outcome, side)
 
         ctx.match.insights = [
             Insight(
                 scope="match", kind="coaching_report", summary=str(d.get("summary", "")),
                 payload={
-                    "strengths": d.get("strengths", []),
-                    "recurring_mistakes": d.get("recurring_mistakes", []),
-                    "positioning_issues": d.get("positioning_issues", []),
-                    "decision_patterns": d.get("decision_patterns", []),
-                    "practice_drills": d.get("practice_drills", []),
+                    "strengths": _clean_points(d.get("strengths")),
+                    "recurring_mistakes": _clean_points(d.get("recurring_mistakes")),
+                    **_template_payload(d),
                     "player_side": side, "analysis": "gemini_video_single",
                     "weakness_tags": [str(t) for t in (d.get("weakness_tags") or [])],
                     "goals": goals,
@@ -1803,7 +2273,7 @@ class GeminiVideoCoaching(Stage):
     @staticmethod
     def _charge_soft(ctx: PipelineContext, label: str, usd: float) -> None:
         """Record already-spent money so the reported total is honest, even if it
-        pushes over the cap (unlike a pre-flight charge, this can't be halted — the
+        pushes over the cap (unlike a pre-flight charge, this can't be halted - the
         API call already happened). Falls back to a direct append on BudgetExceeded."""
         try:
             ctx.cost.charge(label, usd)
@@ -1863,5 +2333,5 @@ DEFAULT_STAGES: list[Stage] = [
     HighlightClips(),
 ]
 
-# Native whole-video path (Gemini) — one stage, no frame extraction.
+# Native whole-video path (Gemini) - one stage, no frame extraction.
 VIDEO_NATIVE_STAGES: list[Stage] = [GeminiVideoCoaching()]

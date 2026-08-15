@@ -160,7 +160,7 @@ export function App() {
         const m = await getMatch(matchId);
         if (terminal.includes(m.status)) return finish(m);
       } catch {
-        /* transient network — keep polling */
+        /* transient network - keep polling */
       }
       if (Date.now() - startedAt < 8 * 60 * 1000) setTimeout(poll, 3000);
       else {
@@ -175,7 +175,7 @@ export function App() {
     esRef.current = es;
     es.addEventListener("progress", (e: MessageEvent) => {
       const d = JSON.parse(e.data);
-      addLog(`[${d.stage}] ${d.status}${d.detail ? " — " + d.detail : ""}`);
+      addLog(`[${d.stage}] ${d.status}${d.detail ? " - " + d.detail : ""}`);
     });
     es.addEventListener("done", async () => {
       es.close();
@@ -196,7 +196,7 @@ export function App() {
 
   return (
     <div style={{ fontFamily: "monospace", maxWidth: 900, margin: "20px auto", padding: 12 }}>
-      <h2>Coach.io — Phase 0 (OCR reliability test)</h2>
+      <h2>Coach.io - Phase 0 (OCR reliability test)</h2>
       <p style={{ color: "#666" }}>
         Drop a match clip. Frames are extracted <b>in your browser</b> and only the frames upload.
         The backend reads the HUD (OCR) and runs event/insight analysis (local or cloud).
@@ -326,7 +326,7 @@ export function App() {
             .map((rep: any) => (
               <div key={rep.id} style={{ border: "2px solid #0a6", borderRadius: 6, padding: 14, marginTop: 12 }}>
                 <h3 style={{ marginTop: 0 }}>
-                  🎯 Coaching report{rep.payload?.player_side ? ` — you = ${rep.payload.player_side}` : ""}
+                  🎯 Coaching report{rep.payload?.player_side ? ` - you = ${rep.payload.player_side}` : ""}
                 </h3>
                 <p style={{ fontSize: 15 }}>{rep.summary}</p>
                 {[
@@ -422,12 +422,12 @@ export function App() {
             {trends.map((t) => (
               <tr key={t.key}>
                 <td>{t.label}</td>
-                <td>{t.latest ?? "—"}{t.unit ?? ""}</td>
-                <td>{t.previous ?? "—"}</td>
-                <td>{t.delta ?? "—"}</td>
-                <td>{t.average ?? "—"}</td>
+                <td>{t.latest ?? "-"}{t.unit ?? ""}</td>
+                <td>{t.previous ?? "-"}</td>
+                <td>{t.delta ?? "-"}</td>
+                <td>{t.average ?? "-"}</td>
                 <td>{t.points?.length ?? 0}</td>
-                <td>{t.improving === null ? "—" : t.improving ? "↑ yes" : "↓ no"}</td>
+                <td>{t.improving === null ? "-" : t.improving ? "↑ yes" : "↓ no"}</td>
               </tr>
             ))}
           </tbody>

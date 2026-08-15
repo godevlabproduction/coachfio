@@ -1,0 +1,1764 @@
+/* =============================================================================
+   Coach.io - design system
+
+   Minimal, dark, flat. The character comes from typography, spacing rhythm and
+   restraint - NOT from decoration. Deliberately absent: glows, gradients,
+   background textures, condensed uppercase display type, drop shadows, hover
+   translations. Every one of those was tried and removed; don't reintroduce them.
+
+   Colour rules
+   - Greys carry all structure.
+   - The accent appears on the primary button, the active nav item, and nothing else.
+   - Semantic colour (green/red/amber/blue) appears ONLY where it carries meaning:
+     the category icon on a coaching card, and win/loss/draw state. Never as decoration.
+
+   `data-cx-*` attributes are JS hooks. Do not style them; do not remove them.
+   ========================================================================== */
+
+/* ---------- tokens ------------------------------------------------------- */
+:root {
+  /* Softened dark. Pure black makes hairline borders shout and flattens depth.
+     The surface steps were originally 5 points apart, which on a dark screen is
+     almost nothing - every page read as one flat sheet with hairlines drawn on
+     it. Widened so a card reads as an object sitting ON the page. */
+  /* Palette from the design tokens. The canvas is BLUE-tinted near-black
+     (#0C1118 is R12 G17 B24), not green - green appears only as the accent.
+     Getting that backwards is what made the earlier attempt look wrong.
+     Local names are kept because the whole stylesheet references them; the
+     comment on each line is the token it came from. */
+  --bg: #0C1118;          /* bg-primary   */
+  --surface-1: #151A21;   /* bg-card      - cards, table body */
+  --surface-2: #20262E;   /* control-bg   - inputs, hover, table head */
+  --surface-3: #262D35;   /* control-hover- pressed / wells */
+  --elevated: #171C23;    /* bg-elevated  */
+  --input-bg: #161B22;    /* input-bg     */
+
+  /* Solid, not alpha: the tokens specify real colours, and alpha borders shift
+     tone depending on what is behind them. */
+  --border: #293039;
+  --border-strong: #303740;
+  --border-focus: #3A424C;
+  --divider: #222931;
+
+  --text: #F1F3F5;        /* text-primary  */
+  --text-secondary: #C4CBD3;
+  --text-muted: #9AA3AD;  /* text-muted    */
+  --text-faint: #747E89;  /* text-subtle   */
+  --text-disabled: #5F6975;
+
+  --accent: #48C674;      /* green         */
+  /* The token's green-hover (#46C575) is visually identical to the base, which
+     would make hover feel dead - lifted just enough to register. */
+  --accent-hover: #5BD186;
+  --accent-dark: #39A962;
+  --accent-fg: #0C1118;   /* dark text on a green fill */
+  --accent-soft: #153326; /* green-subtle  */
+  --accent-line: #1D4A35; /* green-surface */
+
+  /* Semantic only. Muted so a grid of them reads calm. */
+  --good: #48C674;
+  --good-soft: #153326;
+  --bad: #D85C6B;         /* danger        */
+  --bad-soft: #3A242A;    /* danger-bg     */
+  --warn: #D3A25E;
+  --warn-soft: rgba(211, 162, 94, 0.13);
+  --info: #7FA9D8;
+  --info-soft: rgba(127, 169, 216, 0.14);
+
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --r-sm: 5px;
+  --r-md: 7px;
+  --r-lg: 10px;
+
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+
+  --nav-h: 56px;
+  --container: 1120px;
+  --pad: 20px;
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+
+@media (min-width: 768px) { :root { --pad: 32px; } }
+
+/* ---------- reset -------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+/* Tells the browser to render NATIVE UI dark: the <select> dropdown popup, form
+   control internals, scrollbars, autofill. The open option list is drawn by the
+   OS and cannot be styled with CSS - this is the only thing that themes it, and
+   without it a dark page opens a white dropdown. */
+:root { color-scheme: dark; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+/* The UA rule for [hidden] is display:none, but ANY author display wins over it.
+   Several components here set display (.badge is inline-flex, .row is flex), so
+   `el.hidden = true` silently did nothing on them - the unread badge rendered
+   "0 new" while believing it was hidden. Make hidden actually hide. */
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+/* Press feedback. A scale, not a translate: hover translations are deliberately
+   absent here, but a control that does nothing when clicked feels broken. */
+.btn, .chip, .segmented__btn, .role-pick__opt, .level-pick__opt {
+  transition: transform .09s ease, background-color .12s ease, border-color .12s ease;
+}
+.btn:active, .chip:active, .segmented__btn:active,
+.role-pick__opt:active, .level-pick__opt:active { transform: scale(.985); }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; padding: 0; }
+
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: var(--r-sm); }
+::selection { background: var(--accent-soft); color: var(--text); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: #39404a; }
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal; font-style: normal; line-height: 1;
+  letter-spacing: normal; text-transform: none; display: inline-block;
+  white-space: nowrap; word-wrap: normal; direction: ltr;
+  -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-size: 19px; flex: none;
+}
+.icon-sm { font-size: 16px; }
+.filled { font-variation-settings: "FILL" 1; }
+
+/* ---------- typography --------------------------------------------------- */
+h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; letter-spacing: -0.012em; }
+
+.t-display { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.t-title   { font-size: 19px; font-weight: 600; letter-spacing: -0.015em; }
+.t-section { font-size: 15px; font-weight: 600; }
+.t-sm      { font-size: 13.5px; }
+.t-xs      { font-size: 12.5px; }
+
+.muted { color: var(--text-muted); }
+.faint { color: var(--text-faint); }
+.mono  { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* A quiet caption above a title. The only uppercase in the system. */
+.eyebrow {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+@media (min-width: 768px) { .t-display { font-size: 30px; } }
+
+/* ---------- layout ------------------------------------------------------- */
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--pad); }
+.page { padding-top: var(--s6); padding-bottom: calc(var(--s8) + 64px); }
+@media (min-width: 768px) { .page { padding-bottom: var(--s8); } }
+
+.stack   { display: flex; flex-direction: column; gap: var(--s5); }
+.stack-s { display: flex; flex-direction: column; gap: var(--s2); }
+.row     { display: flex; align-items: center; gap: var(--s3); }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1 1 auto; min-width: 0; }
+
+.grid { display: grid; gap: var(--s3); }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); } }
+
+.grid-fill > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+.split { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); align-items: start; gap: var(--s6); }
+/* Office: the client list is a compact index and the panel carries everything,
+   so the usual 1.8/1 is the wrong way round here. */
+.split--panel { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--s5); }
+.split--even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 900px) { .split--even { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 900px) { .split--panel { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 900px) { .split { grid-template-columns: minmax(0, 1fr); } }
+
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--s4); flex-wrap: wrap;
+  padding-bottom: var(--s4); margin-bottom: var(--s6);
+  border-bottom: 1px solid var(--border);
+}
+.page-head__sub { color: var(--text-muted); margin-top: 6px; font-size: 14px; }
+
+/* The score line on report/moments. A number and a badge - no panel, no bloom. */
+.scoreline { display: flex; align-items: center; gap: var(--s3); margin-top: 6px; }
+.scoreline__value {
+  font-family: var(--mono);
+  font-size: 30px; font-weight: 600; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 768px) { .scoreline__value { font-size: 34px; } }
+
+.section { margin-bottom: var(--s7); }
+.section__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s3); margin-bottom: var(--s3);
+}
+
+/* ---------- app bar ------------------------------------------------------ */
+.appbar {
+  position: sticky; top: 0; z-index: 50; height: var(--nav-h);
+  /* Surface, not page: the bar is chrome and should sit visibly above the
+     content scrolling under it. On the old near-black canvas the two were
+     indistinguishable, so the bar looked like part of the page. */
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+}
+.appbar__inner {
+  height: 100%; display: flex; align-items: center; gap: var(--s6);
+  max-width: var(--container); margin-inline: auto; padding-inline: var(--pad);
+}
+
+.brand {
+  display: inline-flex; align-items: center; gap: var(--s2);
+  font-size: 15px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap;
+}
+.brand__mark {
+  width: 22px; height: 22px; border-radius: var(--r-sm);
+  background: var(--accent-soft); color: var(--accent);
+  border: 1px solid var(--accent-line);
+  display: grid; place-items: center;
+}
+.brand__mark .material-symbols-outlined { font-size: 14px; }
+
+.nav { display: none; align-items: center; gap: var(--s1); }
+@media (min-width: 768px) { .nav { display: flex; } }
+
+.nav__link {
+  padding: 6px 10px; border-radius: var(--r-sm);
+  font-size: 14px; color: var(--text-muted);
+  transition: color .12s ease, background-color .12s ease;
+}
+.nav__link:hover { color: var(--text); background: var(--surface-2); }
+.nav__link[aria-current="page"] { color: var(--text); background: var(--surface-2); font-weight: 500; }
+
+.appbar__end { margin-left: auto; display: flex; align-items: center; gap: var(--s2); }
+
+/* ---------- mobile tab bar ---------------------------------------------- */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; display: flex;
+  background: var(--bg); border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 768px) { .tabbar { display: none; } }
+
+.tabbar__item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 9px 4px 8px; font-size: 11px; color: var(--text-faint);
+  transition: color .12s ease;
+}
+.tabbar__item .material-symbols-outlined { font-size: 20px; }
+.tabbar__item[aria-current="page"] { color: var(--text); }
+
+/* ---------- buttons ------------------------------------------------------ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 34px; padding: 0 14px; border-radius: var(--r-md);
+  border: 1px solid transparent; font-size: 14px; font-weight: 500;
+  white-space: nowrap;
+  transition: background-color .12s ease, border-color .12s ease, color .12s ease;
+}
+.btn:disabled { opacity: .5; pointer-events: none; }
+.btn .material-symbols-outlined { font-size: 17px; }
+
+.btn--primary { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.btn--primary:hover { background: var(--accent-hover); }
+
+.btn--secondary { background: var(--surface-2); border-color: var(--border); color: var(--text); }
+.btn--secondary:hover { background: var(--surface-3); border-color: var(--border-strong); }
+
+.btn--ghost { color: var(--text-muted); }
+.btn--ghost:hover { background: var(--surface-2); color: var(--text); }
+
+.btn--lg { height: 40px; padding: 0 18px; }
+.btn--sm { height: 29px; padding: 0 10px; font-size: 13px; }
+.btn--block { width: 100%; }
+
+.link { color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); }
+.link:hover { color: var(--text); text-decoration-color: currentColor; }
+
+/* ---------- surfaces ----------------------------------------------------- */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+}
+.card--flush { padding: 0; overflow: hidden; }
+
+.card__head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s3); }
+.card__title { font-size: 14.5px; font-weight: 600; }
+
+/* Semantic colour lives here and essentially nowhere else: the category icon is
+   what lets a grid of coaching cards be scanned by type at a glance. */
+.tile {
+  width: 26px; height: 26px; border-radius: var(--r-sm);
+  display: grid; place-items: center; flex: none;
+  background: var(--surface-3); color: var(--text-muted);
+}
+.tile .material-symbols-outlined { font-size: 16px; }
+.tile--accent { background: var(--good-soft); color: var(--good); }
+.tile--danger { background: var(--bad-soft);  color: var(--bad); }
+.tile--warn   { background: var(--warn-soft); color: var(--warn); }
+.tile--info   { background: var(--info-soft); color: var(--info); }
+
+.well { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-md); padding: var(--s3); }
+.divider { height: 1px; background: var(--border); border: 0; }
+
+/* ---------- badges + chips ---------------------------------------------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 21px; padding: 0 7px; border-radius: var(--r-sm);
+  font-size: 12px; font-weight: 500;
+  border: 1px solid transparent;
+}
+.badge--win  { background: var(--good-soft); color: var(--good); }
+.badge--loss { background: var(--bad-soft);  color: var(--bad); }
+.badge--draw,
+.badge--neutral { background: var(--surface-3); color: var(--text-muted); }
+.badge--info { background: var(--info-soft); color: var(--info); }
+/* Event-log severity. 'medium' needed an amber that carries meaning without
+   reading as an error the way --loss does. */
+.badge--warn { background: var(--warn-soft); color: var(--warn); }
+
+/* W / L / D marker in lists and tables. */
+.result {
+  width: 26px; height: 26px; border-radius: var(--r-sm);
+  display: grid; place-items: center; flex: none;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+}
+.result--win  { background: var(--good-soft); color: var(--good); }
+.result--loss { background: var(--bad-soft);  color: var(--bad); }
+.result--draw { background: var(--surface-3); color: var(--text-muted); }
+
+/* Timestamp chip - clickable, jumps to the moment viewer. */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 0 8px; border-radius: var(--r-sm);
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-muted); font-family: var(--mono); font-size: 12px;
+  transition: background-color .12s ease, color .12s ease, border-color .12s ease;
+}
+.chip:hover { background: var(--surface-3); color: var(--text); border-color: var(--border-strong); }
+.chip .material-symbols-outlined { font-size: 13px; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* ---------- forms -------------------------------------------------------- */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field__label { font-size: 12.5px; font-weight: 500; color: var(--text-muted); }
+
+.input, .select {
+  height: 32px; padding: 0 9px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-md); color: var(--text); font-size: 13.5px;
+  transition: border-color .12s ease;
+}
+.input:hover, .select:hover { border-color: var(--border-strong); }
+.input:focus, .select:focus { outline: none; border-color: var(--accent); box-shadow: var(--ring); }
+
+/* Honoured by Chrome/Edge on Windows and Linux; macOS draws the popup itself and
+   only responds to `color-scheme` above. Set both so it looks right everywhere. */
+.select option,
+.select optgroup {
+  background-color: var(--surface-2);
+  color: var(--text);
+  padding: 4px 8px;
+}
+.select option:checked { background-color: var(--surface-3); }
+.select option:disabled { color: var(--text-faint); }
+
+.select {
+  appearance: none; padding-right: 28px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%239ba3ad' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center; background-size: 13px;
+}
+
+.segmented {
+  display: inline-flex; padding: 2px; gap: 2px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md);
+}
+.segmented__btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 28px; padding: 0 12px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500; color: var(--text-muted);
+  transition: background-color .12s ease, color .12s ease;
+}
+.segmented__btn:hover { color: var(--text); }
+/* Active segment takes the accent, as in the reference - a grey-on-grey active
+   state is hard to read on this darker canvas. */
+.segmented__btn[aria-pressed="true"] {
+  background: var(--accent-soft); color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+.segmented__btn[aria-pressed="true"] .material-symbols-outlined { color: var(--accent); }
+.segmented__btn .material-symbols-outlined { font-size: 15px; }
+
+/* ---------- auth screen -------------------------------------------------- */
+/* Signed out there is no nav, so the form owns the whole viewport. */
+/* Signed out there is no nav, so the form owns the viewport and sits centred
+   rather than floating near the top with dead space beneath it. */
+.auth {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  margin-inline: auto;
+  padding: var(--s6) var(--pad);
+  display: grid;
+  align-content: center;
+  transition: max-width .18s ease;
+}
+/* Sign-up carries three level cards as well as the fields, so it gets room to
+   put them side by side instead of stacking into a tall narrow column. */
+.auth--wide { max-width: 780px; }
+.auth--wide .card { padding: var(--s6); }
+
+/* Equal columns so the two halves line up; the level picker spans below. */
+.auth__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); align-items: start; }
+@media (max-width: 700px) { .auth__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s5); } }
+
+.auth__title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.auth--wide .auth__title { font-size: 28px; }
+.auth__sub { color: var(--text-muted); font-size: 14px; margin-top: 6px; max-width: 52ch; }
+.auth__switch {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: var(--s4); font-size: 13.5px; color: var(--text-muted);
+}
+/* Skill picker on sign-up: compact, one line each. */
+.level-pick { display: flex; flex-direction: column; gap: 6px; }
+/* Three across when the picker spans the full card width. */
+.level-pick--row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 700px) { .level-pick--row { grid-template-columns: minmax(0, 1fr); } }
+.level-pick--row .level-pick__opt { align-items: flex-start; }
+.level-pick__opt {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px var(--s3); text-align: left;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  transition: border-color .12s ease, background-color .12s ease;
+}
+.level-pick__opt:hover { border-color: var(--border-strong); }
+.level-pick__opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.level-pick__dot {
+  width: 15px; height: 15px; border-radius: 99px; flex: none; margin-top: 3px;
+  border: 1px solid var(--border-strong);
+}
+.level-pick__opt[aria-pressed="true"] .level-pick__dot {
+  border-color: var(--accent); background: var(--accent); box-shadow: inset 0 0 0 3px var(--surface-1);
+}
+.level-pick__name { font-size: 14px; font-weight: 500; display: block; }
+.level-pick__blurb { font-size: 12.5px; color: var(--text-muted); display: block; margin-top: 1px; }
+
+/* ---------- welcome (post sign-up) --------------------------------------- */
+/* One short entrance, then the app. Same vocabulary as everything else: an
+   accent-tinted tile, a fade-and-rise of 8px, and the existing progress bar
+   reused as a "taking you in" indicator. No confetti, no bounce. Killed
+   entirely by the reduced-motion block at the bottom of this file. */
+/* Takes over the whole viewport - no app bar, no card, nothing else competing. */
+.welcome-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--s5);
+  text-align: center;
+}
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: rise-in .4s cubic-bezier(.2, .7, .3, 1) both;
+}
+
+/* Wide horizontal lockup (~3.9:1) on a transparent canvas - scaled whole, never
+   cropped, so the badge stays attached to the wordmark. Sized by width since the
+   height follows. */
+.welcome__logo {
+  width: 300px;
+  max-width: 82vw;
+  height: auto;
+  margin-bottom: var(--s5);
+  animation: rise-in .4s cubic-bezier(.2, .7, .3, 1) both;
+}
+@media (min-width: 768px) {
+  .welcome__logo { width: 440px; }
+}
+
+/* The controller charges from the bottom up. The glyph is painted with a
+   two-stop gradient clipped to the text, and the fill is the gradient sliding
+   through it - so the icon itself fills rather than a bar next to it. */
+.welcome__pad {
+  font-size: 132px;
+  line-height: 1;
+  background-image: linear-gradient(to top, var(--accent) 50%, var(--surface-3) 50%);
+  background-size: 100% 200%;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pad-charge 1.7s cubic-bezier(.35, 0, .25, 1) .15s both;
+}
+.welcome__title {
+  font-size: 34px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  margin-top: var(--s5);
+  animation: rise-in .45s cubic-bezier(.2, .7, .3, 1) .12s both;
+}
+.welcome__sub {
+  color: var(--text-muted);
+  font-size: 17px;
+  margin-top: var(--s2);
+  animation: rise-in .45s cubic-bezier(.2, .7, .3, 1) .2s both;
+}
+@media (min-width: 768px) {
+  .welcome__pad { font-size: 168px; }
+  .welcome__title { font-size: 42px; }
+  .welcome__sub { font-size: 18px; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pad-charge {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100%; }
+}
+
+/* ---------- dropzone ----------------------------------------------------- */
+.dropzone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--s2); min-height: 220px; padding: var(--s6) var(--s5); text-align: center;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong); border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: background-color .12s ease, border-color .12s ease;
+}
+.dropzone:hover, .dropzone:focus-visible { background: var(--surface-2); border-color: var(--text-faint); }
+.dropzone.is-over { border-color: var(--accent); border-style: solid; background: var(--accent-soft); }
+.dropzone.is-busy { cursor: default; pointer-events: none; }
+.dropzone__icon {
+  width: 54px; height: 54px; border-radius: var(--r-md);
+  display: grid; place-items: center; margin-bottom: var(--s3);
+  background: var(--accent-soft); color: var(--accent);
+  border: 1px solid var(--accent-line);
+}
+.dropzone__icon .material-symbols-outlined { font-size: 26px; }
+.dropzone__title { font-size: 15px; font-weight: 600; }
+.dropzone__hint { color: var(--text-faint); font-size: 13px; }
+
+/* ---------- table -------------------------------------------------------- */
+.table-wrap { border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface-1); }
+.table-scroll { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 12px; font-weight: 500;
+  color: var(--text-faint); padding: 10px var(--s4);
+  background: var(--surface-2); border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+.table td { padding: 11px var(--s4); border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table tbody tr:last-child td { border-bottom: 0; }
+.table tbody tr { transition: background-color .1s ease; }
+.table tbody tr:hover { background: var(--surface-2); }
+.table tbody tr.is-clickable { cursor: pointer; }
+.table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Ellipsis in a table needs a definite width; max-width:0 + a percentage lets
+   the cell take its share and clip the rest. */
+.table td.cell-truncate { max-width: 0; width: 55%; }
+.table td.cell-truncate > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- stats -------------------------------------------------------- */
+.stat {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: var(--s4);
+}
+.stat__label { font-size: 12.5px; color: var(--text-faint); }
+.stat__value {
+  font-family: var(--mono); font-size: 24px; font-weight: 600;
+  line-height: 1.1; margin-top: 4px; font-variant-numeric: tabular-nums;
+}
+.stat__delta { display: inline-flex; align-items: center; gap: 2px; font-size: 12.5px; }
+.stat__delta--up   { color: var(--good); }
+.stat__delta--down { color: var(--bad); }
+.stat__delta--flat { color: var(--text-faint); }
+.stat__delta .material-symbols-outlined { font-size: 14px; }
+/* Surplus/deficit area chart. The baseline is the player's own average for the
+   selected range; the area above it is filled in the metric's "good" colour and
+   below in the "bad" one - which way round depends on the metric, so the classes
+   are assigned in the markup, not here.
+   The two fills are the same path clipped to opposite halves of the box, which
+   is why the colour break lands exactly on the baseline. */
+.dev {
+  position: relative;
+  height: 66px;
+  margin-top: 20px;
+}
+.dev__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  /* Wipes in from the left. A stroke-dash draw does not compose with
+     vector-effect="non-scaling-stroke", and there is no path length to animate
+     on a filled area anyway. */
+  animation: dev-wipe .6s cubic-bezier(.3, 0, .2, 1) both;
+}
+@keyframes dev-wipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+.dev__fill { stroke: none; opacity: .5; }
+.dev__line { fill: none; stroke-width: 1.5; stroke-linejoin: round; opacity: .95; }
+.dev__fill.is-good, .dev__line.is-good { fill: var(--good); stroke: var(--good); }
+.dev__fill.is-bad,  .dev__line.is-bad  { fill: var(--bad);  stroke: var(--bad); }
+.dev__fill.is-flat, .dev__line.is-flat { fill: var(--text-faint); stroke: var(--text-faint); }
+.dev__line.is-good, .dev__line.is-bad, .dev__line.is-flat { fill: none; }
+
+.dev__axis {
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  border-top: 1px dashed var(--border-strong);
+}
+
+/* Invisible hover zones, one per match, centred on their own point. */
+.dev__pt { position: absolute; top: 0; bottom: 0; }
+.dev__dot {
+  position: absolute;
+  left: var(--cx); top: var(--y);
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 0 2px var(--surface-1);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform .12s ease;
+}
+/* Only the latest match is marked by default; the rest appear on hover. */
+.dev__pt--now .dev__dot,
+.dev__pt:hover .dev__dot { transform: translate(-50%, -50%) scale(1); }
+
+/* Hover readout, always above its point. The first and last zones pin their card
+   to the chart edge instead of centring - their point sits on the very edge. */
+.dev__tip {
+  position: absolute;
+  bottom: calc(100% - var(--y) + 10px);
+  left: var(--cx);
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 5px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--text);
+  white-space: nowrap; line-height: 1.25;
+  opacity: 0; pointer-events: none;
+  transition: opacity .12s ease;
+}
+.dev__tip b { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+.dev__tip i { font-style: normal; font-size: 11px; color: var(--text-muted); }
+.dev__pt--first .dev__tip { left: 0; transform: none; }
+.dev__pt--last  .dev__tip { left: auto; right: 0; transform: none; }
+.dev__pt:hover .dev__tip { opacity: 1; }
+
+/* The card needs a stacking context, or a later sibling paints over the tip. */
+.stat { position: relative; z-index: 0; }
+.stat:hover { z-index: 3; }
+
+/* ---------- roles, chat, checkboard --------------------------------------- */
+/* Player-or-coach choice on sign-up. Same bones as .level-pick. */
+.role-pick {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+  margin-bottom: 20px;
+}
+.role-pick__opt {
+  display: flex; align-items: flex-start; gap: 10px;
+  text-align: left;
+  padding: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  transition: border-color .12s ease, background .12s ease;
+}
+.role-pick__opt .material-symbols-outlined { margin-top: 2px; color: var(--text-muted); }
+.role-pick__opt[aria-pressed="true"] {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.role-pick__opt[aria-pressed="true"] .material-symbols-outlined { color: var(--accent); }
+@media (max-width: 520px) { .role-pick { grid-template-columns: minmax(0, 1fr); } }
+
+/* Checkbox rows (consent + the practice checkboard). */
+.check { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.check input {
+  width: 16px; height: 16px; margin-top: 3px; flex: none;
+  accent-color: var(--accent);
+}
+.check--row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.check--row:last-child { border-bottom: 0; padding-bottom: 0; }
+.check--row:first-child { padding-top: 0; }
+/* Ticked items dim - done is done. */
+.check--row:has(input:checked) span { color: var(--text-faint); }
+.check--row:has(input:checked) strong { text-decoration: line-through; }
+
+/* Chat. A fixed-height scroll area, or a long thread makes the page unusable. */
+.chat {
+  display: flex; flex-direction: column;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+/* The whole header is the toggle - a small chevron-only hit area is the usual
+   way this gets built and the usual way it gets missed. */
+.chat__head {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: inherit;
+  transition: background-color .12s ease;
+}
+.chat__head:hover { background: var(--surface-2); }
+.chat__chev { margin-left: auto; color: var(--text-muted); transition: transform .16s ease; }
+.chat__unread { margin-left: auto; }
+/* When there is a badge, it takes the auto margin and the chevron sits after it. */
+.chat__unread:not([hidden]) ~ .chat__chev { margin-left: 8px; }
+
+/* display:none cannot be transitioned, so the body carries the motion. The cap
+   is generous rather than exact - it only has to exceed the real height, and the
+   scroll area inside keeps its own overflow. */
+.chat__body {
+  max-height: 460px;
+  overflow: hidden;
+  transition: max-height .24s cubic-bezier(.3, 0, .2, 1), opacity .16s ease;
+}
+.chat.is-collapsed .chat__chev { transform: rotate(-90deg); }
+.chat.is-collapsed .chat__head { border-bottom: 0; }
+.chat.is-collapsed .chat__body { max-height: 0; opacity: 0; }
+.chat__scroll {
+  height: 320px;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.chat__composer {
+  display: flex; gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+}
+.chat__composer .input { flex: 1 1 auto; min-width: 0; }
+.msg {
+  max-width: 85%;
+  align-self: flex-start;
+  background: var(--surface-3);
+  border-radius: 10px 10px 10px 3px;
+  padding: 7px 11px;
+  font-size: 14px; line-height: 1.45;
+}
+.msg--mine {
+  align-self: flex-end;
+  background: var(--accent-soft);
+  border-radius: 10px 10px 3px 10px;
+}
+/* Only the last bubble animates. The list is re-rendered when a message
+   arrives, so animating every .msg would replay the whole thread each time. */
+.msg:last-child { animation: msg-in .22s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(4px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.msg__time {
+  display: block;
+  font-size: 10.5px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+/* Office client cards. */
+.client.is-active { border-color: var(--accent-line); }
+
+/* The one-thing-to-work-on banner in the locker. */
+.focus-card { border-left: 3px solid var(--accent); }
+.focus-card__text {
+  font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  margin: 6px 0 10px; line-height: 1.45;
+}
+
+/* ---------- home: feature band, steps, catch pills ------------------------ */
+/* Asymmetric on purpose. Three equal cards under three equal cards read as the
+   same component twice; one lead card with two stacked beside it does not. */
+.feature-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--s3);
+}
+.feature-grid__side { display: grid; gap: var(--s3); align-content: start; }
+@media (max-width: 860px) { .feature-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.feature {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+  transition: border-color .14s ease;
+}
+.feature:hover { border-color: var(--border-strong); }
+/* The lead card carries the accent - the one place on this page it appears
+   outside a button, so it reads as emphasis rather than decoration. */
+.feature--lead {
+  display: flex; flex-direction: column;
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  padding: var(--s6);
+}
+.feature--lead .feature__title { font-size: 22px; letter-spacing: -0.018em; }
+.feature--lead .feature__text { font-size: 15px; max-width: 34ch; }
+.feature__icon {
+  display: grid; place-items: center;
+  width: 40px; height: 40px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  margin-bottom: var(--s3);
+}
+.feature--lead .feature__icon {
+  width: 46px; height: 46px;
+  background: var(--accent); color: var(--accent-fg);
+}
+.feature--lead .feature__icon .material-symbols-outlined { font-size: 24px; }
+.feature__title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.feature__text { color: var(--text-muted); font-size: 14px; line-height: 1.55; margin-top: 6px; }
+/* Pushes the strapline to the bottom of the taller lead card. */
+.feature__foot { margin-top: auto; padding-top: var(--s4); }
+
+/* Concrete examples as pills - a different shape again, and the section that
+   makes the promises above believable. */
+.catch-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.catch {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  background: var(--surface-1);
+  font-size: 13.5px;
+  color: var(--text);
+}
+.catch .material-symbols-outlined { font-size: 15px; color: var(--text-faint); }
+
+/* A centred, numbered track - no cards. Three of them, identical, so the row is
+   symmetrical; the feature band above stays asymmetric, so the two sections
+   still read as different things.
+   NOT called .step*: the analysing page already owns that name and its rules are
+   defined later in this file, so they silently won and flattened this. */
+.how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s5); }
+.how__item {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
+/* Connector, drawn as TWO segments per item - left of the number and right of
+   it - rather than one line across the row. Per-side is what lets the first item
+   drop its left segment and the last drop its right, so the track begins and
+   ends on a number instead of trailing into space.
+   Only the RIGHT segment overhangs into the grid gap; the next item's left
+   segment picks up exactly at its own edge, so the dashes meet once rather than
+   being drawn twice over the same span. */
+.how__item::before,
+.how__item::after {
+  content: "";
+  position: absolute;
+  top: 17px;                      /* half the 34px number = its centre line */
+  border-top: 1px dashed var(--border-strong);
+}
+.how__item::before { left: 0; right: calc(50% + 23px); }
+.how__item::after  { left: calc(50% + 23px); right: calc(-1 * var(--s5)); }
+.how__item:first-child::before { content: none; }
+.how__item:last-child::after { content: none; }
+
+.how__n {
+  position: relative;
+  z-index: 1;                     /* sits on the connector rather than under it */
+  display: grid; place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  margin-bottom: var(--s3);
+}
+.how__title { font-size: 15px; font-weight: 600; }
+/* Capped so all three wrap to a similar number of lines rather than one running
+   long and breaking the row's symmetry. */
+.how__text {
+  color: var(--text-muted); font-size: 13.5px; line-height: 1.55;
+  margin-top: 6px; max-width: 30ch;
+}
+@media (max-width: 720px) {
+  .how { grid-template-columns: minmax(0, 1fr); gap: var(--s5); }
+  /* Stacked vertically, a horizontal connector joins nothing. */
+  .how__item::before, .how__item::after { content: none; }
+}
+
+/* Thin facts row under the hero. A different shape again - no card, just a
+   ruled strip - so the practical answers (what to upload, how long, who sees it)
+   sit near the top without competing with the pitch. */
+.facts {
+  display: flex; flex-wrap: wrap;
+  gap: var(--s3) var(--s6);
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+/* Stacked variant for a narrow column: no rules, since it sits inside a card. */
+.facts--stack {
+  flex-direction: column;
+  gap: var(--s3);
+  padding: 0;
+  border: 0;
+}
+.fact { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text-muted); }
+.fact .material-symbols-outlined { font-size: 17px; color: var(--text-faint); }
+
+/* What the report actually contains. Two columns of checked items - dense on
+   purpose: this is the section that has to prove there is substance behind the
+   promises, and a sparse version would undersell it. */
+/* Multi-column, NOT a two-column grid. A grid shares row heights across the
+   columns, so one wrapping item pushes its neighbour's spacing out and the list
+   loses its rhythm - which no amount of alignment tweaking fixes. Columns flow
+   each item independently, so the vertical gap is identical everywhere. */
+.checklist {
+  column-count: 2;
+  column-gap: var(--s6);
+}
+.checklist__item {
+  display: flex; gap: 10px; align-items: flex-start;
+  break-inside: avoid;          /* never split one item across the columns */
+  /* Roughly half a line-height. At var(--s4) the rows sat ~2.5 line-heights
+     apart and the list stopped reading as one list. */
+  margin-bottom: 11px;
+}
+.checklist__item:last-child { margin-bottom: 0; }
+@media (max-width: 760px) { .checklist { column-count: 1; } }
+/* The icon's line BOX must equal the text's, not its line-height RATIO. At 18px
+   a ratio of 1.55 gives a 27.9px box while the 14px text gives 21.7px - so
+   top-aligning the two put the glyph ~3px below the text's centre. Pinning an
+   absolute 22px makes both boxes the same height, and the glyph then centres on
+   the first line exactly. */
+.checklist__item > .material-symbols-outlined {
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--accent);
+  flex: none;
+}
+.checklist__item strong { font-weight: 600; font-size: 14px; line-height: 1.55; }
+.checklist__item span { color: var(--text-muted); font-size: 13.5px; line-height: 1.55; }
+/* A bare item (no <strong> lead) is the package list - full-strength text, since
+   it is the content rather than a caption under a heading.
+   The :not() matters: on the home page the text sits in a <div>, which makes the
+   ICON the only <span> child - so without it this rule repainted the green tick
+   grey. */
+.checklist__item > span:only-of-type:not(.material-symbols-outlined) {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+@media (max-width: 760px) { .checklist { grid-template-columns: minmax(0, 1fr); } }
+
+/* A wide band - the fourth shape on the home page, after the asymmetric cards,
+   the pills and the numbered track. Repeating any of those for this would bury
+   it; a full-width row reads as a change of subject. */
+.band {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s5);
+  padding: var(--s5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r-lg);
+}
+.band__icon {
+  display: grid; place-items: center;
+  width: 46px; height: 46px; flex: none;
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.band__icon .material-symbols-outlined { font-size: 24px; }
+.band__title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.band__text { color: var(--text-muted); font-size: 14px; line-height: 1.55; margin-top: 4px; }
+.band__actions { display: flex; gap: var(--s2); flex: none; }
+@media (max-width: 780px) {
+  .band { grid-template-columns: auto minmax(0, 1fr); }
+  .band__actions { grid-column: 1 / -1; }
+}
+
+/* ---------- numbered step cards (upload) ---------------------------------- */
+/* The step number lives in the card head, so each step is one object rather than
+   a heading floating above a box. */
+.stepcard { padding: var(--s5); background: var(--surface-1);
+  border: 1px solid var(--border); border-radius: var(--r-lg); }
+.stepcard__head {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: var(--s4); margin-bottom: var(--s4);
+  border-bottom: 1px solid var(--border);
+}
+.stepcard__n {
+  display: grid; place-items: center;
+  width: 28px; height: 28px; flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+}
+.stepcard__title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.stepcard__note { margin-left: auto; color: var(--text-faint); font-size: 12.5px; }
+
+/* Accent-outlined button. Used where an action sits inside a quiet area and a
+   solid fill would shout - the dropzone's Browse, for instance. */
+.btn--outline {
+  background: transparent;
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+}
+.btn--outline:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+/* "Good to know" facts pick up the accent, matching the reference. */
+.facts--accent .fact .material-symbols-outlined { color: var(--accent); }
+
+/* Price tag in a card head. Sits opposite the title so the number is the second
+   thing read, after what the package is. */
+.pricetag { margin-left: auto; text-align: right; flex: none; }
+.pricetag__amt {
+  font-family: var(--mono); font-size: 26px; font-weight: 600;
+  color: var(--accent); letter-spacing: -0.02em;
+}
+
+/* ---------- profile page --------------------------------------------------- */
+/* Hero banner. The accent wash and the hairline diagonals are the one place in
+   the app that carries decoration - it reads as a header rather than another
+   card, which is what stops the page looking like a stack of forms. */
+.phero {
+  position: relative;
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: var(--s5);
+  padding: var(--s6);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  /* Spec: #0C1118 -> #10241B -> #173D2A, subtle rather than bright. Runs to the
+     top-right corner so the green never sits behind the name and email. */
+  background:
+    radial-gradient(120% 150% at 100% 0%,
+      #173D2A 0%, #10241B 38%, #0C1118 72%),
+    var(--surface-1);
+  overflow: hidden;
+}
+/* Diagonal hairlines, fading in from the right so they never sit under text. */
+.phero::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(118deg,
+    transparent 0 22px, rgba(255, 255, 255, .022) 22px 23px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 45%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 45%, #000 100%);
+  pointer-events: none;
+}
+.phero > * { position: relative; z-index: 1; }
+/* One avatar component, three sizes. Initials are the DEFAULT, not a fallback
+   for a failure: a picture is optional and most accounts will not have one. */
+.avatar {
+  display: grid; place-items: center; flex: none;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  font-family: var(--mono); font-size: 14px; font-weight: 600; letter-spacing: .03em;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+.avatar--img { background: var(--surface-3); border-color: var(--border-strong); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar--sm { width: 32px; height: 32px; font-size: 12px; }
+.avatar--xl {
+  width: 118px; height: 118px; font-size: 38px;
+  border-width: 2px; border-color: var(--accent);
+}
+.avatar--img.avatar--xl { border-color: var(--accent); }
+
+/* Picture + its controls in the hero. */
+.phero__pic { position: relative; flex: none; }
+.phero__picbtn {
+  position: absolute; right: 2px; bottom: 2px;
+  display: grid; place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--accent); color: var(--accent-fg);
+  border: 2px solid var(--surface-1);
+  transition: background-color .12s ease;
+}
+.phero__picbtn:hover { background: var(--accent-hover); }
+.phero__picbtn .material-symbols-outlined { font-size: 17px; }
+.phero__picdel { display: block; text-align: center; margin-top: 8px; }
+
+/* The nav slot is the avatar itself - no label text beside it. */
+.nav__avatar { display: inline-flex; padding: 0; }
+.phero__id { flex: 1 1 260px; min-width: 0; }
+.phero__name { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+.phero__mail { color: var(--text-muted); font-size: 15px; margin-top: 4px; overflow-wrap: anywhere; }
+.phero__meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.phero__since { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; }
+.phero__since .material-symbols-outlined { font-size: 16px; color: var(--text-faint); }
+.phero__actions { display: flex; gap: var(--s2); flex: none; margin-left: auto; }
+@media (max-width: 720px) {
+  .phero { padding: var(--s5); }
+  .phero__avatar { width: 84px; height: 84px; font-size: 28px; }
+  .phero__actions { margin-left: 0; width: 100%; }
+}
+
+/* Card with its heading INSIDE it. The old page put section titles above bare
+   cards, which is why four unrelated blocks read as one long form. */
+.pcard {
+  display: flex; flex-direction: column;
+  padding: var(--s5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.pcard__head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: var(--s4); }
+/* Only the PRICE centres against the title block. Centring the whole head (which
+   is what :has() on the container did) dragged the icon down between the title
+   and its subtitle, so it read as floating rather than labelling the heading. */
+.pricetag { align-self: center; }
+/* Same rule as the ticks: match the TITLE's line box (17px x 1.6 = 27px), not a
+   ratio of the icon's own size. */
+.pcard__icon { color: var(--text-muted); flex: none; line-height: 27px; }
+.pcard__icon .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
+.pcard__title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.pcard__sub { color: var(--text-muted); font-size: 13.5px; margin-top: 2px; }
+.pcard__foot { margin-top: auto; padding-top: var(--s4); display: flex; justify-content: flex-end; }
+
+/* Filled field: the label lives inside the box, above the value. */
+.ffield {
+  display: block; position: relative;
+  padding: 9px 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  transition: border-color .12s ease;
+}
+.ffield + .ffield { margin-top: 10px; }
+.ffield:focus-within { border-color: var(--accent-line); }
+.ffield__label { display: block; font-size: 11.5px; color: var(--text-faint); }
+.ffield__input, .ffield select {
+  width: 100%; background: none; border: 0; padding: 0;
+  font-size: 15px; color: var(--text);
+  appearance: none; -webkit-appearance: none;
+}
+.ffield__input:focus, .ffield select:focus { outline: none; box-shadow: none; }
+/* Textareas in a filled field: no resize handle fighting the card layout. */
+textarea.ffield__input { resize: vertical; min-height: 84px; font-family: inherit; line-height: 1.55; }
+.ffield select { padding-right: 22px; }
+.ffield__chev {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); pointer-events: none;
+}
+
+/* Level options as radios rather than checkboxes: exactly one applies. */
+.lvl { display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left;
+  padding: 13px 14px; border: 1px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface-1); transition: border-color .12s ease, background-color .12s ease; }
+.lvl + .lvl { margin-top: 10px; }
+.lvl:hover { border-color: var(--border-strong); }
+.lvl[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.lvl__radio {
+  display: grid; place-items: center;
+  width: 21px; height: 21px; flex: none; margin-top: 1px;
+  border-radius: 50%; border: 1.5px solid var(--border-strong);
+  color: transparent;
+}
+.lvl[aria-pressed="true"] .lvl__radio {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-fg);
+}
+.lvl__radio .material-symbols-outlined { font-size: 14px; }
+.lvl__name { font-size: 15px; font-weight: 600; }
+.lvl__blurb { display: block; color: var(--text-muted); font-size: 13.5px; line-height: 1.5; margin-top: 2px; }
+
+/* Suggestion callout inside "Where you play". */
+.hint {
+  display: flex; gap: 10px;
+  margin-top: var(--s4); padding: 12px 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-md);
+  font-size: 13.5px; line-height: 1.55;
+}
+.hint .material-symbols-outlined { color: var(--accent); font-size: 18px; flex: none; }
+
+/* Usage: a ring for the proportion, a number for the answer. */
+.usage { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap;
+  padding: var(--s4); background: var(--surface-2); border-radius: var(--r-md); }
+.usage__big { font-family: var(--mono); font-size: 30px; font-weight: 600; color: var(--accent); line-height: 1.1; }
+.usage__ring { position: relative; width: 92px; height: 92px; flex: none; }
+.usage__ring svg { transform: rotate(-90deg); }
+.usage__ring-track { fill: none; stroke: var(--surface-3); stroke-width: 7; }
+.usage__ring-val { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; }
+.usage__pct {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 15px; font-weight: 600;
+}
+.usage__rest { flex: 1 1 150px; min-width: 0; }
+
+/* Footer strip. */
+.helpbar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--s4);
+  margin-top: var(--s5); padding: var(--s4) var(--s5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.helpbar__icon { color: var(--text-muted); flex: none; }
+.helpbar__actions { margin-left: auto; }
+@media (max-width: 620px) { .helpbar__actions { margin-left: 0; } }
+
+/* ---------- modal ---------------------------------------------------------- */
+/* Replaces window.confirm. The native one renders in OS chrome - white box,
+   system font, and a "localhost:8000 says" line above your copy - which is
+   jarring in a dark app and cannot be styled at all. */
+.modal {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  padding: var(--s4);
+}
+.modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(6, 9, 12, .72);
+  animation: fade-in .14s ease both;
+}
+.modal__box {
+  position: relative;
+  width: 100%; max-width: 440px;
+  padding: var(--s5);
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  animation: modal-in .18s cubic-bezier(.2, .7, .3, 1) both;
+}
+.modal__head { display: flex; align-items: center; gap: 12px; margin-bottom: var(--s3); }
+.modal__title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.modal__text { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+.modal__actions { display: flex; justify-content: flex-end; gap: var(--s2); margin-top: var(--s5); }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+/* Stop the page scrolling behind the dialog. */
+body.is-modal { overflow: hidden; }
+
+/* Destructive confirm. The only red button in the system - it must not look like
+   the primary action anywhere else. */
+.btn--danger { background: var(--bad); color: #1A0E10; }
+.btn--danger:hover { background: #E0707E; }
+
+/* ---------- tabs ----------------------------------------------------------- */
+.tabs {
+  display: flex; gap: 2px;
+  padding: 0 var(--s4);
+  border-bottom: 1px solid var(--border);
+}
+.tabs__btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 11px 12px;
+  color: var(--text-muted);
+  font-size: 13.5px; font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .12s ease, border-color .12s ease;
+}
+.tabs__btn:hover { color: var(--text); }
+.tabs__btn[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.tabs__btn .badge { height: 18px; padding: 0 6px; font-size: 11px; }
+/* The chat mounts straight into the body, so it must not add a second frame. */
+.panel__body > .chat { border: 0; border-radius: 0; background: transparent; }
+.panel__body > .chat .chat__head { display: none; }
+
+/* ---------- account: profile header + stats -------------------------------- */
+/* One identity block, not two. Name and email previously appeared in the page
+   head AND again in a card on the right - the same facts in two treatments,
+   which is disorienting and made the page feel arbitrary. */
+.profile {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: var(--s4);
+  padding-bottom: var(--s5);
+  margin-bottom: var(--s5);
+  border-bottom: 1px solid var(--border);
+}
+.profile__avatar {
+  display: grid; place-items: center;
+  width: 60px; height: 60px; flex: none;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  font-family: var(--mono); font-size: 21px; font-weight: 600;
+}
+.profile__id { flex: 1 1 260px; min-width: 0; }
+.profile__name { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.profile__mail { color: var(--text-muted); font-size: 14px; margin-top: 2px; overflow-wrap: anywhere; }
+.profile__tags { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.profile__actions { display: flex; gap: var(--s2); flex: none; margin-left: auto; }
+.profile__stats { margin-bottom: var(--s6); }
+/* Slightly smaller than a report headline: four of these sit in a row. */
+.stat__value--tile { font-size: 22px; line-height: 1.25; }
+/* Numbers get the tabular mono face; prose does not - a habit name set in mono
+   reads as a rendering fault rather than a value. */
+.stat__value--text {
+  font-family: var(--font);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 768px) { .profile__name { font-size: 30px; } }
+@media (max-width: 620px) { .profile__actions { margin-left: 0; width: 100%; } }
+
+/* ---------- account: identity card ---------------------------------------- */
+/* The right rail used to hold one small usage card in an otherwise empty column.
+   This gives it a subject: who you are in the app, and where that takes you. */
+.idcard {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  padding: var(--s6) var(--s5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.idcard__avatar {
+  display: grid; place-items: center;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  font-family: var(--mono); font-size: 22px; font-weight: 600;
+  letter-spacing: .02em;
+  margin-bottom: var(--s3);
+}
+.idcard__name { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+/* Emails are long and must not stretch the rail or spill out of the card. */
+.idcard__mail {
+  color: var(--text-muted); font-size: 13px; margin-top: 2px;
+  max-width: 100%; overflow-wrap: anywhere;
+}
+.idcard__tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: var(--s3); }
+.idcard__link { margin-top: var(--s4); }
+
+/* ---------- office: client index + detail panel --------------------------- */
+/* A scannable row, not a card. Everything else moved into the panel. */
+.client-row {
+  display: flex; align-items: center; gap: var(--s3);
+  width: 100%; text-align: left;
+  padding: 12px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: inherit;
+  transition: border-color .12s ease, background .12s ease;
+}
+.client-row:hover { background: var(--surface-2); }
+.client-row.is-active { border-color: var(--accent-line); background: var(--accent-soft); }
+.client-row__main { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.client-row__form { flex: none; }
+/* The chevron is decoration; the row is the target. */
+.client-row > .material-symbols-outlined:last-child { color: var(--text-faint); flex: none; }
+@media (max-width: 620px) { .client-row__form { display: none; } }
+
+/* The detail panel. Sticky so the client's history stays put while the chat
+   under it scrolls on a tall screen. */
+/* Empty state: matches the filled panel's footprint so the row does not jump
+   in height the moment a client is picked. */
+.panel--empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--s2);
+  min-height: 260px;
+  padding: var(--s6);
+  text-align: center;
+  color: var(--text-muted);
+  border-style: dashed;
+}
+.panel--empty .material-symbols-outlined { font-size: 26px; color: var(--text-faint); }
+.panel--empty p { font-size: 14px; max-width: 30ch; }
+
+.panel {
+  animation: panel-in .22s cubic-bezier(.2, .7, .3, 1) both;
+  position: sticky; top: calc(var(--nav-h) + 16px);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.panel__head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s3);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.panel__body { padding: 16px; max-height: 72vh; overflow-y: auto; }
+/* The panel is a narrow column, so the 140px meter track of a normal .pattern
+   crushes the label into one word per line. Stack it, same as the mobile rule. */
+.panel .pattern {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px var(--s3);
+  padding: 9px 0;
+}
+.panel .pattern__meter { grid-column: 1 / -1; }
+.panel .pattern__label { font-size: 13px; }
+
+.icon-btn {
+  display: grid; place-items: center;
+  width: 30px; height: 30px; flex: none;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+}
+.icon-btn:hover { background: var(--surface-3); color: var(--text); }
+
+/* One habit several clients share. */
+.shared { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.shared:first-of-type { padding-top: 0; }
+.shared:last-of-type { border-bottom: 0; padding-bottom: 0; }
+.catch--sm { padding: 4px 10px; font-size: 12.5px; }
+
+.cmatch {
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+}
+
+/* ---------- report template sections ------------------------------------- */
+/* Label/value rows. Two columns on wide screens so a long analysis field does not
+   stretch to a 1000px line, stacked on narrow ones. */
+.kv-list { display: grid; gap: 2px; }
+.kv {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: var(--s3);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.kv:last-child { border-bottom: 0; padding-bottom: 0; }
+.kv dt { color: var(--text-muted); font-size: 13px; }
+.kv dd { margin: 0; font-size: 14px; line-height: 1.55; }
+@media (max-width: 620px) {
+  .kv { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+
+/* One logged event. The head is the scannable line (when, phase, how bad); the
+   body is the detail. */
+.ev {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--s4);
+}
+.ev__head {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: var(--s2);
+  padding-bottom: var(--s3);
+  margin-bottom: var(--s2);
+  border-bottom: 1px solid var(--border);
+}
+.ev__body .kv { padding: 6px 0; }
+
+/* Neutral phase marker. Not a .badge - those carry win/loss meaning. */
+.pill {
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--surface-3);
+  color: var(--text-muted);
+}
+
+/* Ranked practice priority. */
+.prio { display: flex; flex-direction: column; }
+/* These sit three-across, so the 190px label column of a normal .kv leaves the
+   value squeezed into a ribbon. Stack them instead. */
+.prio .kv { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 8px 0; }
+.prio .kv dt { font-size: 12px; }
+.prio__n { font-family: var(--mono); font-weight: 600; }
+/* The phrase to actually say to yourself mid-match - set apart because it is the
+   one line meant to be memorised rather than read. */
+.prio__say {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-top: auto; padding-top: var(--s3);
+  font-size: 13.5px; font-style: italic;
+  color: var(--accent);
+}
+.prio__say .material-symbols-outlined { font-size: 16px; margin-top: 2px; }
+
+/* ---------- form strip --------------------------------------------------- */
+/* .result is display:grid (block-level), so the row needs to be a flex parent
+   or the badges stack one per line. */
+.form-strip { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* ---------- recurring issues --------------------------------------------- */
+/* Label / proportion / count. The meter is red because every row here is a
+   habit that cost goals - this is the one place the bad colour is the default. */
+.pattern {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px auto;
+  align-items: center;
+  gap: var(--s4);
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pattern:first-child { padding-top: 0; }
+.pattern:last-child { padding-bottom: 0; border-bottom: 0; }
+.pattern__label { font-size: 14px; }
+.pattern__meter {
+  height: 6px; border-radius: 99px;
+  background: var(--surface-3); overflow: hidden;
+}
+.pattern__fill {
+  display: block; height: 100%; border-radius: 99px;
+  background: var(--bad);
+  transform-origin: left;
+  animation: meter-fill .55s cubic-bezier(.3, 0, .2, 1) both;
+}
+@keyframes meter-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.pattern__count {
+  font-family: var(--mono); font-size: 12.5px;
+  color: var(--text-muted); font-variant-numeric: tabular-nums;
+}
+@media (max-width: 620px) {
+  .pattern { grid-template-columns: minmax(0, 1fr) auto; gap: var(--s2) var(--s3); }
+  .pattern__meter { grid-column: 1 / -1; }
+}
+
+
+/* ---------- progress ----------------------------------------------------- */
+.progress { height: 4px; background: var(--surface-3); border-radius: 99px; overflow: hidden; }
+.progress__bar {
+  height: 100%; background: var(--accent); border-radius: 99px;
+  /* linear, not eased: the analysing bar advances in many small steps and easing
+     each one makes a continuous creep look like a stutter. */
+  transition: width .6s linear;
+}
+
+.steps { display: flex; flex-direction: column; }
+.step {
+  display: flex; align-items: center; gap: var(--s3);
+  padding: 9px 0; font-size: 14px; color: var(--text-faint);
+}
+.step + .step { border-top: 1px solid var(--border); }
+.step__dot {
+  width: 18px; height: 18px; border-radius: 99px;
+  display: grid; place-items: center; flex: none;
+  border: 1px solid var(--border-strong); color: var(--text-faint);
+}
+.step__dot .material-symbols-outlined { font-size: 12px; }
+.step.is-done { color: var(--text-muted); }
+.step.is-done .step__dot { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent); }
+.step.is-active { color: var(--text); font-weight: 500; }
+.step.is-active .step__dot { border-color: var(--accent); color: var(--accent); }
+/* The only looping animation in the app, and it means "this is running now". */
+.step.is-active .step__dot::after {
+  content: ""; width: 6px; height: 6px; border-radius: 99px;
+  background: var(--accent); animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* ---------- alerts ------------------------------------------------------- */
+.alert {
+  display: flex; gap: var(--s3); padding: var(--s3) var(--s4);
+  border-radius: var(--r-md); border: 1px solid var(--border);
+  background: var(--surface-1); font-size: 14px;
+}
+.alert__title { font-weight: 600; margin-bottom: 2px; }
+.alert--danger { background: var(--bad-soft); border-color: transparent; }
+.alert--danger .material-symbols-outlined { color: var(--bad); }
+.alert--warn { background: var(--warn-soft); border-color: transparent; }
+.alert--warn .material-symbols-outlined { color: var(--warn); }
+.alert--info { background: var(--info-soft); border-color: transparent; }
+.alert--info .material-symbols-outlined { color: var(--info); }
+
+/* ---------- empty + loading states -------------------------------------- */
+.empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 6px; padding: var(--s7) var(--s5);
+  border: 1px dashed var(--border); border-radius: var(--r-lg);
+}
+.empty__icon {
+  width: 34px; height: 34px; border-radius: var(--r-md);
+  display: grid; place-items: center; margin-bottom: var(--s2);
+  background: var(--surface-2); color: var(--text-faint);
+}
+.empty__title { font-size: 15px; font-weight: 600; }
+.empty__text { color: var(--text-muted); font-size: 14px; max-width: 44ch; }
+.empty__actions { margin-top: var(--s3); display: flex; gap: var(--s2); }
+
+.skeleton {
+  background: var(--surface-1);
+  border-radius: var(--r-sm);
+  animation: fade 1.4s ease-in-out infinite;
+}
+@keyframes fade { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.skeleton--text { height: 12px; margin-bottom: 8px; }
+.skeleton--title { height: 18px; width: 35%; margin-bottom: 14px; }
+.skeleton--block { height: 120px; }
+
+/* ---------- match list rows --------------------------------------------- */
+.match-row {
+  display: flex; align-items: center; gap: var(--s3); width: 100%;
+  padding: 10px var(--s3); text-align: left;
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  transition: background-color .12s ease, border-color .12s ease;
+}
+.match-row:hover { background: var(--surface-2); border-color: var(--border-strong); }
+.match-row__main { min-width: 0; flex: 1; }
+/* Both are <span> in the generated markup, so they need an explicit block
+   display or the score and the meta line run together on one line. */
+.match-row__title { display: block; font-family: var(--mono); font-size: 14px; font-weight: 500; }
+.match-row__meta { display: block; font-size: 12.5px; color: var(--text-faint); margin-top: 1px; }
+
+/* ---------- goal / moment items ----------------------------------------- */
+.goal {
+  display: flex; gap: var(--s4); padding: var(--s3) var(--s4);
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+}
+.goal__side { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; flex: none; width: 100px; }
+.goal__body { min-width: 0; flex: 1; }
+.goal__fix { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+@media (max-width: 620px) {
+  .goal { flex-direction: column; gap: var(--s2); }
+  .goal__side { flex-direction: row; align-items: center; width: auto; }
+}
+
+.moment-item {
+  display: flex; gap: var(--s3); width: 100%;
+  padding: 9px var(--s3); text-align: left;
+  background: transparent; border: 1px solid transparent; border-radius: var(--r-md);
+  transition: background-color .1s ease;
+}
+.moment-item:hover { background: var(--surface-2); }
+.moment-item[aria-current="true"] { background: var(--surface-2); border-color: var(--border-strong); }
+.moment-item__time { font-family: var(--mono); font-size: 12px; color: var(--text-faint); flex: none; width: 44px; padding-top: 2px; }
+.moment-item__body { min-width: 0; }
+.moment-item__kind { display: block; font-size: 12px; font-weight: 500; }
+.moment-item__note {
+  font-size: 13px; color: var(--text-muted); overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.k-good { color: var(--good); }
+.k-bad  { color: var(--bad); }
+.k-info { color: var(--info); }
+.k-warn { color: var(--warn); }
+
+.scroll-y { overflow-y: auto; }
+
+/* ---------- disclosure --------------------------------------------------- */
+.disclosure { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface-1); overflow: hidden; }
+.disclosure > summary {
+  display: flex; align-items: center; gap: var(--s3);
+  padding: var(--s3) var(--s5); cursor: pointer; list-style: none;
+  font-weight: 500; font-size: 14.5px;
+}
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary:hover { background: var(--surface-2); }
+.disclosure__chevron { margin-left: auto; color: var(--text-faint); transition: transform .16s ease; }
+.disclosure[open] .disclosure__chevron { transform: rotate(180deg); }
+.disclosure__body { padding: var(--s5); border-top: 1px solid var(--border); }
+
+.log { display: flex; flex-direction: column; }
+.log__item { display: flex; gap: var(--s4); padding: 9px 0; border-bottom: 1px solid var(--border); }
+.log__item:last-child { border-bottom: 0; }
+.log__time { font-family: var(--mono); font-size: 12px; color: var(--text-faint); flex: none; width: 54px; padding-top: 2px; }
+.log__text { font-size: 14px; color: var(--text-muted); min-width: 0; }
+
+/* ---------- video -------------------------------------------------------- */
+.video-frame { background: #000; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.video-frame video { width: 100%; max-height: 62vh; background: #000; }
+
+/* ---------- coaching point lists ---------------------------------------- */
+.points { display: flex; flex-direction: column; gap: var(--s3); }
+.points > li { display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; }
+
+/* ---------- utilities ---------------------------------------------------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; left: var(--s3); top: -60px; z-index: 100;
+  background: var(--surface-2); border: 1px solid var(--border-strong);
+  padding: 8px 12px; border-radius: var(--r-md); font-size: 14px; transition: top .15s ease;
+}
+.skip-link:focus { top: var(--s3); }
+
+.text-center { text-align: center; }
+.nowrap { white-space: nowrap; }
+
+/* ---------- entrance motion ---------------------------------------------- */
+/* ONE entrance, reused. Only for content that arrives asynchronously - a report,
+   a match list, trend cards - so the page settles instead of snapping in. Short
+   (280ms) and small (6px): enough to read as motion, not enough to wait for.
+   Nothing that is already on screen animates, and nothing loops. */
+.reveal { animation: reveal .28s cubic-bezier(.2, .7, .3, 1) both; }
+/* Stagger a list so it cascades rather than arriving as a block. Caps at 8 -
+   beyond that the last item would feel late. */
+.reveal-list > * { animation: reveal .28s cubic-bezier(.2, .7, .3, 1) both; }
+.reveal-list > :nth-child(1) { animation-delay: .02s; }
+.reveal-list > :nth-child(2) { animation-delay: .05s; }
+.reveal-list > :nth-child(3) { animation-delay: .08s; }
+.reveal-list > :nth-child(4) { animation-delay: .11s; }
+.reveal-list > :nth-child(5) { animation-delay: .14s; }
+.reveal-list > :nth-child(6) { animation-delay: .17s; }
+.reveal-list > :nth-child(7) { animation-delay: .20s; }
+.reveal-list > :nth-child(n+8) { animation-delay: .23s; }
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}

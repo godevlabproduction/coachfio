@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from adapters.base.registry import load_builtin_adapters, registry
-from api.routes import games, matches, usage
+from api.routes import account, auth, games, matches, social, usage
 from core.config import get_settings
 from core.storage.db import init_db
 from core.storage.objectstore import get_object_store
@@ -28,10 +28,18 @@ async def lifespan(app: FastAPI):
     except Exception as exc:  # noqa: BLE001
         log.warning("object store not ready at startup: %s", exc)
     log.info("adapters loaded: %s", registry.keys())
+    # Fail loudly at boot, not after someone has uploaded a whole match. The
+    # usual cause is `docker compose restart` after editing .env - restart reuses
+    # the container's original environment, so the new key never arrives.
+    if not get_settings().openai_api_key:
+        log.error(
+            "OPENAI_API_KEY is empty - native video analysis WILL fail. If you just "
+            "edited .env, run: docker compose up -d --force-recreate api worker"
+        )
     yield
 
 
-app = FastAPI(title="Coach.io — Gameplay Analysis (Phase 0)", lifespan=lifespan)
+app = FastAPI(title="Coach.io - Gameplay Analysis (Phase 0)", lifespan=lifespan)
 
 settings = get_settings()
 app.add_middleware(
@@ -41,8 +49,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(account.router)
+app.include_router(account.users_router)
+app.include_router(auth.router)
 app.include_router(games.router)
 app.include_router(matches.router)
+app.include_router(social.router)
 app.include_router(usage.router)
 
 

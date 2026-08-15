@@ -1,4 +1,4 @@
-"""HudReader — applies a HUD schema's regions to frames and OCRs them.
+"""HudReader - applies a HUD schema's regions to frames and OCRs them.
 
 This is where the schema (data) meets the pixels. It:
   1. Uses scene analysis to decide which frames are the stat/summary screen

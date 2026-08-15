@@ -2,7 +2,7 @@
 
 Schema-evolution strategy: volatile / game-specific shapes live in JSONB
 (`outcome`, `capture`, `payload`, `extra`, `warnings`), so an adapter can add
-fields without a migration. Only the stable, queryable columns are typed — and
+fields without a migration. Only the stable, queryable columns are typed - and
 metrics get their own row per (match, key) so trend queries stay simple SQL.
 """
 from __future__ import annotations
@@ -45,7 +45,7 @@ class MatchRow(Base):
     capture: Mapped[dict] = mapped_column(JSONB, default=dict)
     outcome: Mapped[dict] = mapped_column(JSONB, default=dict)
     warnings: Mapped[list] = mapped_column(JSONB, default=list)
-    # Stage 3 insights (coaching) — match-scoped JSON blob (low volume).
+    # Stage 3 insights (coaching) - match-scoped JSON blob (low volume).
     insights: Mapped[list] = mapped_column(JSONB, default=list)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, index=True)
@@ -86,6 +86,94 @@ class UsageRow(Base):
     user_id: Mapped[str] = mapped_column(String(128), primary_key=True)
     matches_analyzed: Mapped[int] = mapped_column(Integer, default=0)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
+
+
+class UserRow(Base):
+    """An account. `user_id` is whatever the auth seam (api/deps.current_user)
+    returns - a dev header today, a hosted provider's subject claim later - so
+    swapping in Clerk/Auth0/Supabase needs no change here.
+
+    Holds only coaching preferences and display fields. NO credentials: password
+    hashing and sessions belong to the auth provider, per the project brief.
+    """
+
+    __tablename__ = "users"
+
+    user_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    display_name: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    email: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
+    # Coaching calibration. Applied to every new match; overridable per upload.
+    skill_level: Mapped[str] = mapped_column(String(32), default="intermediate")
+    control_scheme: Mapped[str] = mapped_column(String(32), default="Classic")
+    preferred_side: Mapped[str] = mapped_column(String(8), default="home")
+
+    # Free-form answers to the adapter's skill survey (e.g. FC's Division Rivals
+    # tier and Champs record). Opaque here on purpose: the questions are
+    # game-specific and live in the adapter, so this must not become typed columns.
+    skill_survey: Mapped[dict] = mapped_column(JSONB, default=dict)
+
+    # Public-facing coach profile: {headline, bio, specialties[], experience}.
+    # JSONB rather than typed columns because this is presentation copy that will
+    # keep changing shape, and none of it is queried.
+    coach_profile: Mapped[dict] = mapped_column(JSONB, default=dict)
+
+    # Object-store key for an uploaded profile picture, or empty. Optional by
+    # design: an account never needs one, and the UI falls back to initials.
+    avatar: Mapped[str] = mapped_column(String(200), default="")
+
+    # "player" | "coach". Decides what the app EMPHASISES (office vs locker,
+    # first/third-person reports) - never how a report reads; that stays with
+    # skill_level, because a coach can be new to the game and a pro player wants
+    # dense output. Keep the two axes separate.
+    role: Mapped[str] = mapped_column(String(16), default="player")
+
+    # Practice-plan checkboard: {item_key: {"done": bool, "ts": iso}}. JSONB on
+    # the user rather than a table - items are derived from the latest report's
+    # practice plan, so only the tick state needs storing.
+    checklist: Mapped[dict] = mapped_column(JSONB, default=dict)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
+
+
+class CoachLinkRow(Base):
+    """A player <-> coach connection. Always created by the PLAYER (choosing a
+    coach from the directory) - that act is the consent that lets the coach read
+    the player's progress and chat with them. Coaches cannot create links, so a
+    coach account can never grant itself access to someone's data."""
+
+    __tablename__ = "coach_links"
+
+    coach_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    player_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+
+    # "pending" until the coach accepts. NOTHING is granted while pending - not
+    # chat, not the progress summary. The player asking is a request, not an act
+    # that gives them a channel to someone who never agreed to coach them.
+    status: Mapped[str] = mapped_column(String(16), default="pending")
+
+    # Reports are a SEPARATE, opt-in grant on top of the link. Connecting shares
+    # the progress summary; it does not hand over the full AI report, which names
+    # players and reads like a private diary of someone's mistakes. Defaults to
+    # False so the stronger permission is never granted implicitly.
+    share_reports: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
+class MessageRow(Base):
+    """One chat message between two linked accounts. Plain rows + polling - no
+    websockets until someone actually needs them."""
+
+    __tablename__ = "messages"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    sender: Mapped[str] = mapped_column(String(128), index=True)
+    recipient: Mapped[str] = mapped_column(String(128), index=True)
+    body: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, index=True)
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class EventRow(Base):

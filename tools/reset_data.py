@@ -1,6 +1,6 @@
 """Wipe all analysed matches (and their metrics/events via FK cascade).
 
-Dev/test convenience — clears the trends view without dropping the schema:
+Dev/test convenience - clears the trends view without dropping the schema:
 
     docker compose run --rm api python -m tools.reset_data
 """

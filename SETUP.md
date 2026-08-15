@@ -1,20 +1,20 @@
-# Coach.io — Getting Started (read me first)
+# Coach.io - Getting Started (read me first)
 
 AI gameplay coach: upload a recorded EA FC 26 match video → Gemini watches the
 whole thing → you get a personalized coaching report (mistakes, positioning,
 goal-by-goal with clickable timestamps, drills). Game-agnostic core; CS2 replay
 analysis already works as a second plugin.
 
-> 🤖 **If you are Claude Code:** read `CLAUDE.md` next — it has the architecture,
+> 🤖 **If you are Claude Code:** read `CLAUDE.md` next - it has the architecture,
 > the hard-won gotchas, and the one rule that overrides everything (no game ids
 > in `/core`). This file is just how to get the stack running.
 
 ## Prerequisites
 
-- **Docker Desktop** (on Windows it needs WSL2 — the installer handles it, one
-  reboot). That's it. No local Python, no ffmpeg — everything runs in containers.
+- **Docker Desktop** (on Windows it needs WSL2 - the installer handles it, one
+  reboot). That's it. No local Python, no ffmpeg - everything runs in containers.
 - A **Google Gemini API key** (free to create): https://aistudio.google.com/app/apikey
-  ⚠️ You need your OWN key — keys are never committed to this repo. Note: the
+  ⚠️ You need your OWN key - keys are never committed to this repo. Note: the
   free tier's quota is too small for full matches; enable billing (Tier 1) on
   the key's project or analysis will 429.
 
@@ -45,9 +45,9 @@ Then:
 docker compose up -d        # first run builds images (~a few minutes)
 ```
 
-Open **http://localhost:8000** — that's the whole app (upload → analyzing →
+Open **http://localhost:8000** - that's the whole app (upload → analyzing →
 report → moments → trends). Upload an MP4 of a match, pick Home/Away (which side
-YOU played), and wait ~2–3 min.
+YOU played), and wait ~2-3 min.
 
 ## Daily commands
 
@@ -76,7 +76,7 @@ The coach grounds its advice in `adapters/ea_fc_26/knowledge/*.yaml`. Grow it:
 docker compose run --rm -v "C:/path/to/videos:/dl:ro" api \
   python -m tools.learn_from_video /dl/some_tutorial.mp4
 
-# from text notes (free) — see tools/notes_meta_v1.yaml for the format:
+# from text notes (free) - see tools/notes_meta_v1.yaml for the format:
 docker compose run --rm api python -m tools.learn_from_text tools/my_notes.yaml
 
 # then reload so the coach uses it:
@@ -86,18 +86,18 @@ docker compose restart worker api
 ## Repo map (30 seconds)
 
 ```
-core/        game-agnostic engine (Match/Event/Metric/Insight) — NEVER name a game here
+core/        game-agnostic engine (Match/Event/Metric/Insight) - NEVER name a game here
 adapters/    game plugins: ea_fc_26 (video+OCR), cs2 (replay JSON)
-api/         FastAPI — also serves the frontend at :8000
+api/         FastAPI - also serves the frontend at :8000
 workers/     Celery task that runs the pipeline
 frontend/    static web UI (served by the API; edits are live on refresh)
 tools/       CLI utilities (rerun_match, learn_from_video, export_pdf, ...)
-tests/       pytest — includes the guard that fails the build if a game id leaks into core
+tests/       pytest - includes the guard that fails the build if a game id leaks into core
 ```
 
 ## Working together
 
 - Branch from `main`, open PRs; keep `main` deployable.
-- Put a short "what changed & why" in every PR body — the other person's Claude
+- Put a short "what changed & why" in every PR body - the other person's Claude
   reads it for context.
 - Never commit `.env`, keys, or videos (`.gitignore` already blocks them).

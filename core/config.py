@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     highlight_window_s: float = 4.0   # frames within +/- this of the event
     highlight_fps: int = 4            # playback fps of the assembled clip
 
-    # Accounts / usage limits (identity is pluggable — see api/deps.current_user).
+    # Accounts / usage limits (identity is pluggable - see api/deps.current_user).
     free_match_limit: int = 25        # matches per identity before 402
 
     # OCR: "paddle" | "stub"
@@ -53,13 +53,13 @@ class Settings(BaseSettings):
     gemini_video_synth_model: str = "gemini-pro-latest"    # deep synthesis
     gemini_video_media_res: str = "medium"                 # low|medium|high|default
     # Pre-compress the video (ffmpeg 720p/15fps, no audio) before uploading to
-    # Gemini — a huge upload-speed + cost win with negligible quality loss (Gemini
+    # Gemini - a huge upload-speed + cost win with negligible quality loss (Gemini
     # samples ~1fps at medium res anyway). Plus we upload ONCE and read N times.
     gemini_video_compress: bool = True
-    # True  = deep mode: watch (dense observations) THEN synthesise a report — best
+    # True  = deep mode: watch (dense observations) THEN synthesise a report - best
     #         quality, but several Gemini calls per match.
     # False = SINGLE-CALL mode: one Gemini call over the whole video returns the
-    #         coaching report directly. Far fewer requests (no 429 bursts) — use this
+    #         coaching report directly. Far fewer requests (no 429 bursts) - use this
     #         when the API is rate-limited or for cheap/fast runs.
     gemini_video_two_pass: bool = True
     # Gate the deterministic scoreboard timeline (many small reads). Off in
@@ -69,8 +69,15 @@ class Settings(BaseSettings):
     # but more requests. ~28 is the "middle mode" sweet spot (accurate score + timed
     # goals for ~28 calls); 60 gives second-accurate timing for the deep mode.
     gemini_score_max_frames: int = 60
+    # Scoreboard reads are network-bound, not compute-bound: they are batched and
+    # run in parallel. Both are tunable because the ceiling here is the API's rate
+    # limit, not our machine - back them off if 429s appear.
+    gemini_score_batch: int = 6        # crops per request
+    # Sized so the default 60-frame read (62 frames -> 11 requests) still goes out
+    # as ONE parallel round; below 11 it becomes two rounds and roughly doubles.
+    gemini_score_workers: int = 12     # concurrent requests
     # Self-consistency: watch the match N independent times and keep observations
-    # that RECUR across viewings — one-off hallucinations get outvoted. Passes run
+    # that RECUR across viewings - one-off hallucinations get outvoted. Passes run
     # in PARALLEL, so 2 viewings cost ~one viewing's wall-time (extra $ is bandwidth
     # + a 2nd cheap watch, not latency). 1 = off.
     gemini_video_watch_passes: int = 2
@@ -104,7 +111,7 @@ class Settings(BaseSettings):
     # Stage 3 = one whole-match coaching report.
     #  - "sample": ONE model call over frames sampled across the match (cheap, coarse).
     #  - "full":   read the WHOLE match in segments (map) then synthesise one report
-    #              (reduce). Reads far more frames — use with a cheap/large-context
+    #              (reduce). Reads far more frames - use with a cheap/large-context
     #              provider. Every segment call is still budget-checked + charged.
     coaching_mode: str = "full"
     coaching_max_frames: int = 16          # "sample" mode: frames in the single call

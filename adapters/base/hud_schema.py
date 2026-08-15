@@ -6,7 +6,7 @@ one of these YAML files.
 
 Coordinates are NORMALIZED to [0, 1] fractions of frame width/height, not
 pixels. FC 26's HUD sits at the same relative position at 1080p, 1440p, and 4K,
-so one schema scales across resolutions — we only re-calibrate when a game
+so one schema scales across resolutions - we only re-calibrate when a game
 *patch* moves the HUD, which is what `schema_version` is for.
 """
 from __future__ import annotations

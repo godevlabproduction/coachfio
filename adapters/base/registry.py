@@ -1,5 +1,5 @@
 """Adapter registry. The core resolves a `(game_id, edition)` to an adapter
-instance here — this is the ONLY place that knows which games exist, and it's a
+instance here - this is the ONLY place that knows which games exist, and it's a
 lookup table, not a branch. No `if game == "fc26"` anywhere else."""
 from __future__ import annotations
 

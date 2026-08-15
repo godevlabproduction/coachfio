@@ -1,4 +1,4 @@
-"""Phase 0 CLI — run the extraction pipeline against a real clip WITHOUT the web
+"""Phase 0 CLI - run the extraction pipeline against a real clip WITHOUT the web
 stack or a database. This is the fastest loop for the only question that matters
 right now: does OCR read real footage reliably?
 
@@ -76,7 +76,7 @@ def cmd_analyze(args: argparse.Namespace) -> int:
 
 
 def _run_full(adapter, ocr, frames, args) -> dict:
-    """Run the ENTIRE pipeline (Stages 1-3) with the configured vision engine —
+    """Run the ENTIRE pipeline (Stages 1-3) with the configured vision engine -
     the CLI equivalent of a worker run, minus the DB/upload. Uses .env settings
     (VISION_ENGINE, ENABLE_STAGE_2/3, models, budget)."""
     from core.ai.vision import build_vision
@@ -131,7 +131,7 @@ def _grab_frame(video: str, at_sec: float, out_path: Path) -> None:
 
 
 def cmd_overlay(args: argparse.Namespace) -> int:
-    """Draw the schema's region boxes on one frame — the calibration workflow.
+    """Draw the schema's region boxes on one frame - the calibration workflow.
     Nudge the rects in hud.yaml until the boxes sit on the numbers."""
     load_builtin_adapters()
     adapter = registry.get(args.game, args.edition)

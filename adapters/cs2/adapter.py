@@ -1,4 +1,4 @@
-"""Counter-Strike 2 adapter — Phase 2 proof that a NON-VIDEO game is a plugin.
+"""Counter-Strike 2 adapter - Phase 2 proof that a NON-VIDEO game is a plugin.
 
 Source is a replay/stats export (JSON), so there's no HUD and no OCR: the ~10%
 of code here is `ingest()`, which turns the structured export into the same

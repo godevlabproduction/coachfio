@@ -23,15 +23,22 @@ _NAME = re.compile(r"[A-Z][A-Z'\-]{2,}")
 _LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ'-"
 
 
-def _extract_frames(video_bytes: bytes, every_s: float, max_frames: int) -> list:
-    """Sample one frame every `every_s` seconds (via ffmpeg), up to `max_frames`."""
+def _extract_frames(video_bytes: bytes, every_s: float, max_frames: int,
+                    start_s: float = 0.0) -> list:
+    """Sample one frame every `every_s` seconds (via ffmpeg), up to `max_frames`.
+
+    `start_s` seeks before decoding (input-side `-ss`, so it is a fast keyframe
+    seek) - used to re-read a narrow window at finer granularity without paying to
+    decode the whole video again.
+    """
     frames = []
     with tempfile.TemporaryDirectory() as tmp:
         p = Path(tmp)
         vid = p / "m.mp4"
         vid.write_bytes(video_bytes)
+        seek = ["-ss", f"{start_s:.2f}"] if start_s > 0 else []
         subprocess.run(
-            ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(vid),
+            ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *seek, "-i", str(vid),
              "-vf", f"fps=1/{every_s}", "-frames:v", str(max_frames), "-q:v", "3",
              str(p / "f%04d.jpg")],
             check=True,

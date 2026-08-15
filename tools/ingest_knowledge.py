@@ -9,7 +9,7 @@ the docs/updates/tactics: point it at trusted sources over time.
 
 target = mechanics | tactics | mistake_remedies | patch_notes  (default: mechanics)
 
-Uses the configured Gemini key (openai engine). Review the appended entries — the
+Uses the configured Gemini key (openai engine). Review the appended entries - the
 model can misread; the YAML is meant to be human-audited.
 """
 from __future__ import annotations

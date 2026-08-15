@@ -12,15 +12,35 @@ from botocore.client import Config
 from core.config import get_settings
 
 
+# Errors that will still be errors in three seconds. Retrying these just adds
+# latency: a missing key made every 404 (a frame/clip/video that was never
+# uploaded) take ~3.5s of backoff before the API could answer.
+_PERMANENT_S3_CODES = frozenset({
+    "NoSuchKey", "NoSuchBucket", "NotFound", "404",
+    "AccessDenied", "InvalidRange", "InvalidArgument",
+})
+
+
+def _is_permanent(exc: Exception) -> bool:
+    resp = getattr(exc, "response", None)
+    if not isinstance(resp, dict):
+        return False
+    code = (resp.get("Error") or {}).get("Code")
+    status = (resp.get("ResponseMetadata") or {}).get("HTTPStatusCode")
+    return str(code) in _PERMANENT_S3_CODES or status in (403, 404, 416)
+
+
 def _retry(fn, attempts: int = 4, base_delay: float = 0.5):
     """Retry a storage op on transient MinIO/network errors (IncompleteRead,
-    connection resets) — these happen under load and almost always succeed on a
-    retry. Re-raises the last error if all attempts fail."""
-    last = None
+    connection resets) - these happen under load and almost always succeed on a
+    retry. Permanent errors are re-raised immediately; the last error otherwise."""
+    last: Exception | None = None
     for i in range(attempts):
         try:
             return fn()
         except Exception as exc:  # noqa: BLE001 - boto/urllib3 raise varied types
+            if _is_permanent(exc):
+                raise
             last = exc
             if i < attempts - 1:
                 time.sleep(base_delay * (2 ** i))
@@ -65,7 +85,7 @@ class ObjectStore:
         return _retry(lambda: self._client.head_object(Bucket=self._bucket, Key=key)["ContentLength"])
 
     def get_range(self, key: str, start: int, end: int) -> bytes:
-        """Fetch bytes [start, end] inclusive — for HTTP range (video seeking)."""
+        """Fetch bytes [start, end] inclusive - for HTTP range (video seeking)."""
         def _do() -> bytes:
             obj = self._client.get_object(
                 Bucket=self._bucket, Key=key, Range=f"bytes={start}-{end}")

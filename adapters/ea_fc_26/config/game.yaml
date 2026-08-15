@@ -1,4 +1,4 @@
-# EA Sports FC 26 — identity, vocabulary, metrics, validation.
+# EA Sports FC 26 - identity, vocabulary, metrics, validation.
 # This file is DATA. Adding FC 27 next year = copy this, bump edition + schema.
 
 identity:

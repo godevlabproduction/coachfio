@@ -7,7 +7,7 @@ entries:
     problem: Diving in with the CB / over-committing tackles.
     fix: >-
       Hold contain (L2/LT) and jockey to delay; only stand-tackle (○/B) when the ball is
-      clearly exposed. Prefer MANUAL switching to the covering man over second-man press —
+      clearly exposed. Prefer MANUAL switching to the covering man over second-man press -
       over-using press (R1) drags players out and opens holes.
     drill: "Skill Games > Defending: win the ball with jockey + contain, no slide tackles."
     tags: [defending, contain, one-v-one, tackling]
@@ -24,24 +24,52 @@ entries:
     match: [caught high, high line, in behind, through ball, counter, transition, gaps]
     problem: Back line too high / caught in transition on the counter.
     fix: >-
-      Drop the defensive line a notch, keep one fullback supporting (not both
-      forward), and set wide roles to a defensive/supportive Focus. Recover with
-      contain, not chasing.
+      FIRST establish WHY the space existed - do not assume line height. If the
+      defender was pushed high during your own attack, this is the fix: drop the
+      defensive line a notch, keep one fullback supporting (not both forward), and
+      set wide roles to a defensive/supportive Focus; recover with contain, not
+      chasing. But if YOU manually switched to that defender and pulled him out of
+      the line to challenge, the line height was never the problem - see
+      'dragged_defender_out_of_line' instead, which has a completely different fix.
     drill: "Set a 'defend the counter' tactics code; play a half focusing on line height + recovery runs."
     tags: [tactics, defensive-line, transition, counters, positioning]
+  - id: dragged_defender_out_of_line
+    match: [switched to the fullback, dragged him, pulled him out, took the defender,
+            out of the line, left space behind, manually switched, went to challenge,
+            chased with the defender, vacated]
+    problem: >-
+      Manually switching to a defender (usually a fullback or CB) and dragging him
+      out of the backline to go and win the ball - the challenge fails and the
+      space he vacated is the one that gets used.
+    fix: >-
+      This is a CONTROL mistake, not a shape mistake, so tactics sliders will not
+      help. Leave the defender in the line. Defend with the player the game already
+      gave you, or hold second-man contain (L1/LB) so the AI presses while your
+      man keeps his position. Only take manual control of a defender when he is
+      already the closest man on the correct side of the attacker - if you have to
+      run him across or forward to reach the ball, you are opening the space that
+      will be scored through. If nobody can reach it safely, jockey (L2/LT), delay,
+      and let the attack come to your block.
+    drill: "Play a half where you never switch to a defender in your own third - press only with L1/LB and jockey with whoever the game gives you."
+    tags: [defending, switching, manual-defending, positioning, fullback, space-behind]
   - id: forcing_central
     match: [forcing central, congested, lost possession midfield, turnover, no width]
     problem: Forcing passes into a compact centre and turning it over.
     fix: >-
-      Switch play to the under-loaded flank (change the point of attack) and use
-      first-time passes to move the block; only go central when a passing LANE opens.
-    drill: "Possession drill: mandate a switch of play before any shot; punish central forcing."
+      Recycle backwards first, then find the WINGER on the under-loaded flank -
+      name the actual player, not "a wide man". The point is not just safety: send
+      that winger wide and hold him level with the edge of the opponent's six-yard
+      box so their backline has to drop to track him. Dropping the line is what
+      opens the space centrally for your striker and CAM. Only go central once a
+      passing LANE has actually opened; first-time passes move the block faster
+      than dribbling at it.
+    drill: "Possession drill: recycle back, switch to the winger, hold him wide and deep to pull the backline, THEN attack the space centrally."
     tags: [passing, build-up, possession, width, midfield]
   - id: secondary_balls
     match: [loose ball, rebound, second ball, scramble, not first to, clear]
     problem: Not winning loose/second balls in your own box.
     fix: >-
-      Anticipate rebounds — press R2/RT for urgency to the loose ball, and CLEAR with
+      Anticipate rebounds - press R2/RT for urgency to the loose ball, and CLEAR with
       the shoot button (not a pass) to get distance. Reaction-save with the keeper if
       manual.
     drill: "Kick-Off vs Legendary: focus solely on clearing rebounds from crosses/corners with the shoot button."
@@ -60,8 +88,8 @@ entries:
     fix: >-
       Pick the shot: low driven (double-tap ○/B, ~2.5 bars, aim far post) across goal
       from the edge; finesse (hold R1/RB + shoot from ~45°) to curl it in; side-foot
-      placed finish inside the box. Timed Finishing is gone — it's position + composure.
-    drill: "Practice Arena: 20 finishes — low driven from the edge, finesse from 45°, placed finishes inside."
+      placed finish inside the box. Timed Finishing is gone - it's position + composure.
+    drill: "Practice Arena: 20 finishes - low driven from the edge, finesse from 45°, placed finishes inside."
     tags: [attacking, shooting, finishing, composure, finesse]
   - id: conceding_cutbacks
     match: [cutback, cut back, pulled back, low cross, unmarked at penalty spot, byline]
@@ -79,7 +107,7 @@ entries:
       Stand BETWEEN the ball and the most dangerous option; switch to the covering
       full-back EARLY (Right Stick) to close the half-space before the gap opens. Defend
       with your CDMs cutting the passing lane rather than chasing with CBs. Most spam
-      relies on you over-committing — be patient and drop the line a notch.
+      relies on you over-committing - be patient and drop the line a notch.
     drill: "Kick-Off vs Legendary: focus on early FB switching + holding CDMs to cut through-ball lanes; do not press with CBs."
     tags: [defending, through-ball, positioning, defensive-line, switching, patience]
   - id: cant_break_low_block
@@ -87,7 +115,7 @@ entries:
     problem: Can't break down a deep/compact defence.
     fix: >-
       Don't force it through the middle. Carry the ball down the WING as low as the goal-
-      line/byline — this pulls their defence down toward their keeper and OPENS space —
+      line/byline - this pulls their defence down toward their keeper and OPENS space -
       then cut inside or CUTBACK to a central finisher (the Vejrgang pattern). Trigger
       manual runs (L1/LB) to pull markers and switch play to the under-loaded flank.
     drill: "Possession drill: score only from a wide overload -> cutback or a manually-triggered run in behind."
@@ -99,13 +127,13 @@ entries:
       Learning WHERE to stand beats spamming tackle. Jockey (L2/LT) to close the shooting
       or passing LANE and shepherd play wide; only tackle when the ball is exposed. Keep
       your defensive block connected rather than running one man at the ball.
-    drill: "Play a half with a self-rule: no slide tackles — win it all through jockey + positioning."
+    drill: "Play a half with a self-rule: no slide tackles - win it all through jockey + positioning."
     tags: [defending, positioning, jockey, contain, shape, discipline]
   - id: beaten_by_skill_moves
-    match: [skill move, skilled, beaten by dribbling, ball roll, stepover, roulette, juggled]
+    match: [skill move, skilled, beaten by dribbling, ball roll, stepover, roulette, juggled, 'left and right', 'side to side', 'shimmy', 'dancing', 'jinking', 'wiggling', 'shuffling']
     problem: Beaten by skill-move spam.
     fix: >-
-      Stay PATIENT and jockey (L2/LT) side-on to block the exit route — most skills need
+      Stay PATIENT and jockey (L2/LT) side-on to block the exit route - most skills need
       space. Don't spam contain (R1/RB), it drags you out of shape; use the SECOND
       defender (R1/RB) to cut the passing lane while your marker jockeys. Vs a ball-roll,
       wait for the roll to finish, then tackle.
@@ -115,7 +143,7 @@ entries:
     match: [pace, fast, sprinted past, knock-on, speed, burned, in behind pace]
     problem: Beaten repeatedly by pace / speed-boost dribbling.
     fix: >-
-      Don't sprint unless you're SURE of winning it — hold contain and stay goal-side.
+      Don't sprint unless you're SURE of winning it - hold contain and stay goal-side.
       Use the second defender (R1/RB) to cut the passing lane while your marker jockeys,
       and drop your line a notch so there's less grass in behind. Track quick turns with
       positioning, not lunges.
@@ -127,7 +155,7 @@ entries:
     fix: >-
       Shield-trap (hold L2/LT) as you receive to protect it, play the FIRST-TIME pass out
       of the press, and switch to the FREE man (often the far-side full-back) rather than
-      dwelling. If in doubt near your box, clear with the shoot button — don't force it.
+      dwelling. If in doubt near your box, clear with the shoot button - don't force it.
     drill: "Build-out drill vs a friend pressing: one/two-touch only, must switch to the free side to escape."
     tags: [possession, build-up, press, shielding, first-time, switching]
   # --- from a real coach's match analysis (user-provided) ---------------------
@@ -136,7 +164,7 @@ entries:
     problem: Carved open by the opponent's give-and-go / triangle passing.
     fix: >-
       Spot the give-and-go/triangle pattern EARLY and switch to your FULL-BACK ahead of
-      time so you can reach their winger before the return pass — don't chase the passes
+      time so you can reach their winger before the return pass - don't chase the passes
       through the middle. Jockey to delay, keep your pivot compact, and cut the return
       lane rather than lunging at the first man.
     drill: "vs a friend spamming one-twos: pre-switch to the fullback and cut the return pass, no chasing."
@@ -145,8 +173,53 @@ entries:
     match: [tackle in the box, penalty, dived in in the area, lunged in the box, panicked in defense]
     problem: Tackling/panicking inside your own penalty area.
     fix: >-
-      Do NOT tackle inside your own box — tackling is unreliable there and risks penalties.
+      Do NOT tackle inside your own box - tackling is unreliable there and risks penalties.
       Use ONLY jockey (hold L2/LT), stay goal-side, read the attacker and delay. Stay calm;
       let them run into a dead end rather than committing.
-    drill: "Defend crosses/1v1s in the box using jockey only — zero tackle button for a whole half."
+    drill: "Defend crosses/1v1s in the box using jockey only - zero tackle button for a whole half."
     tags: [defending, box, jockey, tackling, discipline, penalties]
+  # --- from the user's competitive breakdown ---------------------------------
+  # NOTE: every id here also becomes a weakness TAG (see knowledge_base.issue_tags),
+  # so it shows up in the cross-match "what keeps costing you" aggregation. Add
+  # distinct habits, not near-duplicates of the entries above, or the longitudinal
+  # counts split across two tags for what is really one problem.
+  - id: rushed_final_pass
+    match: [rushed, killer pass, final pass, forced the pass, lost it in the box, final third, too early]
+    problem: Rushing the final pass before the defence has been moved.
+    fix: >-
+      Reaching the box is not the problem - the killer ball is being played before
+      anything has shifted. Complete two or three passes INSIDE the final third
+      first: move one defender, then play the cutback or the third-man run. Prefer
+      the pass that drags a marker over the one that looks like an assist.
+    drill: "Enter the final third and complete three passes before any shot or killer ball; force one cutback per attack."
+    tags: [attacking, final-third, patience, cutback, through-ball, turnovers]
+  - id: sprint_overuse
+    match: [sprint, holding r2, heavy touch, ran into traffic, overran, knocked it too far]
+    problem: Holding sprint constantly, killing close control.
+    fix: >-
+      Sprint (R2/RT) is for three moments only: attacking open space, recovering
+      defensively, and escaping a pressure trap. Release it near the box and in
+      traffic so the touches shorten, and never hold it while jockeying - sprint
+      jockey (L2+R2 / LT+RT) is a deliberate, separate input.
+    drill: "One match using sprint only in those three situations; count heavy touches near the box before and after."
+    tags: [dribbling, sprint, close-control, first-touch, defending, jockey]
+  - id: poor_player_switching
+    match: [wrong player, switched late, switching, selected the wrong, wrong defender, too late to switch]
+    problem: Selecting the wrong defender, or switching too late.
+    fix: >-
+      Switch to the player who blocks the NEXT dangerous action, not the one
+      nearest the ball. Use the Right Stick flick to choose deliberately rather
+      than tapping the switch button and accepting what you get, and make the
+      switch BEFORE the pass is played, not after.
+    drill: "Review every conceded chance and write down: who you selected, who you should have, which lane mattered, and whether the switch was early or late."
+    tags: [defending, switching, positioning, passing-lanes, reactions, discipline]
+  - id: no_rest_defence
+    match: [both fullbacks, caught forward, no one behind the ball, exposed on the counter, everyone forward]
+    problem: Attacking with no rest defence - both fullbacks caught ahead of the ball.
+    fix: >-
+      Keep one midfielder behind the ball at all times and never push both
+      fullbacks up together: attack with one, hold the other with a defensive or
+      supportive Focus. Aim for a 2-3-5 / 3-2-5 in attack that can fold back into
+      a compact 4-4-2 or 4-2-3-1 the moment you lose it.
+    drill: "Play a half where one fullback is manually held back on every attack; count how many counters reach your box."
+    tags: [tactics, rest-defence, fullbacks, transition, counters, shape, balance]

@@ -20,7 +20,7 @@ class OcrEngine(Protocol):
 
 
 def _preprocess(image_bgr: np.ndarray) -> np.ndarray:
-    """Upscale small HUD crops and boost contrast — OCR is far better on big,
+    """Upscale small HUD crops and boost contrast - OCR is far better on big,
     high-contrast digits than on tiny ones."""
     h, w = image_bgr.shape[:2]
     if h == 0 or w == 0:
@@ -77,7 +77,7 @@ class PaddleOcrEngine:
             result = engine.ocr(img)  # newer versions dropped the cls kwarg
         if not result or not result[0]:
             return "", 0.0
-        # result[0] = [ [box, (text, conf)], ... ] — join lines, average conf.
+        # result[0] = [ [box, (text, conf)], ... ] - join lines, average conf.
         texts, confs = [], []
         for line in result[0]:
             text, conf = line[1][0], float(line[1][1])

@@ -47,13 +47,13 @@ _PROMPT = (
     "You are building the knowledge base for an EA Sports FC 26 AI coach. Watch this "
     "ENTIRE training/tutorial video and EXTRACT EVERYTHING teachable in it: mechanics, "
     "skill moves, dribbling, passing, shooting, defending, positioning, set pieces, "
-    "tactics/FC IQ roles, meta tips, and timing. Be EXHAUSTIVE — capture every distinct "
+    "tactics/FC IQ roles, meta tips, and timing. Be EXHAUSTIVE - capture every distinct "
     "concept the video demonstrates or explains.\n"
     "For EACH concept return one 'facts' entry: a short 'title'; a 'detail' that is a "
     "SELF-CONTAINED, factual explanation a coach could quote (what it is, when to use it, "
     "why it works); the EXACT FC 26 'controls' (buttons/sticks, PlayStation + Xbox) if the "
     "video shows an input; a 'category' (mechanic|skill_move|defending|attacking|tactic|"
-    "meta|tip); and a few 'tags'. Only include what the video actually teaches — do NOT "
+    "meta|tip); and a few 'tags'. Only include what the video actually teaches - do NOT "
     "invent controls or mechanics. Also give a one-line 'summary' of what the video covers."
 )
 
@@ -69,7 +69,7 @@ def main() -> None:
 
     s = get_settings()
     if not s.openai_api_key:
-        print("No Gemini key (OPENAI_API_KEY) configured — cannot watch the video.")
+        print("No Gemini key (OPENAI_API_KEY) configured - cannot watch the video.")
         return
 
     print(f"reading {path.name} ...")

@@ -1,0 +1,81 @@
+# HOW TO ANALYSE - the classification scheme the coach reasons with, not facts
+# about the game. This is the one knowledge file that goes into EVERY prompt in
+# full, because it changes the shape of every point rather than supplying a
+# detail to cite.
+#
+# The error taxonomy is the highest-value part: without it the coach recommends a
+# formation change when the real problem was a late player switch. Naming the
+# TYPE of error first is what makes the fix land on the actual cause.
+meta:
+  purpose: >-
+    Classify what went wrong before prescribing anything. The same visible
+    outcome (a conceded goal) has five different causes and five different fixes.
+
+error_types:
+  - id: decision
+    title: Decision error
+    detail: The wrong option was selected - the pass, shot or dribble was available but not the right one.
+  - id: execution
+    title: Execution error
+    detail: The idea was correct but the pass, shot or skill move failed in the doing.
+  - id: tactical
+    title: Tactical error
+    detail: The formation, role or focus caused the problem - the player was put in a position to fail.
+  - id: mechanical
+    title: Mechanical error
+    detail: Switching, jockeying, sprinting or finishing TECHNIQUE failed - an input problem, not a thinking one.
+  - id: external
+    title: External factor
+    detail: Delay, an animation, a rebound or an unusual gameplay event. Name it and move on - there is nothing to coach.
+
+# Applied to a possession to describe what the player did with it.
+possession_outcomes:
+  - Correct progression
+  - Safe reset
+  - Forced pass
+  - Missed forward pass
+  - Unnecessary dribble
+  - Wrong player selected
+  - Late decision
+  - Attack slowed by excessive touches
+
+# What separates elite play, and the observable evidence for each. Use these to
+# praise precisely instead of "good attacking".
+elite_traits:
+  - trait: Efficient attacking
+    look_for: Few wasted touches, no forced passes.
+  - trait: Constant scanning
+    look_for: Checking options before receiving.
+  - trait: Controlled tempo
+    look_for: Fast when space appears, patient when it does not.
+  - trait: Structured pressure
+    look_for: Pressing with a purpose rather than chasing.
+  - trait: Defensive discipline
+    look_for: Protecting the centre before tackling.
+  - trait: Repeated patterns
+    look_for: Reliable combinations instead of random attacks.
+  - trait: Adaptation
+    look_for: Changing the plan when the opponent counters it.
+  - trait: Mental control
+    look_for: No panic after conceding or missing a chance.
+
+# Naming the exact rule broken is what makes a defensive note actionable. Each of
+# these is a distinct error - "bad defending" is not a coaching point.
+defensive_error_kinds:
+  - Bad player switching
+  - Overcommitting with a centre-back
+  - Failing to track a runner
+  - Pressing at the wrong angle
+  - Leaving the CDM position
+  - Holding sprint while jockeying
+  - Allowing an easy cutback
+  - Defending the ball instead of the passing lane
+  - Failing to recognise a repeated opponent pattern
+
+# The shape a good defensive note takes: timestamp, the switch/action taken, the
+# consequence, then the correction. Used as a style reference, not a template to
+# fill with invented specifics.
+worked_example: >-
+  "At 06:42 you switched from the CDM to the CB and followed the ball. That
+  opened the pass into the striker. The correction: stay with the CDM, cover the
+  striker, and let the CB hold the line."

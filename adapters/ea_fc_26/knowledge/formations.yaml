@@ -6,7 +6,7 @@ principles:
     title: Meta build-up = quick vertical transitions
     detail: >-
       The FC 26 attacking meta is fast transitions, vertical passes and intelligent
-      off-ball runs — not slow sideways possession. Counter and Balanced build-up
+      off-ball runs - not slow sideways possession. Counter and Balanced build-up
       styles dominate; when you win the ball, look to progress vertically before the
       opponent resets.
     tags: [attacking, build-up, transition, meta, passing]
@@ -14,20 +14,20 @@ principles:
     title: Double pivot for control
     detail: >-
       Two defensive midfielders (a holder + a box-to-box/box-crasher) is the standard
-      meta base — it screens the back line and stops opponents playing through the
+      meta base - it screens the back line and stops opponents playing through the
       middle. If you get overrun centrally, hold one CDM back rather than pushing both.
     tags: [tactics, midfield, defending, through-ball, positioning]
   - id: fullbacks_meta
     title: Full-backs must defend AND support
     detail: >-
       Narrow/attacking systems put heavy load on full-backs; use technically strong
-      full-backs and don't push BOTH forward — keep one supporting to avoid getting
+      full-backs and don't push BOTH forward - keep one supporting to avoid getting
       countered in the wide channels.
     tags: [tactics, fullbacks, width, counters, transition]
   - id: manual_defending
     title: Manual jockey defending
     detail: >-
-      AI defending is toned down in FC 26 — winning the ball relies on manual jockey
+      AI defending is toned down in FC 26 - winning the ball relies on manual jockey
       (hold L2/LT) at the right moment and timing the stand tackle, not auto-contain.
       Contain to delay, second-man (L1/LB) to double, tackle only when the ball is
       exposed.
@@ -54,7 +54,7 @@ entries:
     title: 4-4-1-1 (post-patch #1)
     detail: >-
       Balanced build-up, high depth (~60-70). Great for rapid counters via the CAM +
-      striker; the CAM (Shadow Striker) is critical — Bonmatí/Bellingham-type shines.
+      striker; the CAM (Shadow Striker) is critical - Bonmatí/Bellingham-type shines.
       Inside-Forward wingers. Shifts into 4-3-3 / 4-2-3-1 dynamically.
     tags: [formation, 4411, counter, cam, meta]
   - id: f_442
@@ -69,7 +69,7 @@ entries:
     formation: "4-2-3-1 Wide"
     title: 4-2-3-1 Wide (safe, compact)
     detail: >-
-      The safe staple — four at the back + two CDMs for a compact block, three CAMs
+      The safe staple - four at the back + two CDMs for a compact block, three CAMs
       supporting a lone striker. Excellent defensive support; needs a strong striker.
     tags: [formation, 4231, safe, compact, defending]
   - id: f_4213

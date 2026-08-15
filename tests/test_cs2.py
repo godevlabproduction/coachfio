@@ -40,7 +40,7 @@ def test_cs2_ingest_parses_replay():
 
 
 def test_replay_source_runs_through_core_pipeline():
-    """The SAME run_pipeline that handles FC video handles a CS2 replay — it
+    """The SAME run_pipeline that handles FC video handles a CS2 replay - it
     dispatches on SourceType, with no game-specific branching in core."""
     load_builtin_adapters()
     match = Match(game_id="cs2", game_edition="2", source_type=SourceType.REPLAY_FILE)

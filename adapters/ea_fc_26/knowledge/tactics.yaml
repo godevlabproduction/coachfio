@@ -1,4 +1,4 @@
-# FC 26 TACTICS / FC IQ — roles, focuses and set pieces (distilled facts).
+# FC 26 TACTICS / FC IQ - roles, focuses and set pieces (distilled facts).
 # Source: EA Pitch Notes gameplay deep dive + The World's Game update.
 meta:
   system: "FC IQ (Player Roles + Focuses + team tactics)"
@@ -25,7 +25,7 @@ entries:
     area: tactics
     title: Tactics Code system
     detail: >-
-      Save/load up to 10 custom tactics codes and share them across modes — useful
+      Save/load up to 10 custom tactics codes and share them across modes - useful
       to keep a balanced default and a chase-the-game preset ready.
     tags: [tactics, presets, workflow]
   - id: set_piece_assignments
@@ -42,7 +42,7 @@ entries:
     title: Manual switching over second-man press
     detail: >-
       Prioritise MANUAL player switching over the second/third-man press. Over-using
-      second-man press (hold R1) — and especially third-man (double R1) — drags your AI
+      second-man press (hold R1) - and especially third-man (double R1) - drags your AI
       players out of position and OPENS HOLES you concede through. Use it sparingly;
       mostly switch to the right defender yourself and jockey.
     controls: "Right Stick flick (manual switch); R1 second-man press = sparingly"
@@ -51,7 +51,7 @@ entries:
     area: tactics
     title: Keep CM/CDMs central & compact
     detail: >-
-      Don't drag your CM/CDMs out to the wings — keep them CLOSE TOGETHER in the central
+      Don't drag your CM/CDMs out to the wings - keep them CLOSE TOGETHER in the central
       part of the pitch to screen the middle. Let full-backs handle the flanks; pulling a
       pivot wide is what opens the central lanes you get punished through.
     tags: [defending, midfield, compact, shape, central, positioning]
@@ -70,5 +70,113 @@ entries:
     detail: >-
       Pushing a high line + attacking fullbacks leaves gaps in behind on turnovers.
       If you get countered, drop the line slightly and keep one fullback supporting
-      rather than both bombing on — compactness between the lines beats chasing.
+      rather than both bombing on - compactness between the lines beats chasing.
     tags: [tactics, defensive-line, compactness, transition, counters]
+
+  # --- attacking / defending META (user-provided competitive breakdown) -------
+  - id: buildup_principles
+    area: attacking
+    title: Build-up principles
+    detail: >-
+      Mix short passing with direct progression - pure possession is too slow and
+      constant through balls are predictable. Keep one midfielder behind the ball
+      at ALL times. Use the striker to pin or drag a centre-back. Let one wide
+      player attack inside while the other holds width. Attract the opponent to
+      one side, then switch. Do not send both fullbacks forward at once. Prefer a
+      one-two around the box to forcing a central dribble.
+    tags: [attacking, build-up, possession, width, switching, rest-defence, fullbacks]
+  - id: chance_creation_pattern
+    area: attacking
+    title: The reliable chance-creation pattern
+    detail: >-
+      The repeatable sequence is: wide player receives, striker either runs in
+      behind or checks to the ball, the CAM makes a LATE run into the space that
+      creates, and the wide player then cuts inside, feeds the CAM or finds the
+      striker. Score attacks against this shape rather than against whether a
+      goal resulted.
+    tags: [attacking, chance-creation, patterns, runs, cam, winger, striker]
+  - id: front_three_composition
+    area: attacking
+    title: A front three needs different jobs
+    detail: >-
+      A good front three contains one direct runner, one ball carrier/dribbler and
+      one finisher/playmaker. Three players who all want the ball to feet gives the
+      defence nothing to worry about - at least one must attack space.
+    tags: [attacking, squad, roles, striker, winger, runs, space]
+  - id: midfield_composition
+    area: tactics
+    title: Midfield needs complementary profiles
+    detail: >-
+      A strong midfield has one defensive anchor, one progressive passer and one
+      runner/late box attacker. Three slow playmakers with weak defensive movement
+      is the common failure - it leaves no screen and no threat in behind.
+    tags: [tactics, midfield, cdm, cam, roles, balance, squad]
+  - id: attack_defend_shapes
+    area: tactics
+    title: Attacking shape vs defending shape
+    detail: >-
+      In attack aim for roughly a 2-3-5 or 3-2-5. On losing the ball, return to a
+      compact 4-4-2 or 4-2-3-1 block. The bridge between the two is REST DEFENCE:
+      enough players behind the ball to stop the counter. Two defensive midfielders
+      is the common competitive answer - they cover central lanes and shrink the
+      gap between midfield and defence.
+    tags: [tactics, shape, rest-defence, transition, counters, cdm, block]
+  - id: defensive_rules
+    area: defending
+    title: Core defending rules
+    detail: >-
+      Defend FIRST with the CDM. Block the passing lane into the striker or CAM.
+      Bring the centre-back only once the attacker enters a dangerous zone. Keep
+      the back four compact. Do not hold sprint while jockeying. Use second-man
+      press in short bursts, never permanently. Track runs before chasing the ball.
+      After losing possession, delay the counter rather than diving in.
+    tags: [defending, cdm, passing-lanes, jockey, press, tracking, transition, discipline]
+  - id: pressing_by_match_state
+    area: defending
+    title: Choosing a press for the match state
+    detail: >-
+      Balanced is the default. "Press after possession loss" works when you have
+      stamina and defensive-minded roles. Constant pressure is an emergency option
+      only. Drop back / lower block protects a lead or blunts fast forwards. A high
+      line beats passive opponents but is punished by direct passing.
+    tags: [defending, press, tactics, high-line, low-block, stamina, match-state]
+  - id: final_third_entry
+    area: attacking
+    title: Do not rush the final pass
+    detail: >-
+      Many players reach the box successfully and then lose it by attempting the
+      killer pass BEFORE the defence has been moved. Judge an attack by how it
+      entered the final third, whether it used the half-space or the central lane,
+      whether width, an overlap/underlap or a third-man run was involved, and
+      whether the defensive line was actually broken - not by the shot alone.
+    tags: [attacking, final-third, patience, through-ball, cutback, half-space, runs]
+  - id: pass_and_reposition
+    area: attacking
+    title: "Pass and reposition"
+    detail: >-
+      An elite habit: after every pass, the player you control should immediately
+      create a new angle, make a supporting run or occupy a useful lane. Standing
+      still after passing is why build-up stalls and why the same sideways ball
+      keeps coming back.
+    tags: [attacking, build-up, movement, angles, possession, habit]
+  - id: tempo_control
+    area: attacking
+    title: Tempo is a choice, not a speed setting
+    detail: >-
+      The goal is not to play quickly all the time. Play fast when the advantage
+      is there and slow down when the opponent has closed the space. Coach tempo
+      as a decision, not as "be faster".
+    tags: [attacking, tempo, decision-making, patience, possession]
+  - id: pull_the_backline_with_width
+    area: attacking
+    title: Use a wide runner to pull the backline back
+    detail: >-
+      Against a compact centre, width is a lever, not just an escape route. Push a
+      winger wide and hold him roughly level with the edge of the opponent's
+      six-yard box: their back line has to drop to track him, and the moment it
+      drops the gap between their defence and midfield opens for the striker and
+      CAM. So the sequence is recycle -> switch to the winger -> hold him wide and
+      deep -> then attack the space centrally. Naming the specific player matters
+      when coaching this: "switch to your left winger, number 17" is executable,
+      "use the width" is not.
+    tags: [attacking, width, winger, backline, space, build-up, compact-defence]

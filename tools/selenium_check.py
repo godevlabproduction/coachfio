@@ -2,7 +2,7 @@
 
 Drives a real Chromium (via a Selenium standalone container) against the running
 app and asserts: the page renders, the video actually loads + seeks, the coaching
-comment shows, and the buttons are present — with no severe console errors.
+comment shows, and the buttons are present - with no severe console errors.
 
     python -m tools.selenium_check "<url>" [selenium_hub]
 """

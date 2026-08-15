@@ -1,6 +1,6 @@
 """Vision model abstraction for Stages 2 & 3.
 
-The pipeline never imports the Anthropic SDK directly — it calls a `VisionModel`
+The pipeline never imports the Anthropic SDK directly - it calls a `VisionModel`
 with an adapter-supplied prompt, a few JPEG frames, and an optional JSON schema,
 and gets back parsed data + token usage. Swap `anthropic` for `stub` (or a local
 model later) without touching the pipeline.
@@ -56,7 +56,7 @@ def _parse_json(text: str) -> dict[str, Any]:
 
 
 class VisionModel(Protocol):
-    # True when calls are free (local/stub) — the pipeline then skips the budget
+    # True when calls are free (local/stub) - the pipeline then skips the budget
     # estimate so a free engine can't be halted by the $-cap.
     free: bool
 
@@ -73,7 +73,7 @@ class VisionModel(Protocol):
 class StubVisionModel:
     """No-network engine. Lets the full Stage 2/3 path run (and be tested)
     without an API key or spend. Returns a schema-shaped, honest placeholder and
-    reports zero tokens so it costs $0 — it never fabricates events."""
+    reports zero tokens so it costs $0 - it never fabricates events."""
 
     free = True
 
@@ -82,7 +82,7 @@ class StubVisionModel:
         if "label" in props:
             data = {"label": "in_play", "confidence": 0.0}
         elif "summary" in props or "kind" in props:
-            data = {"kind": "note", "summary": "(stub vision engine — no analysis)",
+            data = {"kind": "note", "summary": "(stub vision engine - no analysis)",
                     "factors": [], "coaching_point": ""}
         else:
             data = {}
@@ -112,7 +112,7 @@ class AnthropicVisionModel:
         # structured extraction we don't need it and it eats the token budget.
         if any(m in model for m in ("sonnet-5", "opus-5", "opus-4-8")):
             return {"type": "disabled"}
-        return None  # Haiku 4.5 etc. — leave default (no thinking)
+        return None  # Haiku 4.5 etc. - leave default (no thinking)
 
     def generate(self, model, prompt, images_jpeg, schema=None, max_tokens=512) -> VisionResult:
         client = self._client_or_init()
@@ -136,7 +136,7 @@ class AnthropicVisionModel:
         try:
             resp = client.messages.create(**kwargs)
         except Exception:
-            # Structured-output or thinking kwarg rejected by this model — retry bare.
+            # Structured-output or thinking kwarg rejected by this model - retry bare.
             kwargs.pop("output_config", None)
             kwargs.pop("thinking", None)
             resp = client.messages.create(**kwargs)
@@ -187,7 +187,7 @@ def _ollama_post(url: str, payload: dict[str, Any], timeout: float) -> dict[str,
 
 
 class OpenAICompatVisionModel:
-    """Vision via any OpenAI-compatible chat/completions endpoint — Google Gemini
+    """Vision via any OpenAI-compatible chat/completions endpoint - Google Gemini
     (…/v1beta/openai), Alibaba Qwen-VL (DashScope compatible-mode), Zhipu GLM,
     Moonshot, OpenRouter, local vLLM. Set base_url + api_key + model in config.
     Computes its own cost from configured $/Mtok rates (cheap providers)."""
@@ -265,7 +265,7 @@ class OllamaVisionModel:
         self._url = base_url.rstrip("/") + "/api/chat"
         self._timeout = timeout
         # -1 = let Ollama decide; 0 = force CPU (needed when the GPU driver is too
-        # old for the CUDA build — the PTX-toolchain crash).
+        # old for the CUDA build - the PTX-toolchain crash).
         self._num_gpu = num_gpu
 
     def generate(self, model, prompt, images_jpeg, schema=None, max_tokens=512) -> VisionResult:
@@ -288,7 +288,7 @@ class OllamaVisionModel:
             data = _ollama_post(self._url, payload, self._timeout)
 
         text = (data.get("message") or {}).get("content", "") or ""
-        # Local calls are free — report zero tokens so cost accounting stays $0.
+        # Local calls are free - report zero tokens so cost accounting stays $0.
         return VisionResult(data=_parse_json(text), text=text, input_tokens=0, output_tokens=0, model=model)
 
 

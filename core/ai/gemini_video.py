@@ -1,11 +1,11 @@
 """Native Gemini video analysis: upload a whole clip via the File API, then ask
 for a structured coaching report in ONE call. This is a distinct source path from
-the frame pipeline — Gemini-specific, kept out of core dispatch (the pipeline
+the frame pipeline - Gemini-specific, kept out of core dispatch (the pipeline
 selects it via SourceType.VIDEO_NATIVE).
 
 Stdlib-only HTTP (urllib) so no extra dependency. The native generativelanguage
 endpoints authenticate with the `x-goog-api-key` header (NOT Bearer, which the
-OpenAI-compat endpoint uses) — same Gemini key as the `openai` engine.
+OpenAI-compat endpoint uses) - same Gemini key as the `openai` engine.
 """
 from __future__ import annotations
 
@@ -44,7 +44,7 @@ def _urlopen_retry(req, timeout: float, attempts: int = 5) -> bytes:
             if e.code in (408, 409, 429, 500, 502, 503, 504) and i < attempts - 1:
                 time.sleep(min(2 ** i, 8))
                 continue
-            raise
+            raise RuntimeError(_http_detail(e)) from e
         except urllib.error.URLError as e:
             last = e
             if i < attempts - 1:
@@ -56,8 +56,23 @@ def _urlopen_retry(req, timeout: float, attempts: int = 5) -> bytes:
     raise RuntimeError("request failed")
 
 
+def _http_detail(e) -> str:
+    """urllib's HTTPError stringifies to just 'HTTP Error 403: Forbidden'. Google
+    puts the actual reason (quota exhausted, API disabled, key restriction) in the
+    RESPONSE BODY, which is consumed and discarded unless read here - so a failed
+    match logged a warning that was impossible to act on. Reading the body is
+    one-shot, hence doing it at the raise site."""
+    try:
+        body = e.read().decode("utf-8", "replace")[:600]
+    except Exception:  # noqa: BLE001 - already handling a failure
+        body = ""
+    detail = " ".join(body.split())
+    return f"HTTP {getattr(e, 'code', '?')} {getattr(e, 'reason', '')}".strip() + (
+        f" - {detail}" if detail else "")
+
+
 def _urlopen_retry_full(req, timeout: float, attempts: int = 5):
-    """Like _urlopen_retry but returns (body_bytes, headers) — needed for the File
+    """Like _urlopen_retry but returns (body_bytes, headers) - needed for the File
     API upload steps that read a response HEADER (the resumable upload URL)."""
     import urllib.error
 
@@ -71,7 +86,7 @@ def _urlopen_retry_full(req, timeout: float, attempts: int = 5):
             if e.code in (408, 409, 429, 500, 502, 503, 504) and i < attempts - 1:
                 time.sleep(min(2 ** i, 8))
                 continue
-            raise
+            raise RuntimeError(_http_detail(e)) from e
         except urllib.error.URLError as e:
             last = e
             if i < attempts - 1:
@@ -84,7 +99,7 @@ def _urlopen_retry_full(req, timeout: float, attempts: int = 5):
 
 # Higher = the model sees the video in more detail (more tokens/sec, more $).
 _MEDIA_RES = {
-    "low": "MEDIA_RESOLUTION_LOW",       # ~66 tok/s  — cheap, coarse
+    "low": "MEDIA_RESOLUTION_LOW",       # ~66 tok/s  - cheap, coarse
     "medium": "MEDIA_RESOLUTION_MEDIUM",
     "high": "MEDIA_RESOLUTION_HIGH",     # most detail
     # "default" -> omit (model default)
@@ -184,7 +199,7 @@ class GeminiVideoModel:
 
     def generate_text(self, model: str, prompt: str, schema: dict | None = None,
                       max_tokens: int = 3000) -> VideoResult:
-        """Text-only call (no video) — the 'reduce'/synthesis step on a stronger model."""
+        """Text-only call (no video) - the 'reduce'/synthesis step on a stronger model."""
         return self._generate(model, [{"text": prompt}], schema, "default", max_tokens)
 
     def research(self, model: str, question: str, max_tokens: int = 1800) -> dict:
