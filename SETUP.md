@@ -101,3 +101,57 @@ tests/       pytest - includes the guard that fails the build if a game id leaks
 - Put a short "what changed & why" in every PR body - the other person's Claude
   reads it for context.
 - Never commit `.env`, keys, or videos (`.gitignore` already blocks them).
+
+## Subdomains: one site per game
+
+`fifa.coachfio.com` serves the FC adapter; the bare domain serves a chooser. One
+frontend is deployed for every host and asks `GET /api/site` at boot which game
+it is, so **adding a game never needs a frontend change**.
+
+The mapping is config, not code:
+
+```
+SITE_HOSTS=fifa=ea-fc@26,cs=cs2@2        # <label>=<game_id>@<edition>
+SITE_ROOT_LABELS=www,app,localhost,127   # labels that mean "no game, show chooser"
+```
+
+An unmapped subdomain resolves to the chooser rather than falling back to the
+only installed game. That is deliberate: silently serving FC on
+`valorant.coachfio.com` would file uploads against the wrong adapter, and
+nothing would look broken until someone read the report.
+
+### Testing locally
+
+Host-header override, no DNS needed:
+
+```bash
+curl -s -H "Host: fifa.coachfio.com" localhost:8000/api/site
+```
+
+For the browser, add to `/etc/hosts`, then visit `http://fifa.localtest.me:8000`:
+
+```
+127.0.0.1  fifa.coachfio.local coachfio.local
+```
+
+(`*.localtest.me` already resolves to 127.0.0.1 publicly, so it needs no hosts
+entry, but the label must be listed in `SITE_HOSTS`.)
+
+### Deploying
+
+1. **DNS**: an A/AAAA record for the apex plus a wildcard `*.coachfio.com` to the
+   same origin, so a new game needs no DNS change.
+2. **TLS**: a wildcard certificate for `*.coachfio.com`, plus the apex. A
+   per-subdomain certificate means issuing one for every new game.
+3. **Proxy**: pass the original `Host` header through (`proxy_set_header Host
+   $host` in nginx). Resolution reads it, so a proxy that rewrites Host makes
+   every site resolve to the chooser.
+
+### Sessions across subdomains
+
+`localStorage` is per-origin, so the current dev identity does **not** carry from
+`coachfio.com` to `fifa.coachfio.com`: you appear signed out on each. Accounts,
+coach links and chat are game-agnostic (no game column on those tables), so they
+must be shared across every site. The fix is the hosted auth provider at the
+`current_user` seam issuing a cookie scoped to `.coachfio.com`. Until that lands,
+treat each subdomain as a separate sign-in.

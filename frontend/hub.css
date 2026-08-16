@@ -1,0 +1,267 @@
+/* HUB THEME (coachfio.com only) - light, with violet as the accent.
+   Separate from app.css on purpose: the hub belongs to no single game, so it has
+   its own identity, and each game site keeps its own. FC is dark green; this is
+   light violet-accented; a future title brings its own stylesheet and nothing
+   here moves.
+
+   The ground is light and the DARK sections are the exception: one violet band
+   to break the page, and the closing panel. Violet is an accent here, not the
+   surface. Everything else from the reference designs holds - one chromatic
+   actor, a pill kicker, the accent used INSIDE the headline rather than around
+   it, numbered step cards, alternating bands.
+
+   Deliberately NOT taken from them: invented social proof ("10K+ players",
+   "2M+ matches", "4.9/5"), nav links to pages that do not exist, and a
+   newsletter box that goes nowhere. Those are what make a page read as
+   generated rather than built.
+
+   Restraint rules held throughout:
+     - Violet is the only chromatic actor. Everything else is neutral.
+     - Glow appears at most once per view, behind the thing being sold.
+     - Hover shifts a border or a fill. Nothing lifts, nothing scales. */
+
+:root {
+  /* Paper, not near-black. Each step is a real step so cards still separate
+     from the page and the footer still separates from both. */
+  --h-bg: #F7F7FB;
+  --h-bg-2: #FFFFFF;
+  --h-surface: #FFFFFF;
+  --h-surface-2: #F1F1F6;
+  --h-line: rgba(0, 0, 0, .08);
+  --h-line-2: rgba(0, 0, 0, .16);
+  --h-ink: #14121F;
+  --h-ink-2: #4A4660;
+  --h-ink-3: #86829C;
+  --h-violet: #7C5CFF;
+  /* On a light ground the readable accent IS the deep one, so violet-2 (the
+     "accent text" role) and violet-deep (the "pressed/hover" role) converge. */
+  --h-violet-2: #5B3FD6;
+  --h-violet-deep: #5B3FD6;
+  --h-violet-soft: rgba(124, 92, 255, .10);
+  --h-violet-line: rgba(124, 92, 255, .28);
+  --h-bad: #BA1A1A;
+
+  /* The inverse set, used by the two dark sections below. Named rather than
+     inlined so the violet band and the closing panel cannot drift apart. */
+  --h-dk-bg: #14121F;
+  --h-dk-surface: #1E1B33;
+  --h-dk-line: rgba(255, 255, 255, .09);
+  --h-dk-ink: #F5F4FA;
+  --h-dk-ink-2: #A9A6BE;
+  --h-dk-accent: #9B84FF;
+
+  --h-r: 10px;
+  --h-r-lg: 16px;
+  --h-s1: 8px; --h-s2: 16px; --h-s3: 24px; --h-s4: 40px; --h-s5: 72px;
+
+  --h-font: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --h-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+/* The UA rule for [hidden] is display:none, but ANY author display wins over it. */
+[hidden] { display: none !important; }
+
+.hub {
+  margin: 0; background: var(--h-bg); color: var(--h-ink);
+  font-family: var(--h-font); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.hub a { color: inherit; }
+.hub-wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.hub-skip { position: absolute; left: -9999px; }
+.hub-skip:focus { left: 24px; top: 24px; z-index: 100; background: var(--h-surface); padding: 10px 16px; border-radius: var(--h-r); }
+.hub :focus-visible { outline: 2px solid var(--h-violet); outline-offset: 3px; border-radius: var(--h-r); }
+
+/* ---- top bar ------------------------------------------------------------ */
+.hub-top {
+  position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--h-line);
+  background: rgba(247, 247, 251, .82);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.hub-top__in { display: flex; align-items: center; justify-content: space-between; gap: var(--h-s2); padding: 16px 0; }
+.hub .hub-logo { display: inline-flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; letter-spacing: -.02em; color: var(--h-ink); text-decoration: none; }
+.hub-logo__mark {
+  width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--h-violet), var(--h-violet-deep)); color: #fff;
+}
+.hub-logo__mark .material-symbols-outlined { font-size: 18px; }
+.hub-top__right { display: flex; align-items: center; gap: var(--h-s2); }
+
+.hub-chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--h-line); background: var(--h-surface);
+  font-family: var(--h-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--h-ink-2);
+}
+.hub-chip__dot { width: 6px; height: 6px; border-radius: 999px; background: var(--h-violet); box-shadow: 0 0 8px var(--h-violet); }
+
+/* ---- buttons ------------------------------------------------------------ */
+.hub-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 20px; border-radius: var(--h-r); border: 1px solid transparent;
+  font-family: inherit; font-size: 14.5px; font-weight: 600; text-decoration: none; cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease;
+}
+.hub-btn--primary { background: var(--h-violet); color: #fff; }
+.hub-btn--primary:hover { background: var(--h-violet-deep); }
+.hub-btn--ghost { background: var(--h-surface); border-color: var(--h-line); color: var(--h-ink); }
+.hub-btn--ghost:hover { border-color: var(--h-line-2); background: var(--h-surface-2); }
+.hub-btn--lg { padding: 14px 26px; font-size: 15px; }
+.hub-btn--block { width: 100%; }
+.hub-btn[disabled] { opacity: .5; cursor: not-allowed; }
+.hub-btn .material-symbols-outlined { font-size: 18px; }
+.hub-textlink { font-size: 14.5px; font-weight: 500; color: var(--h-ink-2); text-decoration: none; }
+.hub-textlink:hover { color: var(--h-ink); }
+
+/* ---- type --------------------------------------------------------------- */
+.hub-h1 { font-size: clamp(38px, 4.6vw, 56px); font-weight: 700; line-height: 1.06; letter-spacing: -.035em; margin: 0; }
+.hub-h1 em { font-style: normal; color: var(--h-violet-2); }
+.hub-h2 { font-size: clamp(26px, 2.8vw, 36px); font-weight: 700; line-height: 1.15; letter-spacing: -.03em; margin: 0; }
+.hub-h3 { font-size: 18px; font-weight: 600; letter-spacing: -.01em; margin: 0; }
+.hub-lede { font-size: 16.5px; line-height: 1.65; color: var(--h-ink-2); margin: 20px 0 0; }
+.hub-body { font-size: 15.5px; line-height: 1.65; color: var(--h-ink-2); margin: 0; }
+.hub-small { font-size: 13.5px; line-height: 1.6; color: var(--h-ink-2); margin: 0; }
+.hub-mono { font-family: var(--h-mono); font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--h-violet-2); margin: 0; }
+.hub-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--h-violet-line); background: var(--h-violet-soft); }
+
+/* ---- surfaces ----------------------------------------------------------- */
+.hub-card { background: var(--h-surface); border: 1px solid var(--h-line); border-radius: var(--h-r-lg); padding: var(--h-s3); }
+.hub-card--flush { padding: 0; overflow: hidden; }
+.hub-band { padding: var(--h-s5) 0; }
+/* One dark band: it breaks a long light page and gives the steps somewhere to
+   sit without competing with the hero. This is the inverse of what it used to
+   be - the page was dark with a light band, and now it is the other way round. */
+.hub-band--violet { background: var(--h-dk-bg); color: var(--h-dk-ink); }
+.hub-band--violet .hub-h2, .hub-band--violet .hub-h3 { color: var(--h-dk-ink); }
+.hub-band--violet .hub-body, .hub-band--violet .hub-small { color: var(--h-dk-ink-2); }
+.hub-band--violet .hub-card { background: var(--h-dk-surface); border-color: var(--h-dk-line); }
+.hub-band--violet .hub-mono, .hub-band--violet .hub-step__n { color: var(--h-dk-accent); }
+
+/* ---- hero --------------------------------------------------------------- */
+.hub-hero { position: relative; overflow: hidden; padding: var(--h-s5) 0 var(--h-s4); }
+/* The single glow on the page, behind the headline. */
+.hub-hero::before {
+  content: ""; position: absolute; left: 50%; top: -240px; width: 900px; height: 640px;
+  transform: translateX(-50%); pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(124, 92, 255, .13), transparent 70%);
+}
+/* Centred hero. The lede and buttons centre with the headline: centring the
+   title alone leaves the block hanging off its own text. */
+.hub-hero__in { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; text-align: center; }
+.hub-hero__in .hub-lede { margin-left: auto; margin-right: auto; max-width: 62ch; }
+.hub-hero__cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 34px; }
+
+/* Three supporting points under the hero: icon, label, one line. */
+.hub-points { position: relative; z-index: 1; display: grid; gap: var(--h-s3); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: var(--h-s5); }
+.hub-point { display: flex; gap: 14px; }
+.hub-point__ico { flex: 0 0 38px; height: 38px; border-radius: var(--h-r); display: grid; place-items: center; background: var(--h-violet-soft); border: 1px solid var(--h-violet-line); color: var(--h-violet-2); }
+.hub-point__ico .material-symbols-outlined { font-size: 19px; }
+.hub-point b { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 3px; }
+.hub-point span { font-size: 13.5px; color: var(--h-ink-2); }
+
+/* ---- report windows ----------------------------------------------------- */
+.hub-shots { display: grid; gap: var(--h-s3); grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.hub-mock { margin: 0; border-radius: var(--h-r-lg); border: 1px solid var(--h-line); background: var(--h-surface); overflow: hidden; }
+.hub-mock__chrome { display: flex; align-items: center; gap: 6px; padding: 11px 16px; background: var(--h-surface-2); border-bottom: 1px solid var(--h-line); }
+.hub-mock__chrome i { width: 9px; height: 9px; border-radius: 999px; background: rgba(0, 0, 0, .13); }
+.hub-mock__chrome span { margin-left: 8px; font-family: var(--h-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--h-ink-3); }
+.hub-mock img { display: block; width: 100%; height: auto; }
+
+/* ---- numbered steps ----------------------------------------------------- */
+.hub-steps { display: grid; gap: var(--h-s3); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: var(--h-s4); }
+.hub-step__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.hub-step__ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--h-violet); color: #fff; }
+.hub-step__n { font-family: var(--h-mono); font-size: 13px; font-weight: 600; color: var(--h-violet-deep); }
+
+/* ---- feature row -------------------------------------------------------- */
+.hub-feats { display: grid; gap: var(--h-s4); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: var(--h-s4); text-align: center; }
+.hub-feat__ico { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; background: var(--h-violet-soft); border: 1px solid var(--h-violet-line); color: var(--h-violet-2); margin-bottom: 14px; }
+.hub-feat b { display: block; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.hub-feat span { font-size: 13.5px; color: var(--h-ink-2); }
+
+/* ---- closing CTA -------------------------------------------------------- */
+.hub-cta {
+  position: relative; overflow: hidden; text-align: center;
+  padding: var(--h-s5) var(--h-s3); border-radius: var(--h-r-lg);
+  background: linear-gradient(150deg, #272247, #191630);
+  border: 1px solid var(--h-violet-line); color: var(--h-dk-ink);
+}
+/* The one violet panel on a light page. Its ink is pinned because the tokens
+   around it are now light. */
+.hub-cta .hub-h2 { color: var(--h-dk-ink); }
+.hub-cta .hub-body, .hub-cta .hub-small { color: var(--h-dk-ink-2); }
+.hub-cta::before {
+  content: ""; position: absolute; left: 50%; top: -180px; width: 700px; height: 420px;
+  transform: translateX(-50%); pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(124, 92, 255, .28), transparent 70%);
+}
+.hub-cta > * { position: relative; z-index: 1; }
+
+/* ---- game cards (hub picker) -------------------------------------------- */
+.hub-games { display: grid; gap: var(--h-s3); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.hub-gcard {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+  height: 320px; padding: 24px; border-radius: var(--h-r-lg); overflow: hidden;
+  border: 1px solid var(--h-line); text-decoration: none; isolation: isolate;
+  transition: border-color .18s ease;
+}
+.hub-gcard:hover { border-color: var(--h-violet-line); }
+.hub-gcard__art { position: absolute; inset: 0; z-index: 0; background: linear-gradient(160deg, #29244A, #17142A); }
+.hub-gcard__art--b { background: linear-gradient(160deg, #3A2244, #20132A); }
+/* Key art sits inside the art slot, so if it fails to load the gradient behind
+   it is still there. Slightly desaturated so the cards read as one set rather
+   than as two competing box shots. */
+.hub-gcard__img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); transition: transform .35s ease; }
+.hub-gcard:hover .hub-gcard__img { transform: scale(1.03); }
+.hub-gcard__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, .55)); }
+/* Photography needs a deeper, earlier scrim than a flat gradient does: the FC
+   art is bright sky where the card's white title sits. */
+.hub-gcard__scrim--art { background: linear-gradient(to bottom, rgba(10, 8, 20, .15) 0%, rgba(10, 8, 20, .55) 45%, rgba(10, 8, 20, .88) 100%); }
+.hub-gcard__in { position: relative; z-index: 2; }
+.hub-gcard__tags { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+/* A game card is key art with a scrim, so it is dark whatever the page is. Its
+   internals are written light-on-dark here rather than via the page tokens. */
+.hub-gtag { padding: 4px 9px; border-radius: 6px; font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .8); background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .16); }
+.hub-gtag--active { background: rgba(124, 92, 255, .85); border-color: transparent; color: #fff; }
+.hub-gcard__name { font-size: 28px; font-weight: 700; letter-spacing: -.025em; margin: 0 0 5px; color: #fff; }
+.hub-gcard__desc { font-size: 13.5px; color: rgba(255, 255, 255, .72); margin: 0; }
+.hub-gsoon { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 320px; padding: 24px; border-radius: var(--h-r-lg); background: var(--h-surface-2); border: 1px dashed var(--h-line-2); }
+.hub-gsoon__ring { width: 46px; height: 46px; border-radius: 999px; background: var(--h-bg-2); border: 1px solid var(--h-line); display: grid; place-items: center; margin-bottom: 16px; color: var(--h-ink-3); }
+.hub-game__mark { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--h-violet-soft); border: 1px solid var(--h-violet-line); color: var(--h-violet-2); }
+
+/* ---- forms -------------------------------------------------------------- */
+.hub-center { min-height: 100vh; display: grid; place-items: center; padding: var(--h-s3); }
+.hub-auth { width: 100%; max-width: 400px; }
+.hub-field { display: block; margin-bottom: var(--h-s2); }
+.hub-label { display: flex; justify-content: space-between; font-family: var(--h-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--h-ink-2); margin-bottom: 8px; }
+.hub-input {
+  width: 100%; padding: 12px 14px; border-radius: var(--h-r);
+  border: 1px solid var(--h-line-2); background: var(--h-bg-2);
+  font-family: inherit; font-size: 15px; color: var(--h-ink);
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.hub-input::placeholder { color: var(--h-ink-3); }
+.hub-input:focus { outline: none; border-color: var(--h-violet); box-shadow: 0 0 0 3px rgba(124, 92, 255, .16); }
+.hub-err { display: block; margin-top: 8px; font-size: 13px; color: var(--h-bad); }
+
+/* ---- footer ------------------------------------------------------------- */
+.hub-foot { border-top: 1px solid var(--h-line); background: var(--h-bg-2); }
+.hub-foot__in { display: flex; align-items: center; justify-content: space-between; gap: var(--h-s3); flex-wrap: wrap; padding: var(--h-s4) 0; }
+.hub-foot__nav { display: flex; gap: var(--h-s3); flex-wrap: wrap; }
+.hub-foot__nav a { font-size: 13.5px; color: var(--h-ink-2); text-decoration: none; }
+.hub-foot__nav a:hover { color: var(--h-ink); }
+.hub-foot__copy { font-size: 13px; color: var(--h-ink-3); }
+.hub-foot__copy strong { color: var(--h-ink-2); font-weight: 600; }
+/* Signed-in variant: a credit line, not a nav. Transparent so it reads as the
+   bottom of the page rather than as another band. */
+.hub-foot--slim { background: none; }
+.hub-foot--slim .hub-foot__in { padding: 20px 0; }
+.hub-foot__support { font-size: 13px; color: var(--h-ink-3); text-decoration: none; }
+.hub-foot__support:hover { color: var(--h-ink-2); }
+
+/* ---- signed-in page layout --------------------------------------------- */
+/* One row of cards does not fill a screen, so the document used to end partway
+   up the viewport and leave bare background below the footer. Pin the footer to
+   the bottom and let main absorb the slack instead. */
+body[data-hub-page="hub"] { min-height: 100dvh; display: flex; flex-direction: column; }
+body[data-hub-page="hub"] > main { flex: 1 0 auto; }

@@ -49,8 +49,8 @@ entries:
       have the ball to "shoot" or "clear with ○/B" is wrong and impossible to
       execute; while the opponent is dribbling, ○/B is a tackle. When the
       opponent has the ball, the only correct inputs are jockey (L2/LT), manual
-      switching (Right Stick), second-man contain (L1/LB) and a timed stand
-      tackle (○/B).
+      switching (Right Stick or L1/LB), second-man press (R1/RB) and a timed
+      stand tackle (○/B).
     controls: "In possession: ○/B shoot|clear, □/X pass, △/Y through ball. Defending: ○/B stand tackle, □/X slide, △/Y keeper rush"
     tags: [defending, controls, inputs, do-not-mention, tackling, clearance]
   - id: tackling
@@ -66,11 +66,15 @@ entries:
     area: defending
     title: Manual switching & second man
     detail: >-
-      Switch to the right defender early with the Right Stick flick (or L1/LB for
-      the second-man press) so you mark runners and cover the far post instead of
-      ball-watching. Late switching is a top cause of conceding.
-    controls: "Right Stick flick (manual switch); L1/LB (second-man contain)"
-    tags: [defending, switching, marking, far-post, crosses]
+      Switch to the right defender early with the Right Stick flick so you mark
+      runners and cover the far post instead of ball-watching. Late switching is a
+      top cause of conceding. To bring a second defender across without leaving
+      your own man, hold R1/RB for the second-man press.
+    # CORRECTED. This entry previously said L1/LB was the second-man press. It is
+    # R1/RB; L1/LB switches player. The old text meant every report that coached a
+    # press named a button that does something else, which is unexecutable advice.
+    controls: "Right Stick flick (manual switch); L1/LB (switch player); R1/RB (second-man press)"
+    tags: [defending, switching, marking, far-post, crosses, pressing]
   - id: shield_trap
     area: ball_control
     title: Shield trapping & first-touch precision
@@ -228,3 +232,68 @@ entries:
       your own half - that's when the space is biggest.
     controls: "L1/LB (send runner); one-two / give-and-go passes"
     tags: [attacking, wingers, runs, counter, give-and-go, transition]
+  # --- from a community meta cheat sheet (user-supplied) ----------------------
+  - id: r1_l1_are_possession_sensitive
+    area: general
+    title: R1/RB and L1/LB do different jobs with and without the ball
+    detail: >-
+      These two shoulder buttons are the most overloaded inputs in the game, and
+      naming the wrong job is how coaching advice becomes impossible to execute.
+      WITH the ball, R1/RB is CONTROLLED SPRINT (faster than jogging but keeps
+      close control - the correct default for dribbling in traffic) and it is the
+      skill-move modifier; L1/LB is STRAFE DRIBBLE (explosive sideways movement
+      while facing the play) and the modifier for La Croqueta and the Explosive
+      Stepover. WITHOUT the ball, R1/RB calls a team-mate to press and L1/LB
+      switches player. Never tell a player to "hold sprint" as a general fix:
+      holding R2/RT permanently is one of the most common causes of losing the
+      ball, and controlled sprint is usually the actual answer.
+    controls: "With ball: R1/RB controlled sprint + skill modifier, L1/LB strafe dribble. Without ball: R1/RB second-man press, L1/LB player switch"
+    tags: [dribbling, defending, controls, inputs, controlled-sprint, strafe, pressing, do-not-mention]
+  - id: driven_pass_family
+    area: attacking
+    title: Driven pass, driven through ball, driven lob
+    detail: >-
+      The driven pass (R1/RB + pass) is the fastest ground pass in the game and
+      the backbone of the current passing meta, because a fast pass arrives before
+      the defence can shift. Driven THROUGH balls split a defensive line when
+      timed well, and the driven lob is the quick cross-field switch. All three
+      are noticeably stronger on a player with the Pinged Pass PlayStyle. Coach
+      the driven pass when build-up is being intercepted: a normal pass gives the
+      defence time that a driven one does not.
+    controls: "Driven pass: R1/RB + cross/A. Driven through ball: L1/LB + R1/RB + triangle/Y. Driven lob: R1/RB + square/X"
+    tags: [passing, build-up, driven, through-ball, switch, playstyle, meta]
+  - id: first_time_and_one_two
+    area: attacking
+    title: First-time passing and the one-two
+    detail: >-
+      First-time passing is more responsive in FC 26 and is what makes build-up
+      look fast without being risky: the ball moves before the defence resets. The
+      one-two (L1/LB + pass) passes AND sends the passer on a run in one input,
+      which is the simplest way to break a compact defensive block. A player who
+      takes a settling touch every time they receive is giving the defence a free
+      half-second, and that is a coachable habit rather than a skill problem.
+    controls: "First-time pass: pass as the ball arrives. One-two: L1/LB + cross/A"
+    tags: [passing, first-time, one-two, tempo, build-up, low-block, meta]
+  - id: power_and_chip_shots
+    area: attacking
+    title: Power shot and chip shot
+    detail: >-
+      The power shot (L1/LB + R1/RB + shoot) trades a long wind-up for pace on the
+      strike, so it is only correct with time and space - prescribing it under
+      pressure guarantees a block. The chip (L1/LB + shoot) is the answer to a
+      keeper who has rushed out, which is a situation, not a preference. Neither
+      replaces the low driven shot as the default finish from the edge of the box.
+    controls: "Power shot: L1/LB + R1/RB + circle/B. Chip: L1/LB + circle/B"
+    tags: [shooting, finishing, power-shot, chip, keeper, situational]
+  - id: meta_playstyles
+    area: general
+    title: The PlayStyles that define the current meta
+    detail: >-
+      Four traits carry disproportionate weight right now. PINGED PASS makes
+      driven passes and driven through balls noticeably better and is the single
+      most valuable passing trait. TECHNICAL improves shot speed, control and
+      dribbling. RAPID boosts sprint speed and suits wingers and attackers. FLAIR
+      raises skill-move success. Remember these are PASSIVE traits with no button:
+      never give a control for a PlayStyle, and when the fix depends on one, name
+      the player who HAS it rather than telling everyone to attempt the pass.
+    tags: [playstyle, meta, passing, dribbling, pace, squad_selection, do-not-mention]

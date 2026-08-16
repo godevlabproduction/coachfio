@@ -122,9 +122,37 @@ class Settings(BaseSettings):
     # API
     api_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
+    # --- one subdomain per game ---------------------------------------------
+    # "fifa.coachfio.com" serves the FC adapter, the bare domain serves the
+    # chooser. This is a LOOKUP TABLE, deliberately: the mapping is data, so the
+    # core never learns a game id and adding a game stays a config line plus a
+    # plugin. Format: "<label>=<game_id>@<edition>", comma separated.
+    site_hosts: str = "fifa=ea-fc@26,cs=cs2@2"
+    # Labels that mean "no game, show the chooser" rather than a missing site.
+    site_root_labels: str = "www,app,coachfio,localhost,127"
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.api_cors_origins.split(",") if o.strip()]
+
+    @property
+    def site_host_map(self) -> dict[str, tuple[str, str]]:
+        """label -> (game_id, edition). Malformed entries are skipped rather than
+        crashing boot: a typo in an env var should not take the API down."""
+        out: dict[str, tuple[str, str]] = {}
+        for part in self.site_hosts.split(","):
+            part = part.strip()
+            if not part or "=" not in part or "@" not in part:
+                continue
+            label, key = part.split("=", 1)
+            gid, _, edition = key.partition("@")
+            if label.strip() and gid.strip() and edition.strip():
+                out[label.strip().lower()] = (gid.strip(), edition.strip())
+        return out
+
+    @property
+    def root_label_set(self) -> set[str]:
+        return {s.strip().lower() for s in self.site_root_labels.split(",") if s.strip()}
 
 
 _settings: Settings | None = None

@@ -6,7 +6,7 @@
 <title>Coachfio - Home</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <link rel="stylesheet" href="/app.css">
 </head>
@@ -87,7 +87,6 @@
   <section class="section">
     <div class="section__head">
       <h2 class="t-section">What it catches</h2>
-      <span class="faint t-xs">counted across every match</span>
     </div>
     <div class="catch-row reveal">
       <span class="catch"><span class="material-symbols-outlined">shield</span>Diving in with your centre-back</span>
@@ -103,7 +102,6 @@
   <section class="section">
     <div class="section__head">
       <h2 class="t-section">What's in every report</h2>
-      <span class="faint t-xs">and you can download it as a PDF</span>
     </div>
     <div class="card">
       <div class="checklist">
@@ -212,9 +210,15 @@
           form and the habits that keep repeating, and you can message them directly. You choose
           what they see, and you can disconnect any time.</p>
       </div>
-      <div class="band__actions">
-        <a class="btn btn--primary" href="/locker/">Find a coach</a>
-        <a class="btn btn--secondary" href="/signin/?signup=1">I'm a coach</a>
+      <!-- Two doors, and only one is ever right for the person looking at it.
+           A guest needs the sign-up door (with the coach role already chosen, so
+           the form does not contradict the button they just pressed); a player
+           wants the directory; a coach wants their office, not a second account.
+           Resolved in initHomeBand(). This markup is the GUEST state, so the page
+           is correct before any script runs. -->
+      <div class="band__actions" data-cx-coach-band>
+        <a class="btn btn--primary" href="/locker/" data-cx-find-coach>Find a coach</a>
+        <a class="btn btn--secondary" href="/signin/?signup=1&amp;role=coach" data-cx-coach-cta>I'm a coach</a>
       </div>
     </div>
   </section>

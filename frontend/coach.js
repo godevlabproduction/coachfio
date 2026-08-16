@@ -14,7 +14,13 @@
   // API base: when served on :3000 (npm run dev) talk to the backend on :8000;
   // served same-origin by the API itself, relative URLs are correct.
   var API = location.port === "3000" ? "http://localhost:8000" : "";
+  // Which game this hostname serves. One subdomain per game (fifa.coachfio.com),
+  // one frontend for all of them, so this is asked for at boot rather than baked
+  // in. The literal below is only the fallback for when /api/site cannot be
+  // reached; the server is the authority, so a new game never needs a frontend
+  // edit. `SITE` carries the display name and the list of sibling sites.
   var GAME = { game_id: "ea-fc", edition: "26" };
+  var SITE = { game: null, sites: [] };
 
   // ---- identity ------------------------------------------------------------
   // The signed-in account. The backend reads it from the X-User-Id header at the
@@ -676,7 +682,7 @@
     }).join("");
     return '<section class="section"><div class="section__head">'
       + '<h2 class="t-section">Event log</h2>'
-      + '<span class="faint t-xs">click a timestamp to watch it</span></div>'
+      + '</div>'
       + '<div class="stack-s reveal-list">' + rows + "</div></section>";
   }
 
@@ -735,7 +741,7 @@
     }).join("");
     return '<section class="section"><div class="section__head">'
       + '<h2 class="t-section">Practice plan</h2>'
-      + '<span class="faint t-xs">three priorities, in order</span></div>'
+      + '</div>'
       + '<div class="grid grid-3 reveal-list">' + cards + "</div></section>";
   }
 
@@ -748,7 +754,7 @@
     if (!changes.length) {
       return sectionCard("Tactical recommendation", "tune", "",
         '<p class="muted">Nothing in this match pointed at your tactics. The problems '
-        + "above are habits, not settings &mdash; changing the setup now would add a new "
+        + "above are habits, not settings, and changing the setup now would add a new "
         + "weakness without fixing anything.</p>");
     }
     var rows = changes.map(function (c) {
@@ -1223,16 +1229,17 @@
       deltaHtml = '<span class="stat__delta stat__delta--flat">No change</span>';
     }
     var n = (t.points || []).length;
-    // The big number is ONE match, not a total. Without saying so, "Shots 5" next
-    // to "across 3 matches" reads as five shots in three games.
+    // Just the average. The window is already stated by the range picker at the
+    // top of the page, and repeating "over 5 matches" on all six cards was five
+    // extra words each to say something the control above already says.
     var avg = typeof t.average === "number"
-      ? "avg " + (Math.round(t.average * 10) / 10) + esc(unit) + " over " + n + " match" + (n === 1 ? "" : "es")
+      ? "avg " + (Math.round(t.average * 10) / 10) + esc(unit)
       : n + " match" + (n === 1 ? "" : "es");
     return '<div class="stat"><div class="stat__label">' + esc(t.label || t.key) + "</div>"
       + '<div class="row" style="gap:10px;align-items:baseline">'
       + '<span class="stat__value">' + (Math.round(val * 100) / 100) + esc(unit) + "</span>"
       + deltaHtml + "</div>"
-      + '<div class="faint t-xs" style="margin-top:2px">Last match · ' + avg + "</div>"
+      + '<div class="faint t-xs" style="margin-top:2px">' + avg + "</div>"
       + miniChart(t.points, byId || {}, unit, t.higher_is_better) + "</div>";
   }
 
@@ -1246,7 +1253,7 @@
     var wins = seq.filter(function (m) { return resultOf(m.outcome) === "win"; }).length;
     var rate = seq.length ? Math.round((wins / seq.length) * 100) : 0;
     return '<div class="section__head"><h2 class="t-section">Form</h2>'
-      + '<span class="faint t-xs">oldest to newest</span></div>'
+      + '</div>'
       + '<div class="card"><div class="row wrap" style="gap:20px">'
       + '<div class="form-strip reveal-list">'
       + seq.map(function (m) {
@@ -1265,9 +1272,7 @@
     var issues = (data && data.issues) || [];
     if (!issues.length) return "";
     var total = data.matches || 1;
-    return '<div class="section__head"><h2 class="t-section">What keeps costing you</h2>'
-      + '<span class="faint t-xs">across ' + total + " analysed match"
-      + (total === 1 ? "" : "es") + "</span></div>"
+    return '<div class="section__head"><h2 class="t-section">What keeps costing you</h2></div>'
       + '<div class="card">'
       + issues.map(function (i) {
           var pct = Math.round((i.count / total) * 100);
@@ -1277,10 +1282,7 @@
             + pct + '%"></span></span>'
             + '<span class="pattern__count">' + i.count + " / " + total + "</span></div>";
         }).join("")
-      + "</div>"
-      + '<p class="faint t-xs" style="margin-top:10px">'
-      + "Tagged by the coach on each match, so the same habit is counted the same way "
-      + "every time. Fixing the top one is usually worth more than everything below it.</p>";
+      + "</div>";
   }
 
   function initTrends() {
@@ -1318,13 +1320,15 @@
             return;
           }
 
+          // Oldest first: every block on this page has time as its axis, and a
+          // history that reads right to left is a puzzle, not a chart.
           var byId = {};
           done.forEach(function (m) { byId[m.id] = m; });
           var cards = trends.map(function (t) { return trendCard(t, byId); })
             .filter(Boolean).slice(0, 6).join("");
           var metricsBlock = cards
             ? '<div class="section__head"><h2 class="t-section">Key metrics</h2>'
-              + '<span class="faint t-xs">each figure is your most recent match</span></div>'
+              + '</div>'
               + '<div class="grid grid-3 reveal-list">' + cards + "</div>"
               // Goals are scoreboard-derived; the rest is the model's count of what
               // it noticed. Say so rather than let them look equally authoritative.
@@ -1373,9 +1377,7 @@
     }
 
     function rangeWrap(inner) {
-      return '<div class="row-between wrap" style="margin-bottom:24px">'
-        + '<span class="faint t-xs">Showing '
-        + (statsRange ? "your last " + statsRange + " matches" : "every match") + "</span>"
+      return '<div class="row" style="justify-content:flex-end;margin-bottom:24px">'
         + rangePicker() + "</div>" + inner;
     }
     function wireRange() {
@@ -1797,7 +1799,10 @@
     var host = $("[data-cx-auth]");
     var mode = /signup/.test(location.search) ? "up" : "in";
     var level = "intermediate";
-    var role = "player";
+    // Arriving from "I'm a coach" must open the form on Coach. It used to be
+    // hardcoded to player, so the button announced you were a coach and then the
+    // form quietly assumed you were not, and you had to notice and fix it.
+    var role = /[?&]role=coach\b/.test(location.search) ? "coach" : "player";
     var survey = [], answers = {}, suggestion = null, levelTouched = false;
     // Every survey change re-renders the card, which would blow away anything
     // already typed. Keep the text fields in state and write them back.
@@ -2086,6 +2091,31 @@
 
   // The app bar is static markup in every page, so swap its right-hand side here
   // rather than maintaining two copies of the header in seven files.
+  // The "Want a real coach too?" band on the home page. The markup ships in the
+  // GUEST state (both doors), so this only has to correct it for someone signed
+  // in. "I'm a coach" previously pointed at the auth screen for everyone, and the
+  // router bounces a signed-in user off that screen straight back to "/" - click,
+  // flicker, nothing, which reads as a dead button.
+  function initHomeBand() {
+    var band = $("[data-cx-coach-band]");
+    if (!band || !identity()) return;          // guest: shipped markup is correct
+    var find = $("[data-cx-find-coach]"), cta = $("[data-cx-coach-cta]");
+    // Hide the pair until the role is known. Showing both and then removing one
+    // is worse than a short gap: the wrong door is briefly clickable.
+    band.hidden = true;
+    getAccount().then(function (d) {
+      var isCoach = ((d.profile || {}).role === "coach");
+      if (cta) {
+        cta.hidden = !isCoach;
+        if (isCoach) cta.href = "/office/";     // their office, not a second account
+      }
+      if (find) find.hidden = isCoach;
+    }).catch(function () {
+      // Profile unavailable: fall back to the guest pair rather than a band with
+      // no way out of it.
+    }).then(function () { band.hidden = false; });
+  }
+
   function renderAuthNav() {
     var end = $(".appbar__end");
     if (!end || identity()) return;
@@ -2388,7 +2418,7 @@
       var names = Object.keys(groups).sort();
       if (!names.length) return "";
       return '<div class="section__head" style="margin-top:32px"><h2 class="t-section">Your uploads by athlete</h2>'
-        + '<span class="faint t-xs">tagged at upload</span></div>'
+        + "</div>"
         + '<div class="stack-s">'
         + names.map(function (n) {
             var ms = groups[n];
@@ -2573,7 +2603,7 @@
       }
       planHost.innerHTML =
         '<div class="section__head"><h2 class="t-section">Practice checkboard</h2>'
-        + '<span class="faint t-xs">from your latest report</span></div>'
+        + "</div>"
         + '<div class="card"><div class="stack-s">'
         + items.map(function (it) {
             var st = checks[it.key] || {};
@@ -2838,7 +2868,53 @@
   }
 
   // ---- router --------------------------------------------------------------
+  // The game comes from the hostname, so it has to be known before any page
+  // builds a /trends/{game}/{edition} URL. One same-origin call, and a failure
+  // falls through to the built-in default rather than blocking the whole app on
+  // it: a page that renders against the wrong game is recoverable, a page that
+  // never renders is not.
+  function bootSite() {
+    return j("/api/site").then(function (d) {
+      SITE = d || SITE;
+      if (d && d.game) GAME = { game_id: d.game.game_id, edition: d.game.edition };
+    }).catch(function () {});
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    // The root domain is a landing page, not the app: no match hosts to render
+    // into and no game to render them about, so it takes its own path.
+    if (document.body.hasAttribute("data-cx-root")) {
+      bootSite().then(renderGameTiles);
+      return;
+    }
+    bootSite().then(startRouter);
+  });
+
+  function renderGameTiles() {
+    var host = $("[data-cx-game-list]");
+    if (!host) return;
+    var sites = SITE.sites || [];
+    if (!sites.length) {
+      host.innerHTML = emptyState("sports_esports", "No games yet",
+        "Games appear here as they are added.");
+      return;
+    }
+    // SITE.root comes from the server, which is the only place that knows which
+    // label is a subdomain. Deriving it here is what produced fifa.fifa.localhost.
+    var root = SITE.root || location.hostname;
+    var port = location.port ? ":" + location.port : "";
+    host.innerHTML = '<div class="hub-games">' + sites.map(function (s) {
+      var url = location.protocol + "//" + s.label + "." + root + port + "/";
+      return '<a class="hub-game" href="' + url + '">'
+        + '<span class="hub-game__mark">' + icon("sports_esports") + "</span>"
+        + "<span><span class='hub-game__name'>" + esc(s.display_name) + "</span><br>"
+        + "<span class='hub-game__host'>" + esc(s.label + "." + root) + "</span></span>"
+        + '<span class="hub-game__go">' + icon("arrow_forward") + "</span></a>";
+    }).join("") + "</div>";
+  }
+
+
+  function startRouter() {
     markNav();
     var path = location.pathname.replace(/index\.html$/, "");
     var onAuth = /\/signin\/?$/.test(path);
@@ -2867,6 +2943,30 @@
     else if (/\/office\/?$/.test(path)) initOffice();
     else if (/\/coach\/?$/.test(path)) initCoachPage();
     else if (/\/locker\/?$/.test(path)) initLocker();
-    else loadRecent();  // home
-  });
+    else { applySite(); loadRecent(); initHomeBand(); }  // home
+  }
+
+  // The home page ships the FC wording because that is the only live site today.
+  // On the root domain there is no game, so the hero says so and offers the
+  // sites instead of pretending to be one of them.
+  function applySite() {
+    var eyebrow = $("[data-cx-game]");
+    if (eyebrow && SITE.game) eyebrow.textContent = SITE.game.display_name;
+    if (SITE.game || !(SITE.sites || []).length) return;
+
+    if (eyebrow) eyebrow.textContent = "Choose your game";
+    var port = location.port ? ":" + location.port : "";
+    // The server computes the root. This used to count dots here, which treated
+    // fifa.localhost as a bare domain and linked on to fifa.fifa.localhost.
+    // Knowing which label is a subdomain is the server's job, and duplicating the
+    // rule in two languages is what let the two disagree.
+    var root = SITE.root || location.hostname;
+    var row = $(".row");
+    if (!row) return;
+    row.innerHTML = SITE.sites.map(function (s, i) {
+      return '<a class="btn btn--' + (i ? "secondary" : "primary") + ' btn--lg" href="'
+        + location.protocol + "//" + s.label + "." + root + port + '/">'
+        + esc(s.display_name) + "</a>";
+    }).join("");
+  }
 })();

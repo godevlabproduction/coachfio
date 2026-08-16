@@ -1,0 +1,116 @@
+# FC 26 SKILL MOVES - the moves worth coaching, with the STAR RATING each one
+# needs. Controls are PlayStation / Xbox.
+#
+# The star rating is the point of this file, not decoration. A skill move is only
+# advice if the player's card can perform it: telling a 3-star skiller to beat a
+# defender with an Elastico is unexecutable, and unexecutable advice is worse than
+# none because it reads as the coach not watching. Always name the rating when
+# prescribing a move, and prefer the cheapest move that solves the situation.
+#
+# Hint-selected into the prompt (only the moves the footage is actually about),
+# because ten moves on every report would crowd out the observations.
+meta:
+  source: "FC 26 Ultimate Team meta cheat sheet (community, jm_plays.fc), user-supplied"
+  principle: >-
+    Coach the SITUATION first and the move second. A skill move is a tool for a
+    specific problem (create separation, escape pressure, change the shooting
+    angle), never a thing to do because it is meta. Two moves executed reliably
+    beat ten attempted badly.
+  note: >-
+    Star ratings are as given by the source. If a rating is contradicted by the
+    in-game card, trust the game.
+
+entries:
+  - id: ball_roll
+    match: [ball roll, create space, shifted the ball, no space to shoot, crowded, tight space]
+    title: Ball Roll (2 star)
+    detail: >-
+      The cheapest useful move in the game and the one elite players spam most.
+      Rolls the ball sideways to shift a defender's weight and open a passing or
+      shooting lane without committing to a dribble. Because it is 2-star, almost
+      any attacker can do it, so this is usually the right recommendation when a
+      player needs a yard rather than a beat.
+    controls: "Right stick: hold left or right"
+    tags: [skill-move, dribbling, 2-star, create-space, shooting-angle, meta]
+  - id: stepover_and_explosive
+    match: [stepover, explosive stepover, wing, wide, beaten the fullback, burst, one v one out wide]
+    title: Stepover (2 star) and Explosive Stepover (3 star)
+    detail: >-
+      Stepover is a speed boost past a committed defender. The EXPLOSIVE variant
+      adds the L1/LB modifier and is then exited by pushing the left stick into
+      space - it is the strongest wing move in the meta because the exit burst,
+      not the feint, is what beats the fullback. Coach the exit as much as the
+      input: players perform the stepover and then fail to accelerate out of it.
+    controls: "Stepover: right stick up-right or up-left. Explosive: L1/LB + the same, then push the left stick into space"
+    tags: [skill-move, dribbling, wing, 2-star, 3-star, acceleration, meta]
+  - id: la_croqueta
+    match: [croqueta, inside the box, cut inside, beat him inside, congested box, close control]
+    title: La Croqueta (3 star)
+    detail: >-
+      Pushes the ball across the body from one foot to the other in one touch.
+      Beats a defender who has committed in a tight area, which makes it the box
+      and half-space move rather than a wing move. Needs the space to plant the
+      second touch, so it fails when used while sprinting into traffic.
+    controls: "L1/LB + right stick: hold left or right"
+    tags: [skill-move, dribbling, box, half-space, 3-star, meta]
+  - id: ball_roll_scoop_turn
+    match: [scoop turn, cut inside, shooting angle, turned onto his left, opened the angle]
+    title: Ball Roll Scoop Turn (4 star)
+    detail: >-
+      A ball roll chained into a scoop turn to cut inside and manufacture a
+      shooting angle from a wide position. This is the move behind a lot of the
+      cut-in-and-finish goals in the current meta. 4-star, so check the card
+      before prescribing it.
+    controls: "Ball roll, then circle/B, then cross/A"
+    tags: [skill-move, dribbling, shooting-angle, cut-inside, 4-star, meta]
+  - id: elastico_family
+    # NOT "centre back" on its own: a DEFENDING log says "my centre back stepped
+    # out", which pulled an attacking skill move onto a report about conceding.
+    match: [elastico, one v one, isolated in attack, took him on, beat the last man]
+    title: Elastico and Reverse Elastico (4 star)
+    detail: >-
+      The 1v1 move against a centre-back who has to respect both feet. The
+      REVERSE is the more effective of the two precisely because opponents read
+      the standard one. Both are 4-star and both need a moment of separation to
+      begin, so they beat an over-committed marker but not a patient one.
+    controls: "Elastico: right stick roll right-to-left. Reverse: right stick roll left-to-right"
+    tags: [skill-move, dribbling, one-v-one, centre-back, 4-star, meta]
+  - id: mcgeady_spin
+    match: [mcgeady, spin, turn while running, changed direction, dead end, ran into trouble]
+    title: McGeady Spin (3 star)
+    detail: >-
+      Turns sharply while still running, which is what separates it from the
+      roulette: it keeps momentum rather than killing it. Use when a run has hit
+      a dead end and the player needs to change direction without stopping.
+    controls: "Right stick: up, then right or left"
+    tags: [skill-move, dribbling, turning, transition, 3-star]
+  - id: roulette
+    match: [roulette, escape pressure, pressed, surrounded, closed down, pressure on the ball]
+    title: Roulette (3 star)
+    detail: >-
+      A 180-degree spin to escape a press. It is a pressure-relief tool, not a
+      beating-a-man tool, and it is the correct answer to being closed down with
+      no forward option, where a forced pass would be the mistake.
+    controls: "Right stick: full 180 degree rotation"
+    tags: [skill-move, dribbling, pressure, escape, 3-star]
+  - id: fake_shot_stop
+    match: [fake shot, froze the defender, shot fake, stopped the ball, disguise]
+    title: Fake Shot Stop (1 star)
+    detail: >-
+      A shot fake that stops the ball dead, freezing the defender before a pass or
+      a real shot. At 1-star EVERY player can do it, which makes it the highest
+      value move to coach to a weaker card and the right suggestion when the
+      problem is a rushed final action rather than a lack of pace.
+    controls: "Circle/B then cross/A, releasing the left stick"
+    tags: [skill-move, dribbling, 1-star, composure, final-action, shooting]
+  - id: elite_spam_list
+    match: [what do pros do, elite habits, meta moves, repeatable, patterns, predictable attacks]
+    title: What elite players actually repeat
+    detail: >-
+      Elite play is a small number of reliable patterns, not a wide repertoire.
+      The habits that recur at the top level are: ball roll, explosive stepover,
+      driven pass, ball roll scoop turn, la croqueta, first-time passes, driven
+      through balls, controlled sprint, low driven shots and one-twos. If a player
+      is losing while attempting a wide variety of moves, the coaching point is
+      usually to cut the repertoire down, not to add to it.
+    tags: [meta, habits, repeatable-patterns, elite, simplification]

@@ -17,7 +17,6 @@ from sqlalchemy.orm import Session
 from core.models.enums import SkillLevel
 from core.storage.models import UserRow
 
-_SIDES = {"home", "away"}
 _ROLES = {"player", "coach"}
 _CURRENCIES = {"EUR", "USD", "GBP"}
 _CONTROL_SCHEMES = {"Classic", "Alternate"}
@@ -76,8 +75,6 @@ def update_user(session: Session, user_id: str, **fields: Any) -> UserRow:
         row.skill_level = SkillLevel.parse(fields["skill_level"]).value
     if "control_scheme" in fields and fields["control_scheme"] in _CONTROL_SCHEMES:
         row.control_scheme = fields["control_scheme"]
-    if "preferred_side" in fields and fields["preferred_side"] in _SIDES:
-        row.preferred_side = fields["preferred_side"]
     if "display_name" in fields and fields["display_name"] is not None:
         name = str(fields["display_name"]).strip()[:80]
         row.display_name = name or None
@@ -132,7 +129,6 @@ def user_profile(row: UserRow) -> dict:
         "email": row.email,
         "skill_level": row.skill_level,
         "control_scheme": row.control_scheme,
-        "preferred_side": row.preferred_side,
         "skill_survey": dict(row.skill_survey or {}),
         "role": getattr(row, "role", None) or "player",
         "coach_profile": dict(getattr(row, "coach_profile", None) or {}),

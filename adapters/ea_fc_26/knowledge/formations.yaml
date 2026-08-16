@@ -29,7 +29,7 @@ principles:
     detail: >-
       AI defending is toned down in FC 26 - winning the ball relies on manual jockey
       (hold L2/LT) at the right moment and timing the stand tackle, not auto-contain.
-      Contain to delay, second-man (L1/LB) to double, tackle only when the ball is
+      Contain to delay, second-man press (R1/RB) to double, tackle only when the ball is
       exposed.
     tags: [defending, jockey, contain, tackling, meta]
   - id: defensive_line_height

@@ -44,7 +44,7 @@ entries:
     fix: >-
       This is a CONTROL mistake, not a shape mistake, so tactics sliders will not
       help. Leave the defender in the line. Defend with the player the game already
-      gave you, or hold second-man contain (L1/LB) so the AI presses while your
+      gave you, or hold second-man press (R1/RB) so the AI presses while your
       man keeps his position. Only take manual control of a defender when he is
       already the closest man on the correct side of the attacker - if you have to
       run him across or forward to reach the ball, you are opening the space that

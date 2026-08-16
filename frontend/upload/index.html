@@ -6,7 +6,7 @@
 <title>Coachfio - Upload a match</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <link rel="stylesheet" href="/app.css">
 </head>
@@ -85,10 +85,11 @@
           <div>
             <p class="t-sm" style="font-weight:550" data-cx-side-q>Which side did you play?</p>
             <p class="faint t-xs" style="margin-top:2px">Home is the top row of the scoreboard, away the bottom.</p>
-            <p class="faint t-xs" style="margin-top:4px">
-              Defaults come from your <a class="link" href="/account/">account</a>; changing them
-              here applies to this match only.
-            </p>
+            <!-- Side is NOT remembered: it changes every match, and it decides which
+                 goals count as conceded and whether the report says you won. It is
+                 asked here every time on purpose, so this must not claim otherwise.
+                 The account-defaults note now sits with the two fields it is true
+                 of, control scheme and coaching level. -->
             <div class="segmented" role="group" aria-label="Which side did you play" style="margin-top:12px">
               <button type="button" class="segmented__btn" data-side="home" aria-pressed="true">
                 <span class="material-symbols-outlined">stadium</span>Home
@@ -134,6 +135,10 @@
               </select>
             </div>
           </div>
+          <p class="faint t-xs" style="margin-top:8px">
+            These two come from your <a class="link" href="/account/">account</a>; changing them
+            here applies to this match only.
+          </p>
         </div>
       </div>
 

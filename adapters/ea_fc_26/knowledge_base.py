@@ -320,6 +320,22 @@ def build_playbook(hints: str = "", max_remedies: int = 6, max_learned: int = 12
         for e in tac:
             out.append(f"- {e['title']}: {' '.join(e.get('detail', '').split())}")
 
+    # Skill moves. Hint-selected, because ten of them on a report about defending
+    # would crowd out the observations. The STAR RATING is carried through
+    # deliberately: a move the player's card cannot perform is not advice, and
+    # prescribing one reads as the coach not having watched.
+    moves = (k.get("skill_moves", {}) or {}).get("entries", []) or []
+    msel = _select_remedies(moves, hints, 4) if hints else []
+    if msel:
+        out.append("")
+        out.append(
+            "SKILL MOVES - only prescribe one the player's card can actually do, and "
+            "say the star rating when you do. Coach the situation first, the move second:"
+        )
+        for e in msel:
+            ctrl = f" [{e['controls']}]" if e.get("controls") else ""
+            out.append(f"- {e['title']}{ctrl}: {' '.join(str(e.get('detail', '')).split())}")
+
     remedies = (k.get("mistake_remedies", {}) or {}).get("entries", []) or []
     sel = _select_remedies(remedies, hints, max_remedies)
     if sel:

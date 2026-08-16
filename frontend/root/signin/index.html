@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/hub.css">
+<title>Sign in - Coachfio</title>
+</head>
+<!-- HUB SIGN IN, structured to design/stitch-hub/coach.io_sign_in/code.html:
+     one centred card, brand, subtitle, labelled fields, full-width primary.
+     The export's password field is not reproduced: there is no password auth
+     behind the current_user seam, and an input that is silently ignored is
+     worse than one that is absent. It returns with the real auth provider. -->
+<body class="hub" data-hub-page="auth">
+<a class="hub-skip" href="#main">Skip to content</a>
+<main id="main" class="hub-center">
+  <div class="hub-auth">
+    <div class="hub-card" style="padding:32px">
+      <div style="text-align:center;margin-bottom:24px">
+        <a class="hub-logo" href="/" style="font-size:24px"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
+        <p class="hub-body" style="margin-top:8px" data-hub-subtitle>Sign in to your account</p>
+      </div>
+      <form data-hub-auth novalidate>
+        <label class="hub-field" data-hub-name-field hidden>
+          <span class="hub-label">Name</span>
+          <input class="hub-input" id="hub-name" type="text" autocomplete="name" placeholder="Your name">
+        </label>
+        <label class="hub-field">
+          <span class="hub-label">Email</span>
+          <input class="hub-input" id="hub-email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </label>
+        <p class="hub-err" data-hub-error hidden></p>
+        <button class="hub-btn hub-btn--primary hub-btn--block hub-btn--lg" data-hub-submit type="submit">Sign in</button>
+      </form>
+      <p class="hub-small" style="margin-top:24px;text-align:center">
+        <span data-hub-swap-text>New here?</span>
+        <a class="hub-textlink" href="#" data-hub-swap style="color:var(--h-violet-2)">Create an account</a>
+      </p>
+    </div>
+    <p class="hub-small" style="text-align:center;margin-top:16px">You pick your game after signing in.</p>
+  </div>
+</main>
+<script src="/hub.js"></script>
+</body>
+</html>

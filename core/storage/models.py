@@ -106,7 +106,6 @@ class UserRow(Base):
     # Coaching calibration. Applied to every new match; overridable per upload.
     skill_level: Mapped[str] = mapped_column(String(32), default="intermediate")
     control_scheme: Mapped[str] = mapped_column(String(32), default="Classic")
-    preferred_side: Mapped[str] = mapped_column(String(8), default="home")
 
     # Free-form answers to the adapter's skill survey (e.g. FC's Division Rivals
     # tier and Champs record). Opaque here on purpose: the questions are

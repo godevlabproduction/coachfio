@@ -26,7 +26,6 @@ class ProfileUpdate(BaseModel):
     email: str | None = None
     skill_level: str | None = None
     control_scheme: str | None = None
-    preferred_side: str | None = None
     skill_survey: dict | None = None
     role: str | None = None   # "player" | "coach" - validated in update_user
     coach_profile: dict | None = None   # public bio; only meaningful for coaches

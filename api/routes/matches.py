@@ -95,7 +95,12 @@ def create_match(
     capture = {
         "skill_level": profile.skill_level,
         "control_scheme": profile.control_scheme,
-        "player_side": profile.preferred_side,
+        # Side is NOT a profile setting. It changes every match, and it decides
+        # which goals count as conceded and whether the report says you won, so a
+        # remembered value is a wrong answer waiting to be used. It comes from the
+        # upload only; "home" here is the same default the form starts on, for a
+        # client that fails to send one at all.
+        "player_side": "home",
         **{k: v for k, v in (body.capture or {}).items() if v not in (None, "")},
         # Stamp the identity server-side so the coaching loop can track this player
         # across matches (the "learns you" longitudinal memory) and so every read
