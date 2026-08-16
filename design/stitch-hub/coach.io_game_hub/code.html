@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coach.io - Select Game</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#c6c5d5",
+                      "secondary-fixed": "#e5e2e1",
+                      "primary-container": "#5e6ad2",
+                      "on-primary-fixed-variant": "#2e3aa2",
+                      "on-primary-fixed": "#000965",
+                      "background": "#f9f9f8",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#bdc2ff",
+                      "on-tertiary-container": "#fffaf8",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f1f1f0",
+                      "primary": "#4450b7",
+                      "surface-container-high": "#e8e8e7",
+                      "primary-fixed": "#dfe0ff",
+                      "primary-fixed-dim": "#bdc2ff",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#1c1b1b",
+                      "tertiary-fixed": "#ffddbb",
+                      "inverse-surface": "#2f3130",
+                      "border-subtle": "rgba(0, 0, 0, 0.08)",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "surface-raised": "#FFFFFF",
+                      "surface-tint": "#4854bb",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "on-tertiary-fixed-variant": "#673d00",
+                      "on-background": "#1a1c1c",
+                      "on-tertiary-fixed": "#2b1700",
+                      "on-secondary-container": "#636262",
+                      "surface-container-low": "#f3f4f3",
+                      "on-primary-container": "#fdfaff",
+                      "surface": "#f9f9f8",
+                      "dark-border": "rgba(255, 255, 255, 0.1)",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "surface-container": "#eeeeed",
+                      "secondary": "#5f5e5e",
+                      "surface-dim": "#dadad9",
+                      "dark-bg": "#08090A",
+                      "on-surface": "#1a1c1c",
+                      "on-secondary-fixed-variant": "#474746",
+                      "on-surface-variant": "#454652",
+                      "tertiary-fixed-dim": "#ffb867",
+                      "surface-bright": "#f9f9f8",
+                      "surface-variant": "#e2e2e2",
+                      "tertiary-container": "#a56500",
+                      "surface-container-highest": "#e2e2e2",
+                      "error": "#ba1a1a",
+                      "dark-surface": "#171717",
+                      "outline": "#767684",
+                      "tertiary": "#834f00",
+                      "secondary-container": "#e2dfde"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "40px",
+                      "margin-desktop": "64px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "4px",
+                      "xs": "4px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-mono": ["JetBrains Mono"],
+                      "headline-lg-mobile": ["Inter"]
+              },
+              "fontSize": {
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        /* Custom hover utility for cards to darken border without shadows */
+        .hover-card-border:hover {
+            border-color: rgba(0, 0, 0, 0.16);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar (Shared Component) -->
+<nav class="bg-surface dark:bg-dark-bg w-full top-0 border-b border-border-subtle dark:border-dark-border z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md max-w-[1280px] mx-auto">
+<!-- Brand Logo -->
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">
+                Coach.io
+            </div>
+<!-- Trailing Actions (Account/Status) -->
+<div class="flex items-center gap-md">
+<div class="hidden md:flex items-center gap-sm bg-surface-container-low px-sm py-xs rounded-full border border-border-subtle">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">Pro Plan: 3 reports left</span>
+</div>
+<button class="text-primary dark:text-inverse-primary hover:text-primary-fixed-dim transition-colors duration-200 opacity-80 hover:opacity-100 flex items-center justify-center p-xs rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+<!-- Header Section -->
+<header class="mb-xl text-center md:text-left">
+<h1 class="font-headline-xl text-headline-xl md:font-headline-xl text-on-background mb-sm">Select a game to start coaching</h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-2xl">Connect your account or upload a VOD to receive deep-dive AI analysis and performance tracking.</p>
+</header>
+<!-- Bento Grid for Game Picker -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Game Card: EA FC 26 -->
+<a class="group relative flex flex-col h-[320px] bg-surface-container-lowest rounded-xl border border-border-subtle overflow-hidden hover-card-border transition-colors duration-200" href="#">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.6)] z-10"></div>
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cinematic, high-contrast promotional shot of a virtual soccer stadium at night, brilliantly lit by stadium floodlights. The field is pristine green, contrasting with the dark, moody atmosphere of the stands. The scene is shot from a slightly elevated angle, capturing the grandeur of the arena. Modern, high-performance aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkYvz4KbkEZmOZjreVNpG3P92vLalMLcTxf2MukFF4eyvbCCSxjNxV7ICkY5_75y-I4XpFi-iQDOEvT9LWU9LhKiTHR_ohP1JhaT9U0nGdK3ZpLAECTmpnD8-X-MJQDXywbhuIWxYztHzPu5WBcEV-M9f31TQAm2Os9yNiLicV8IC9Oc7t090y-okA9JnOTABgQWI7CcUpjirISxfhtlF1U-5mfFDlnuNvlfExS-zNjWalS8X4LKUM"/>
+</div>
+<!-- Overlay Content -->
+<div class="relative z-20 flex flex-col justify-end p-lg h-full">
+<div class="flex items-center gap-sm mb-sm">
+<span class="px-sm py-xs bg-surface-container-lowest/20 backdrop-blur-md rounded-sm font-label-mono text-label-mono text-white border border-white/10 uppercase">Sports</span>
+<span class="px-sm py-xs bg-primary/80 backdrop-blur-md rounded-sm font-label-mono text-label-mono text-white border border-primary/20">Active</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-white mb-xs">EA FC 26</h2>
+<p class="font-body-sm text-body-sm text-white/80">Tactical analysis, passing networks, and player positioning.</p>
+</div>
+</a>
+<!-- Game Card: CS2 -->
+<a class="group relative flex flex-col h-[320px] bg-surface-container-lowest rounded-xl border border-border-subtle overflow-hidden hover-card-border transition-colors duration-200" href="#">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.6)] z-10"></div>
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A gritty, hyper-realistic, first-person perspective view of an urban tactical environment, reminiscent of a competitive shooter map. Warm, dusty sunlight streams through a broken window, illuminating concrete walls and metallic crates. High tension atmosphere with sharp, cinematic lighting emphasizing utility and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvSwOBBbpgMnT7mVCoI0hhAU9sWZRDijlyf1a24_3cghgnA---K2C-muMxm7u3nsrbkYc6oBin2dIhwUc6hhsBT4QhDNZ7j-d_Oyv8u7UTGUiSPtWcGPnAGcXpYQ0BiWpKzvuHVaR2mmHMQPVRZUjRLRzAVNg5coUDr7Qx9L5nRvEbg3lKOW8DW1AQ0813BpwAIINXJ93IaSFTeAaq8x0LIOrXEArCJmOFGae6PJ4NSI7ldfOWy_q3"/>
+</div>
+<!-- Overlay Content -->
+<div class="relative z-20 flex flex-col justify-end p-lg h-full">
+<div class="flex items-center gap-sm mb-sm">
+<span class="px-sm py-xs bg-surface-container-lowest/20 backdrop-blur-md rounded-sm font-label-mono text-label-mono text-white border border-white/10 uppercase">FPS</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-white mb-xs">CS2</h2>
+<p class="font-body-sm text-body-sm text-white/80">Crosshair placement, utility usage, and economic breakdown.</p>
+</div>
+</a>
+<!-- Placeholder Card -->
+<div class="flex flex-col items-center justify-center h-[320px] bg-surface-container-low rounded-xl border border-dashed border-outline-variant p-lg text-center">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">sports_esports</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface-variant mb-xs">More games coming soon</h3>
+<p class="font-body-sm text-body-sm text-secondary max-w-xs">We are constantly expanding our coaching models to support new titles.</p>
+<button class="mt-lg px-md py-sm bg-transparent border border-outline text-on-surface hover:bg-surface-variant transition-colors rounded font-body-sm text-body-sm">
+                    Vote for next game
+                </button>
+</div>
+</div>
+</main>
+</body></html>

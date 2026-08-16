@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Coach.io - Level up your game</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#c6c5d5",
+                        "secondary-fixed": "#e5e2e1",
+                        "primary-container": "#5e6ad2",
+                        "on-primary-fixed-variant": "#2e3aa2",
+                        "on-primary-fixed": "#000965",
+                        "background": "#f9f9f8",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#bdc2ff",
+                        "on-tertiary-container": "#fffaf8",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f0",
+                        "primary": "#4450b7",
+                        "surface-container-high": "#e8e8e7",
+                        "primary-fixed": "#dfe0ff",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "tertiary-fixed": "#ffddbb",
+                        "inverse-surface": "#2f3130",
+                        "border-subtle": "rgba(0, 0, 0, 0.08)",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-raised": "#FFFFFF",
+                        "surface-tint": "#4854bb",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-fixed-variant": "#673d00",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-fixed": "#2b1700",
+                        "on-secondary-container": "#636262",
+                        "surface-container-low": "#f3f4f3",
+                        "on-primary-container": "#fdfaff",
+                        "surface": "#f9f9f8",
+                        "dark-border": "rgba(255, 255, 255, 0.1)",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eeeeed",
+                        "secondary": "#5f5e5e",
+                        "surface-dim": "#dadad9",
+                        "dark-bg": "#08090A",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-surface-variant": "#454652",
+                        "tertiary-fixed-dim": "#ffb867",
+                        "surface-bright": "#f9f9f8",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#a56500",
+                        "surface-container-highest": "#e2e2e2",
+                        "error": "#ba1a1a",
+                        "dark-surface": "#171717",
+                        "outline": "#767684",
+                        "tertiary": "#834f00",
+                        "secondary-container": "#e2dfde"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24 !important;
+        }
+        
+        .grid-pattern {
+            background-image: linear-gradient(to right, theme('colors.border-subtle') 1px, transparent 1px),
+                              linear-gradient(to bottom, theme('colors.border-subtle') 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        
+        .subtle-border {
+            border: 1px solid theme('colors.border-subtle');
+        }
+        
+        .hover-darken {
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .hover-darken:hover {
+            border-color: rgba(0,0,0,0.15);
+        }
+        
+        .input-glow:focus-within {
+            border-color: theme('colors.primary');
+            box-shadow: 0 0 0 2px rgba(68, 80, 183, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="sticky top-0 z-50 bg-surface dark:bg-dark-bg border-b border-border-subtle dark:border-dark-border">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md max-w-[1280px] mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight">
+                Coach.io
+            </div>
+<div class="flex items-center gap-lg hidden md:flex">
+<!-- Navigation items would go here if defined in JSON -->
+</div>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col">
+<!-- Hero Section -->
+<section class="relative pt-[120px] pb-xl px-margin-mobile md:px-margin-desktop max-w-[1280px] mx-auto w-full flex flex-col items-center text-center overflow-hidden">
+<div class="absolute inset-0 grid-pattern opacity-50 pointer-events-none -z-10 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]"></div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full subtle-border bg-surface-container-lowest mb-lg font-label-mono text-label-mono text-secondary">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                V2 Analysis Engine Live
+            </div>
+<h1 class="font-headline-xl text-headline-xl md:text-[56px] md:leading-[64px] font-semibold text-on-surface max-w-3xl tracking-tight mb-lg">
+                Level up your game with AI-powered match analysis.
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-[40px]">
+                Coach.io breaks down your mechanical execution and macro decision-making into actionable data, providing professional-grade insights without the professional-grade price tag.
+            </p>
+<div class="flex flex-col sm:flex-row gap-md">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-DEFAULT font-body-sm text-body-sm font-medium hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2">
+                    Get started
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button class="bg-transparent subtle-border text-on-surface px-8 py-3 rounded-DEFAULT font-body-sm text-body-sm font-medium hover:bg-surface-container-low transition-colors">
+                    View demo report
+                </button>
+</div>
+<!-- Hero Mockup Abstract -->
+<div class="mt-[80px] w-full max-w-5xl aspect-video rounded-xl subtle-border bg-surface-container-lowest p-2 shadow-[0_10px_40px_rgba(0,0,0,0.03)] relative overflow-hidden group hover-darken">
+<div class="absolute top-0 left-0 w-full h-8 border-b border-border-subtle bg-surface-container-low flex items-center px-4 gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+</div>
+<div class="mt-8 h-full w-full bg-background rounded-lg subtle-border p-6 flex flex-col gap-6 overflow-hidden">
+<!-- Fake UI Header -->
+<div class="flex justify-between items-end border-b border-border-subtle pb-4">
+<div>
+<div class="font-label-mono text-label-mono text-secondary mb-1">MATCH_ID: 98273-ALPHA</div>
+<div class="font-headline-md text-headline-md font-medium text-on-surface">Analysis Overview</div>
+</div>
+<div class="font-body-sm text-body-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Processing Complete
+                        </div>
+</div>
+<!-- Fake UI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+<div class="col-span-2 subtle-border rounded-lg bg-surface-container-lowest p-4 flex flex-col">
+<div class="font-label-mono text-label-mono text-secondary mb-4">POSITIONAL HEATMAP</div>
+<div class="flex-grow rounded bg-surface-container-low relative overflow-hidden">
+<!-- Abstract Heatmap Pattern -->
+<div class="absolute inset-0 opacity-20" style="background: radial-gradient(circle at 30% 40%, theme('colors.primary') 0%, transparent 40%), radial-gradient(circle at 70% 60%, theme('colors.tertiary-fixed-dim') 0%, transparent 50%);"></div>
+<!-- Fake Chart Lines -->
+<div class="absolute bottom-4 left-4 right-4 h-[1px] bg-border-subtle"></div>
+<div class="absolute left-4 bottom-4 top-4 w-[1px] bg-border-subtle"></div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="subtle-border rounded-lg bg-surface-container-lowest p-4 flex-grow">
+<div class="font-label-mono text-label-mono text-secondary mb-2">DECISION MAKING</div>
+<div class="font-headline-lg text-headline-lg font-semibold text-on-surface">85<span class="text-secondary text-body-lg">%</span></div>
+<div class="w-full h-1 bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-primary w-[85%] rounded-full"></div>
+</div>
+</div>
+<div class="subtle-border rounded-lg bg-surface-container-lowest p-4 flex-grow">
+<div class="font-label-mono text-label-mono text-secondary mb-2">MECHANICAL ACCURACY</div>
+<div class="font-headline-lg text-headline-lg font-semibold text-on-surface">92<span class="text-secondary text-body-lg">%</span></div>
+<div class="w-full h-1 bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-primary w-[92%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it works -->
+<section class="py-[120px] px-margin-mobile md:px-margin-desktop bg-surface-container-lowest border-y border-border-subtle">
+<div class="max-w-[1280px] mx-auto">
+<div class="text-center mb-[80px]">
+<h2 class="font-headline-lg text-headline-lg md:text-headline-xl font-semibold text-on-surface tracking-tight mb-4">
+                        How it works
+                    </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                        A streamlined pipeline from raw gameplay to professional insight.
+                    </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Step 1 -->
+<div class="subtle-border rounded-xl p-8 bg-background flex flex-col hover-darken group">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center mb-6 text-primary group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[24px]">videocam</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-medium text-on-surface mb-3">
+                            1. Record your match
+                        </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                            Play your game as usual. Use any standard recording software or in-game replay system to capture your POV or match file.
+                        </p>
+</div>
+<!-- Step 2 -->
+<div class="subtle-border rounded-xl p-8 bg-background flex flex-col hover-darken group">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center mb-6 text-primary group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[24px]">cloud_upload</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-medium text-on-surface mb-3">
+                            2. Upload to Coach.io
+                        </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                            Drop your file into our secure portal. Our proprietary AI engine immediately begins parsing mechanical inputs and macro state.
+                        </p>
+</div>
+<!-- Step 3 -->
+<div class="subtle-border rounded-xl p-8 bg-background flex flex-col hover-darken group">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center mb-6 text-primary group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[24px]">analytics</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-medium text-on-surface mb-3">
+                            3. Get your report
+                        </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                            Within minutes, receive a comprehensive breakdown of your performance, highlighting specific errors and opportunities for improvement.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-[120px] px-margin-mobile md:px-margin-desktop bg-background">
+<div class="max-w-[800px] mx-auto text-center subtle-border rounded-2xl p-[64px] bg-surface-container-lowest shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+<h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface tracking-tight mb-4">
+                    Ready to elevate your performance?
+                </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-[40px]">
+                    Join thousands of competitive players using data to refine their craft.
+                </p>
+<div class="flex flex-col sm:flex-row gap-sm justify-center max-w-md mx-auto">
+<input class="input-glow flex-grow bg-background subtle-border rounded-DEFAULT px-4 py-3 font-body-sm text-body-sm text-on-surface focus:outline-none" placeholder="Enter your email" type="email"/>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-DEFAULT font-body-sm text-body-sm font-medium hover:bg-on-primary-fixed-variant transition-colors whitespace-nowrap">
+                        Start Free Trial
+                    </button>
+</div>
+<div class="font-label-mono text-label-mono text-secondary mt-6">
+                    No credit card required for initial setup.
+                </div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-dark-surface border-t border-border-subtle dark:border-dark-border mt-auto">
+<div class="w-full py-xl px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-lg max-w-[1280px] mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary">
+                Coach.io
+            </div>
+<div class="flex flex-wrap justify-center gap-x-lg gap-y-sm">
+<a class="font-label-mono text-label-mono text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Terms</a>
+<a class="font-label-mono text-label-mono text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Privacy</a>
+<a class="font-label-mono text-label-mono text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Support</a>
+<a class="font-label-mono text-label-mono text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Twitter</a>
+</div>
+<div class="font-body-sm text-body-sm text-secondary dark:text-secondary-fixed">
+                © 2024 Coach.io. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>
