@@ -67,9 +67,14 @@
         art: "/art/cs2.png", focus: "38% 50%", fallback: " hub-gcard__art--b",
       },
     };
+    // No hero, no featured slot: every game gets the same card, same size,
+    // same treatment. The hub is game-agnostic on purpose (core rule: FC 26
+    // is a plugin, not the product) - picking one as "featured" would just
+    // be FC 26 every time, since it is first in the site config.
     var cards = sites.map(function (s) {
       var m = META[s.game_id] || { genre: "Game", blurb: "", fallback: "" };
-      return '<a class="hub-gcard" href="' + gameUrl(s, d.root) + '">'
+      return '<a class="hub-gcard" href="' + gameUrl(s, d.root) + '"'
+        + ' data-search="' + esc((s.display_name + " " + m.genre).toLowerCase()) + '">'
         + '<span class="hub-gcard__art' + (m.fallback || "") + '">'
         + (m.art
           ? '<img class="hub-gcard__img" src="' + esc(m.art) + '" alt="" loading="lazy"'
@@ -86,13 +91,27 @@
         + '<p class="hub-gcard__desc">' + esc(m.blurb) + "</p></span></a>";
     });
     if (opts.soon) {
-      cards.push('<div class="hub-gsoon">'
+      cards.push('<div class="hub-gsoon" data-search="">'
         + '<span class="hub-gsoon__ring">' + icon("sports_esports") + "</span>"
         + '<h3 class="hub-h3" style="color:var(--h-ink)">More games coming soon</h3>'
         + '<p class="hub-small" style="margin-top:4px;max-width:32ch">Each new title is a plugin on '
         + "the same engine, so support arrives without rebuilding the coach.</p></div>");
     }
-    host.innerHTML = '<div class="hub-games">' + cards.join("") + "</div>";
+
+    host.innerHTML = '<div class="hub-games" data-hub-games-grid>' + cards.join("") + "</div>";
+
+    // Search filters the grid by name/genre - real functionality over a
+    // small dataset beats a decorative input that does nothing.
+    var search = $("[data-hub-search]");
+    if (search) {
+      search.addEventListener("input", function () {
+        var q = search.value.trim().toLowerCase();
+        host.querySelectorAll("[data-hub-games-grid] > *").forEach(function (el) {
+          var s = el.getAttribute("data-search");
+          el.hidden = q.length > 0 && s !== "" && s.indexOf(q) === -1;
+        });
+      });
+    }
   }
 
   // ---- pages ---------------------------------------------------------------

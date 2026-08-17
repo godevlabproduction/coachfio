@@ -89,6 +89,21 @@ iteration.
 - [ ] Entering a game from the hub (e.g. hub → FC 26) needs to be a good,
       well-considered entry point/transition — not an afterthought.
 
+**Decision: one shared light design system, accent color per game.**
+Previously the hub (`hub.css`, "Aetheric Utility") and the FC 26 game app
+(`app.css`, dark near-black + green) were two visually distinct systems.
+Decided: unify on ONE light theme (structure, typography, spacing, component
+shapes shared across hub + every game), with each game differentiated only
+by its own accent color (and optionally a game icon/crest, hero imagery on
+its Home page, and game-specific terminology already in the adapter's vocab
+config). Nav structure, cards, buttons, spacing must stay identical across
+games so the whole product reads as one family.
+- [ ] `app.css` (FC 26 game pages) needs to move from dark/green to the
+      shared light system + its own accent color — this is a real rework,
+      not just a copy/paste from `hub.css`.
+- [ ] Decide FC 26's specific accent color (distinct from the hub's
+      indigo `#5E6AD2`).
+
 ## Polish checklist — professionalism pass on existing pages
 
 Applies across all pages listed above (`index`, `signin`, `account`,

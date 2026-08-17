@@ -11,39 +11,56 @@
 <link rel="stylesheet" href="/hub.css">
 <title>Your games - Coachfio</title>
 </head>
-<!-- GAME HUB, structured to design/stitch-hub/coach.io_game_hub/code.html: a
-     sticky bar with a plan chip and account control, a left-aligned header, and
-     a three-up of 320px cards with an art layer, a scrim and the label overlaid
-     at the bottom, plus a dashed "coming soon" card.
-     The export uses licensed game key art, which we do not have, so the art
-     layer is a tonal field. Everything else is the export's structure. -->
-<body class="hub" data-hub-page="hub">
+<!-- GAME HUB, glass variant: left sidebar + frosted panels over a soft violet
+     blurred backdrop, matched to a reference dashboard on request. Sidebar
+     currently has only the destinations that are real (My Games, Sign out) -
+     more land here as they exist, not as placeholders. -->
+<body class="hub hub--glass" data-hub-page="hub">
 <a class="hub-skip" href="#main">Skip to content</a>
 
-<header class="hub-top"><div class="hub-wrap hub-top__in">
-  <a class="hub-logo" href="/"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
-  <div class="hub-top__right">
-    <span class="hub-chip" data-hub-usage hidden><span class="hub-chip__dot"></span><span data-hub-usage-text></span></span>
-    <a class="hub-textlink" href="/signin/" data-hub-signout
-       style="display:inline-flex"><span class="material-symbols-outlined">account_circle</span></a>
-  </div>
-</div></header>
+<div class="hub-shell">
+  <aside class="hub-side hub-glass">
+    <a class="hub-logo" href="/"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
+    <nav class="hub-side__nav" aria-label="Primary">
+      <a class="hub-side__link is-active" href="/hub/"><span class="material-symbols-outlined">grid_view</span>My games</a>
+    </nav>
+    <div class="hub-side__foot">
+      <a class="hub-side__link" href="/signin/" data-hub-signout>
+        <span class="material-symbols-outlined">logout</span>Sign out</a>
+    </div>
+  </aside>
 
-<main id="main" class="hub-wrap" style="padding-top:40px;padding-bottom:40px">
-  <header style="margin-bottom:40px">
-    <h1 class="hub-h1">Select a game to start coaching</h1>
-    <p class="hub-lede" style="max-width:62ch">Upload a match to receive a deep-dive analysis and
-      performance tracking across everything you have analysed.</p>
-  </header>
-  <div data-hub-games></div>
-</main>
-<!-- Signed-in pages get the credit line only, not the landing's marketing footer:
-     "Sign in" and "Home" are meaningless once you are past them, "Games" points
-     at this page, and the logo lockup would repeat the one in the header. -->
-<footer class="hub-foot hub-foot--slim"><div class="hub-wrap hub-foot__in">
-    <span class="hub-foot__copy">Built by <strong>GoDevLab Agency</strong></span>
-    <a class="hub-foot__support" href="mailto:godevlabagency@gmail.com">Support</a>
-  </div></footer>
+  <div class="hub-content">
+    <header class="hub-content__top hub-glass">
+      <label class="hub-search">
+        <span class="material-symbols-outlined">search</span>
+        <input type="search" placeholder="Search your games..." data-hub-search aria-label="Search your games">
+      </label>
+      <div class="hub-top__right">
+        <span class="hub-chip" data-hub-usage hidden><span class="hub-chip__dot"></span><span data-hub-usage-text></span></span>
+        <a class="hub-textlink" href="/signin/" data-hub-signout
+           style="display:inline-flex"><span class="material-symbols-outlined">account_circle</span></a>
+      </div>
+    </header>
+
+    <main id="main" style="padding:24px 24px 40px">
+      <header style="margin-bottom:32px">
+        <h1 class="hub-h1">Select a game to start coaching</h1>
+        <p class="hub-lede" style="max-width:62ch">Upload a match to receive a deep-dive analysis and
+          performance tracking across everything you have analysed.</p>
+      </header>
+      <div data-hub-games></div>
+    </main>
+
+    <!-- Signed-in pages get the credit line only, not the landing's marketing
+         footer: "Sign in" and "Home" are meaningless once you are past them,
+         and the logo lockup would repeat the sidebar's. -->
+    <footer class="hub-foot hub-foot--slim"><div class="hub-foot__in" style="padding:0 24px 24px">
+        <span class="hub-foot__copy">Built by <strong>GoDevLab Agency</strong></span>
+        <a class="hub-foot__support" href="mailto:godevlabagency@gmail.com">Support</a>
+      </div></footer>
+  </div>
+</div>
 <script src="/hub.js"></script>
 </body>
 </html>

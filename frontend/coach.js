@@ -2055,7 +2055,7 @@
         var a = document.createElement("a");
         a.className = "nav__link"; a.href = target.href;
         a.setAttribute("data-nav", target.href);
-        a.textContent = target.label;
+        a.innerHTML = icon(target.ic) + target.label;
         nav.appendChild(a);
       }
       var tab = $(".tabbar");

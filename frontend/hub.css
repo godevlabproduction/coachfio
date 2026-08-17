@@ -229,6 +229,97 @@
 .hub-gsoon__ring { width: 46px; height: 46px; border-radius: 999px; background: var(--h-bg-2); border: 1px solid var(--h-line); display: grid; place-items: center; margin-bottom: 16px; color: var(--h-ink-3); }
 .hub-game__mark { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--h-violet-soft); border: 1px solid var(--h-violet-line); color: var(--h-violet-2); }
 
+/* ---- game hub picker: featured hero + "your games" list ----------------- */
+.hub-picker { display: grid; gap: var(--h-s4); grid-template-columns: 1.7fr 1fr; align-items: start; }
+@media (max-width: 860px) { .hub-picker { grid-template-columns: 1fr; } }
+
+.hub-picker__hero { position: relative; }
+/* The one glow on this view, behind the featured game - same restraint rule
+   as the landing hero: at most once per view, behind the thing being sold. */
+.hub-picker__hero::before {
+  content: ""; position: absolute; left: 50%; top: -110px; width: 620px; height: 460px;
+  transform: translateX(-50%); pointer-events: none; z-index: 0;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(124, 92, 255, .16), transparent 70%);
+}
+
+/* Carousel: every slide stacks in the same box, only the active one shows. A
+   real carousel over real games (dot count = games you actually have),
+   not a decorative "1/5" over content that never changes. */
+.hub-hero__slides { position: relative; z-index: 1; height: 460px; }
+.hub-hero-slide {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 36px; border-radius: var(--h-r-lg); overflow: hidden;
+  border: 1px solid var(--h-line); text-decoration: none; isolation: isolate;
+  opacity: 0; visibility: hidden; transition: opacity .25s ease, border-color .18s ease;
+}
+.hub-hero-slide.is-active { opacity: 1; visibility: visible; }
+.hub-hero-slide:hover { border-color: var(--h-violet-line); }
+.hub-hero-slide__art { position: absolute; inset: 0; z-index: 0; background: linear-gradient(160deg, #29244A, #17142A); }
+.hub-hero-slide__art--b { background: linear-gradient(160deg, #3A2244, #20132A); }
+.hub-hero-slide__img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); transition: transform .35s ease; }
+.hub-hero-slide:hover .hub-hero-slide__img { transform: scale(1.02); }
+.hub-hero-slide__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, rgba(10, 8, 20, .1) 0%, rgba(10, 8, 20, .5) 45%, rgba(10, 8, 20, .86) 100%); }
+.hub-hero-slide__in { position: relative; z-index: 2; max-width: 460px; }
+.hub-hero-slide__name { font-size: 34px; font-weight: 700; letter-spacing: -.025em; margin: 14px 0 8px; color: #fff; }
+.hub-hero-slide__desc { font-size: 14.5px; color: rgba(255, 255, 255, .75); margin: 0 0 22px; }
+.hub-hero-slide__cta { display: inline-flex; }
+.hub-hero-slide__cta .material-symbols-outlined { font-size: 18px; }
+
+/* Carousel controls sit top-right of the hero, clear of the CTA/copy which
+   is bottom-left - arrows + dots, wired to real slides. */
+.hub-hero__nav { position: absolute; z-index: 3; right: 24px; top: 24px; display: flex; align-items: center; gap: 14px; }
+.hub-hero__arrow {
+  width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .22); color: #fff;
+  cursor: pointer; transition: background-color .15s ease;
+}
+.hub-hero__arrow:hover { background: rgba(255, 255, 255, .24); }
+.hub-hero__arrow .material-symbols-outlined { font-size: 17px; }
+.hub-hero__dots { display: flex; gap: 6px; }
+.hub-hero__dot { width: 6px; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, .35); border: 0; cursor: pointer; padding: 0; transition: background-color .15s ease, width .15s ease; }
+.hub-hero__dot.is-active { background: #fff; width: 18px; }
+
+/* "Your games" panel - a bordered card (not loose rows) with a divided list,
+   closer to a real library panel than a stack of separate boxes. */
+.hub-lib {
+  border-radius: var(--h-r-lg); padding: var(--h-s3);
+  background: rgba(255, 255, 255, .55); border: 1px solid rgba(255, 255, 255, .6);
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 8px 30px rgba(20, 18, 31, .06);
+}
+.hub-lib__title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--h-ink-3); margin-bottom: 14px; }
+.hub-lib__list { display: flex; flex-direction: column; }
+.hub-lib__item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 6px; text-decoration: none; color: var(--h-ink);
+  border-bottom: 1px solid var(--h-line); transition: background-color .15s ease;
+}
+.hub-lib__list .hub-lib__item:last-child { border-bottom: 0; }
+.hub-lib__item:hover { background: var(--h-violet-soft); border-radius: var(--h-r); }
+.hub-lib__item .material-symbols-outlined { color: var(--h-ink-3); font-size: 20px; }
+.hub-lib__thumb { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 8px; overflow: hidden; background: linear-gradient(160deg, #29244A, #17142A); }
+.hub-lib__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); }
+.hub-lib__meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.hub-lib__name { font-size: 14.5px; font-weight: 600; }
+.hub-lib__genre { font-family: var(--h-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--h-ink-3); }
+
+/* "More titles" - full-width row below, mirrors "you might also like" but
+   with only what's real: a single placeholder, not invented game covers. */
+.hub-more { margin-top: var(--h-s5); }
+.hub-more__row { display: grid; gap: var(--h-s3); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.hub-lib__soon { display: flex; align-items: center; gap: 14px; padding: 20px; border-radius: var(--h-r-lg); border: 1px dashed var(--h-line-2); }
+.hub-lib__soon .material-symbols-outlined { flex: 0 0 auto; color: var(--h-ink-3); font-size: 26px; }
+.hub-lib__soon-t { display: block; font-size: 14.5px; font-weight: 600; }
+.hub-lib__soon-s { display: block; font-size: 13px; color: var(--h-ink-3); margin-top: 3px; }
+
+/* Search box in the top bar, functional filter over "Your games". */
+.hub-search { position: relative; flex: 1; max-width: 380px; }
+.hub-search input {
+  width: 100%; padding: 9px 14px 9px 38px; border-radius: 999px; border: 1px solid var(--h-line);
+  background: var(--h-surface-2); color: var(--h-ink); font: inherit; font-size: 13.5px;
+}
+.hub-search input:focus { outline: none; border-color: var(--h-violet-line); background: var(--h-surface); }
+.hub-search .material-symbols-outlined { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--h-ink-3); font-size: 18px; pointer-events: none; }
+
 /* ---- forms -------------------------------------------------------------- */
 .hub-center { min-height: 100vh; display: grid; place-items: center; padding: var(--h-s3); }
 .hub-auth { width: 100%; max-width: 400px; }
@@ -263,5 +354,46 @@
 /* One row of cards does not fill a screen, so the document used to end partway
    up the viewport and leave bare background below the footer. Pin the footer to
    the bottom and let main absorb the slack instead. */
-body[data-hub-page="hub"] { min-height: 100dvh; display: flex; flex-direction: column; }
-body[data-hub-page="hub"] > main { flex: 1 0 auto; }
+body[data-hub-page="hub"] { min-height: 100dvh; }
+.hub-content { flex: 1 0 auto; display: flex; flex-direction: column; min-height: 100dvh; }
+.hub-content > main { flex: 1 0 auto; max-width: 1180px; width: 100%; margin: 0 auto; }
+
+/* ---- glass variant: sidebar + frosted panels ---------------------------- */
+/* A blurred colour field behind everything is what glassmorphism needs to
+   show through - without it "backdrop-filter: blur" has nothing to blur. */
+.hub--glass { position: relative; overflow-x: hidden; }
+.hub--glass::before, .hub--glass::after {
+  content: ""; position: fixed; z-index: -1; border-radius: 50%; filter: blur(90px); pointer-events: none;
+}
+.hub--glass::before { width: 620px; height: 620px; top: -220px; left: -160px; background: rgba(124, 92, 255, .30); }
+.hub--glass::after { width: 520px; height: 520px; bottom: -220px; right: -140px; background: rgba(124, 92, 255, .22); }
+
+.hub-glass {
+  background: rgba(255, 255, 255, .55);
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .6);
+  box-shadow: 0 8px 30px rgba(20, 18, 31, .06);
+}
+
+.hub-shell { display: flex; min-height: 100dvh; align-items: flex-start; }
+
+.hub-side {
+  flex: 0 0 240px; position: sticky; top: 0; height: 100dvh;
+  display: flex; flex-direction: column; gap: 28px; padding: 24px 16px;
+  border-radius: 0; border-width: 0 1px 0 0;
+}
+.hub-side__nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.hub-side__link {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--h-r);
+  color: var(--h-ink-2); text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: background-color .15s ease, color .15s ease;
+}
+.hub-side__link .material-symbols-outlined { font-size: 20px; }
+.hub-side__link:hover { background: rgba(124, 92, 255, .08); color: var(--h-ink); }
+.hub-side__link.is-active { background: var(--h-violet); color: #fff; }
+.hub-side__foot { border-top: 1px solid var(--h-line); padding-top: 16px; }
+
+.hub-content__top {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--h-s2);
+  margin: 20px 24px 0; padding: 12px 20px; border-radius: var(--h-r-lg); position: sticky; top: 20px; z-index: 40;
+}

@@ -26,34 +26,33 @@
      Getting that backwards is what made the earlier attempt look wrong.
      Local names are kept because the whole stylesheet references them; the
      comment on each line is the token it came from. */
-  --bg: #0C1118;          /* bg-primary   */
-  --surface-1: #151A21;   /* bg-card      - cards, table body */
-  --surface-2: #20262E;   /* control-bg   - inputs, hover, table head */
-  --surface-3: #262D35;   /* control-hover- pressed / wells */
-  --elevated: #171C23;    /* bg-elevated  */
-  --input-bg: #161B22;    /* input-bg     */
+  /* Reworked to "Refined Gaming Dashboard" tokens: near-black canvas, a
+     single vivid pink/red accent (replaces the earlier green), Sora for
+     display type and Plus Jakarta Sans for body text. */
+  --bg: #131315;          /* background    */
+  --surface-1: #1b1b1d;   /* surface-container-low  - cards, table body */
+  --surface-2: #201f21;   /* surface-container      - inputs, hover, table head */
+  --surface-3: #2a2a2c;   /* surface-container-high - pressed / wells */
+  --elevated: #1b1b1d;    /* bg-elevated  */
+  --input-bg: #1b1b1d;    /* input-bg     */
 
-  /* Solid, not alpha: the tokens specify real colours, and alpha borders shift
-     tone depending on what is behind them. */
-  --border: #293039;
-  --border-strong: #303740;
-  --border-focus: #3A424C;
-  --divider: #222931;
+  --border: #353437;      /* surface-variant, used as the hairline */
+  --border-strong: #5c3f41; /* outline-variant */
+  --border-focus: #ac8889;  /* outline */
+  --divider: #2a2a2c;
 
-  --text: #F1F3F5;        /* text-primary  */
-  --text-secondary: #C4CBD3;
-  --text-muted: #9AA3AD;  /* text-muted    */
-  --text-faint: #747E89;  /* text-subtle   */
-  --text-disabled: #5F6975;
+  --text: #e5e1e4;        /* on-surface    */
+  --text-secondary: #e5bdbe; /* on-surface-variant */
+  --text-muted: #ac8889;  /* outline       */
+  --text-faint: #8a6d6e;
+  --text-disabled: #5c3f41;
 
-  --accent: #48C674;      /* green         */
-  /* The token's green-hover (#46C575) is visually identical to the base, which
-     would make hover feel dead - lifted just enough to register. */
-  --accent-hover: #5BD186;
-  --accent-dark: #39A962;
-  --accent-fg: #0C1118;   /* dark text on a green fill */
-  --accent-soft: #153326; /* green-subtle  */
-  --accent-line: #1D4A35; /* green-surface */
+  --accent: #e61e4d;      /* primary-container - vivid pink/red */
+  --accent-hover: #f23a66;
+  --accent-dark: #c81842;
+  --accent-fg: #ffffff;   /* on-primary-container - white on the fill */
+  --accent-soft: rgba(230, 30, 77, .14);
+  --accent-line: rgba(230, 30, 77, .38);
 
   /* Semantic only. Muted so a grid of them reads calm. */
   --good: #48C674;
@@ -68,17 +67,19 @@
   /* Seven steps, nothing between them. The previous 26 ad-hoc sizes are why the
      app read as improvised rather than designed. */
   --t1: 12px; --t2: 14px; --t3: 16px; --t4: 20px; --t5: 26px; --t6: 34px; --t7: 44px;
-  --font: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Sora", var(--font);
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --r-sm: 5px;
-  --r-md: 7px;
-  --r-lg: 10px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
 
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
 
   --nav-h: 56px;
+  --side-w: 240px;
   --container: 1120px;
   --pad: 20px;
   --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
@@ -146,10 +147,10 @@ ul, ol { list-style: none; padding: 0; }
 .filled { font-variation-settings: "FILL" 1; }
 
 /* ---------- typography --------------------------------------------------- */
-h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; letter-spacing: -0.012em; }
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height: 1.3; letter-spacing: -0.012em; }
 
-.t-display { font-size: var(--t5); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
-.t-title   { font-size: var(--t4); font-weight: 600; letter-spacing: -0.015em; }
+.t-display { font-family: var(--font-display); font-size: var(--t5); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+.t-title   { font-family: var(--font-display); font-size: var(--t4); font-weight: 700; letter-spacing: -0.015em; }
 .t-section {
   font-size: var(--t1); font-weight: 600;
   letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary);
@@ -226,23 +227,34 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; letter-spacing: -0.012em; }
   gap: var(--s3); margin-bottom: var(--s3);
 }
 
-/* ---------- app bar ------------------------------------------------------ */
+/* ---------- app bar: fixed left sidebar on desktop ------------------------
+   Was a horizontal top bar; kept every class name and data-nav hook intact
+   (coach.js injects the role-based 5th link and swaps the account avatar via
+   these selectors) and restyled the box model into a sidebar instead. */
 .appbar {
-  position: sticky; top: 0; z-index: 50; height: var(--nav-h);
-  /* Surface, not page: the bar is chrome and should sit visibly above the
-     content scrolling under it. On the old near-black canvas the two were
-     indistinguishable, so the bar looked like part of the page. */
+  position: sticky; top: 0; z-index: 50;
   background: var(--surface-1);
   border-bottom: 1px solid var(--border);
 }
 .appbar__inner {
-  height: 100%; display: flex; align-items: center; gap: var(--s6);
+  height: var(--nav-h); display: flex; align-items: center; gap: var(--s4);
   max-width: var(--container); margin-inline: auto; padding-inline: var(--pad);
+}
+@media (min-width: 768px) {
+  .appbar {
+    position: fixed; inset: 0 auto 0 0; width: var(--side-w); height: 100vh;
+    border-bottom: 0; border-right: 1px solid var(--border);
+  }
+  .appbar__inner {
+    height: 100%; flex-direction: column; align-items: stretch; gap: var(--s5);
+    max-width: none; padding: var(--s5) var(--s3);
+  }
+  body { padding-left: var(--side-w); }
 }
 
 .brand {
   display: inline-flex; align-items: center; gap: var(--s2);
-  font-size: var(--t3); font-weight: 600; letter-spacing: -0.02em; white-space: nowrap;
+  font-family: var(--font-display); font-size: var(--t3); font-weight: 700; letter-spacing: -0.02em; white-space: nowrap;
 }
 .brand__mark {
   width: 22px; height: 22px; border-radius: var(--r-sm);
@@ -253,17 +265,23 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; letter-spacing: -0.012em; }
 .brand__mark .material-symbols-outlined { font-size: var(--t2); }
 
 .nav { display: none; align-items: center; gap: var(--s1); }
-@media (min-width: 768px) { .nav { display: flex; } }
+@media (min-width: 768px) { .nav { display: flex; flex-direction: column; align-items: stretch; gap: var(--s1); flex: 1; } }
 
 .nav__link {
+  display: flex; align-items: center; gap: var(--s2);
   padding: 6px 10px; border-radius: var(--r-sm);
   font-size: var(--t2); color: var(--text-muted);
   transition: color .12s ease, background-color .12s ease;
 }
+.nav__link .material-symbols-outlined { font-size: var(--t4); }
 .nav__link:hover { color: var(--text); background: var(--surface-2); }
-.nav__link[aria-current="page"] { color: var(--text); background: var(--surface-2); font-weight: 500; }
+.nav__link[aria-current="page"] { color: var(--accent-fg); background: var(--accent); font-weight: 600; }
 
 .appbar__end { margin-left: auto; display: flex; align-items: center; gap: var(--s2); }
+@media (min-width: 768px) {
+  .appbar__end { margin-left: 0; margin-top: auto; flex-direction: column; align-items: stretch; gap: var(--s2); padding-top: var(--s3); border-top: 1px solid var(--border); }
+  .appbar__end .btn { width: 100%; }
+}
 
 /* ---------- mobile tab bar ---------------------------------------------- */
 .tabbar {
@@ -279,7 +297,7 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; letter-spacing: -0.012em; }
   transition: color .12s ease;
 }
 .tabbar__item .material-symbols-outlined { font-size: var(--t4); }
-.tabbar__item[aria-current="page"] { color: var(--text); }
+.tabbar__item[aria-current="page"] { color: var(--accent); }
 
 /* ---------- buttons ------------------------------------------------------ */
 .btn {
