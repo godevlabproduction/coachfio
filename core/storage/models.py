@@ -99,7 +99,19 @@ class UserRow(Base):
 
     __tablename__ = "users"
 
+    # OUR id, and deliberately not the auth provider's. It is the primary key
+    # here and it is also written into every match (capture->>'identity'), so
+    # adopting a provider's subject as this value would marry the match history
+    # to that vendor: switching later would mean rewriting JSONB on every row.
     user_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+
+    # The provider's subject claim ("sub"), once one is connected. Nullable
+    # because accounts exist that predate it, and unique because two accounts
+    # must never map to the same login. Changing provider means re-populating
+    # this one column - no match data moves.
+    auth_subject: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, unique=True, index=True)
+
     display_name: Mapped[str | None] = mapped_column(String(80), nullable=True)
     email: Mapped[str | None] = mapped_column(String(255), nullable=True)
 

@@ -37,6 +37,19 @@ async def lifespan(app: FastAPI):
             "OPENAI_API_KEY is empty - native video analysis WILL fail. If you just "
             "edited .env, run: docker compose up -d --force-recreate api worker"
         )
+    # The session cookie is signed with SECRET_KEY. Shipping the default would
+    # let anyone mint a session for any account, so refuse to boot in a
+    # deployment that has clearly gone live (secure cookies = behind TLS) while
+    # still carrying it. Locally it is only a warning.
+    _s = get_settings()
+    if _s.secret_key == "dev-only-change-me":
+        if _s.session_cookie_secure:
+            raise RuntimeError(
+                "SECRET_KEY is still the development default while session cookies are "
+                "marked Secure. Set a real SECRET_KEY (e.g. `openssl rand -hex 32`) "
+                "before serving over HTTPS - sessions are forgeable until you do."
+            )
+        log.warning("SECRET_KEY is the development default - fine locally, never in production.")
     yield
 
 

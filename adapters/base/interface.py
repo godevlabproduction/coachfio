@@ -66,6 +66,52 @@ class ParsedHud(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class ReportSpec(BaseModel):
+    """How one game shapes a whole-match coaching report.
+
+    The CORE owns the envelope - summary, strengths, recurring mistakes, weakness
+    tags, the final score, and the evidence-citation mechanism - because those are
+    coaching concepts, not football ones. Everything in here is the game's own
+    vocabulary and lives with its adapter, so adding a game never edits /core.
+
+    This started life as `_report_template_props()`, `_TEMPLATE_INSTRUCTIONS`,
+    `_TEMPLATE_KEYS`, `_STAT_METRICS` and `_DEEP_GOAL_SCHEMA` inside
+    core/pipeline/stages.py, which put half-spaces, cutbacks and centre-backs in
+    the game-agnostic core.
+    """
+
+    # JSON-schema properties for the game-specific report sections, e.g.
+    # {"attacking": {...}, "defending": {...}}. Their keys are also what gets
+    # carried into the stored payload - there is no second list to keep in sync.
+    sections: dict[str, Any] = Field(default_factory=dict)
+
+    # Prompt text telling the model how to fill `sections`.
+    instructions: str = ""
+
+    # Observed stat key -> (label, higher_is_better). Drives BOTH the integer
+    # properties in the report schema and the Metrics written for trends, so the
+    # two cannot list different stats.
+    stats: dict[str, tuple[str, bool]] = Field(default_factory=dict)
+
+    # Schema for re-watching a single scoring play in depth (a goal here, a round
+    # elsewhere). None means the game has no such second pass.
+    score_event: dict[str, Any] | None = None
+
+    # The flat "label: sentence" sections, as (section key, heading, [(field key,
+    # human label)...]), in document order. Renderers walk this instead of keeping
+    # their own copy of the field labels - core/report/pdf.py used to carry a
+    # duplicate table, which meant a field added to the schema was answered by the
+    # model, stored by the API, shown on the web, and silently missing from the
+    # PDF. Only the flat sections: list-shaped ones have bespoke rendering.
+    kv_sections: list[tuple[str, str, list[tuple[str, str]]]] = Field(default_factory=list)
+
+    def stats_schema(self) -> dict[str, Any]:
+        """`stats` as JSON-schema properties. Counts only - see the note in the
+        adapter about why the qualitative fields are strings."""
+        return {"type": "object",
+                "properties": {k: {"type": "integer"} for k in self.stats}}
+
+
 class GameAdapter(ABC):
     """Implement this (usually by subclassing ConfigDrivenAdapter) to add a game."""
 
@@ -180,6 +226,31 @@ class GameAdapter(ABC):
     def event_type_map(self) -> dict[str, EventTypeDef]:
         """game_type -> EventTypeDef, for mapping a Stage 2 label to a core event."""
         return {e.game_type: e for e in self.event_vocabulary()}
+
+    def prompt_fragments(self, side: str = "home") -> dict[str, str]:
+        """The game's own WORDS in the model prompts, keyed by a role the core fixes.
+
+        The core owns the SHAPE of every prompt - what to return, how to cite
+        evidence, that timestamps are clip-relative, that an empty list is a real
+        answer. It must not own sentences like "home is the TOP row", "jockey
+        with L2/LT" or "switch to your left winger": those are as specific to one
+        game as a schema field is, and they used to sit in /core next to the rule
+        that no game may appear there.
+
+        Values are templates; the core formats in what it knows ({n} images,
+        {time}, {question}). Anything derived from `side` is baked in here, so the
+        core never learns that home is the top row.
+
+        A missing key yields "" - the surrounding instructions are written to
+        stand on their own, so a game supplies as much or as little as it has.
+        """
+        return {}
+
+    def report_spec(self) -> ReportSpec:
+        """The game-specific shape of a coaching report. Default is empty: a game
+        that declares nothing still gets the core envelope, just no sections of
+        its own."""
+        return ReportSpec()
 
     def coaching_schema(self) -> dict[str, Any]:
         """Structured schema for a whole-match coaching report (Stage 3). One

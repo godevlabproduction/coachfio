@@ -13,6 +13,7 @@ from pathlib import Path
 from sqlalchemy import text
 
 from core.storage.db import session_scope
+from core.models.domain import player_scoreline
 
 OUT_DIR = Path("/app/reports")
 
@@ -56,7 +57,10 @@ def build(row, rep) -> Path:
 
     p = rep.get("payload", {})
     out = row["outcome"] or {}
-    score = out.get("score", "?")
+    side = p.get("player_side", "?")
+    # Player-first, matching the app and the report body. This used to print the
+    # raw home-away string while the body below it read the other way round.
+    score = player_scoreline(out, side) or out.get("score", "?")
     result = str(out.get("result", "")).upper()
     corrected = out.get("score_source") == "vision_corrected"
 
@@ -82,7 +86,6 @@ def build(row, rep) -> Path:
     # --- Meta strip ---
     pdf.set_text_color(30, 30, 30)
     pdf.set_font("helvetica", "B", 12)
-    side = p.get("player_side", "?")
     pdf.cell(0, 8, _latin1(f"Final score {score}   ({result} for the {side} player)"), ln=1)
     pdf.set_font("helvetica", "", 9)
     pdf.set_text_color(90, 90, 90)

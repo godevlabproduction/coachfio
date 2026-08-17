@@ -23,7 +23,7 @@ def _match(payload: dict | None = None, summary: str = "A summary.", **kw) -> Ma
     if payload is not None:
         insights = [Insight(kind="coaching_report", summary=summary, payload=payload)]
     return Match(
-        game_id="demo", game_edition="1",
+        game_id=kw.pop("game_id", "demo"), game_edition=kw.pop("game_edition", "1"),
         outcome=kw.pop("outcome", {"score": "3-1", "result": "win"}),
         insights=insights,
         created_at=kw.pop("created_at", datetime(2026, 8, 13, tzinfo=timezone.utc)),
@@ -268,8 +268,40 @@ def test_a_normal_report_is_not_trimmed():
 def test_removed_sections_are_gone():
     """decision_metrics and in_game_triggers were dropped: they duplicated the
     analysis sections, and the decision counts were unmeasurable from video."""
-    from core.report.pdf import _KV_SECTIONS
+    from adapters.ea_fc_26.adapter import EaFc26Adapter
 
-    keys = {k for k, _, _ in _KV_SECTIONS}
+    keys = {k for k, _, _ in EaFc26Adapter().report_spec().kv_sections}
     assert "decision_metrics" not in keys
     assert "in_game_triggers" not in keys
+
+
+def test_the_pdf_takes_its_section_labels_from_the_adapter():
+    """The PDF used to keep its own copy of the field labels, so a field added to
+    the adapter was answered, stored, shown on the web, and missing here."""
+    from adapters.ea_fc_26.adapter import EaFc26Adapter
+    from core.report.pdf import _kv_sections
+
+    match = _match({"attacking": {"use_of_width": "Held the touchline all match."}},
+                   game_id="ea-fc", game_edition="26")
+    assert _kv_sections(match) == EaFc26Adapter().report_spec().kv_sections
+
+
+def test_an_unknown_game_still_produces_a_pdf_without_its_sections():
+    """The envelope is core, so a game with no adapter loses only its tactical
+    sections. A partial report beats no report."""
+    from core.report.pdf import _kv_sections
+
+    match = _match({"summary": "x"}, game_id="not-a-real-game", game_edition="9")
+    assert _kv_sections(match) == []
+    assert build_match_report_pdf(match)[:4] == PDF_MAGIC
+
+
+def test_the_pdf_header_uses_the_player_first_scoreline():
+    """This file was missed when the ordering was unified everywhere else, so an
+    away player got a PDF headed 4-3 over a body reading '3-4 Loss'."""
+    from core.report.pdf import report_filename
+
+    match = _match({"summary": "x"},
+                   outcome={"score": "4-3", "score_home": 4, "score_away": 3, "result": "loss"},
+                   capture={"player_side": "away"})
+    assert "3v4" in report_filename(match)

@@ -17,6 +17,7 @@ from core.pipeline.context import PipelineContext
 from core.pipeline.cost import CostAccountant
 from core.pipeline.stages import HighlightClips, Stage2CheapEvents, Stage3CoachingReport
 from adapters.ea_fc_26.adapter import EaFc26Adapter
+import pytest
 
 
 class ScriptedVision:
@@ -382,36 +383,132 @@ def test_highlights_disabled_without_object_store():
 
 # --- report template: schema -> stored payload -------------------------------
 # Regression cover for a silent data-loss bug. The coaching payload is assembled
-# key by key rather than saved verbatim, so adding a section to the schema is only
-# half the change. When the template landed, the model answered all eleven new
-# sections and the writer copied none of them - the stored report came out
+# key by key rather than saved verbatim, so adding a section to the schema used to
+# be only half the change. When the template landed, the model answered all eleven
+# new sections and the writer copied none of them - the stored report came out
 # SHORTER than the one it replaced, and nothing raised.
+#
+# The sections now live on the adapter (GameAdapter.report_spec()) and the writer
+# reads its keys directly, so the two lists cannot drift. These tests hold that
+# property, and hold the line that /core declares no game sections of its own.
 
-def test_every_schema_section_is_carried_into_the_payload():
-    """The two lists must not drift. If they do, the model does the work and the
-    writer throws it away, which is invisible until someone reads a report."""
-    from core.pipeline.stages import _TEMPLATE_KEYS, _report_template_props
-
-    assert set(_TEMPLATE_KEYS) == set(_report_template_props()), (
-        "a section exists in the schema but is not copied into the stored payload "
-        "(or vice versa)"
-    )
+def _fc_spec():
+    from adapters.ea_fc_26.adapter import EaFc26Adapter
+    return EaFc26Adapter().report_spec()
 
 
-def test_template_sections_survive_into_the_payload():
-    from core.pipeline.stages import _report_template_props, _template_payload
+def test_the_payload_writer_reads_its_keys_from_the_adapter():
+    """The old failure mode was a hand-maintained tuple in core drifting from the
+    schema. A section invented here has never been seen by /core, so if it is
+    carried through, the writer is genuinely driven by the spec."""
+    from adapters.base.interface import ReportSpec
+    from core.pipeline.stages import _template_payload
 
-    response = {k: {"filled": True} for k in _report_template_props()}
+    spec = ReportSpec(sections={"a_section_core_has_never_heard_of": {"type": "string"}})
+    carried = _template_payload({"a_section_core_has_never_heard_of": "kept",
+                                 "match_context": "not in this spec, so dropped"}, spec)
+    assert carried == {"a_section_core_has_never_heard_of": "kept"}
+
+
+def test_every_fc_schema_section_survives_into_the_payload():
+    from core.pipeline.stages import _template_payload
+
+    spec = _fc_spec()
+    response = {k: {"filled": True} for k in spec.sections}
     response["summary"] = "ignored here"
-    carried = _template_payload(response)
-    assert set(carried) == set(_report_template_props())
+    assert set(_template_payload(response, spec)) == set(spec.sections)
 
 
-def test_empty_tactical_changes_is_carried_but_other_empties_are_not():
+def test_empty_lists_are_carried_but_other_empties_are_not():
     """An empty tactical_changes is a real answer ('the video does not implicate
     your tactics') and the report prints it. An empty attacking block is just an
     unanswered section and should not occupy space in the payload."""
     from core.pipeline.stages import _template_payload
 
-    carried = _template_payload({"tactical_changes": [], "attacking": {}, "defending": None})
+    carried = _template_payload(
+        {"tactical_changes": [], "attacking": {}, "defending": None}, _fc_spec())
     assert carried == {"tactical_changes": []}
+
+
+def test_core_declares_no_game_sections_of_its_own():
+    """The architecture rule, at the schema level: a game that declares nothing
+    still gets a working report envelope, and that envelope contains no football.
+    If half-spaces reappear in /core, this fails."""
+    from adapters.base.interface import ReportSpec
+    from core.pipeline.stages import _lite_report_schema, _video_report_schema
+
+    for build in (_video_report_schema, _lite_report_schema):
+        props = build(ReportSpec())["properties"]
+        assert set(props) == {"summary", "strengths", "recurring_mistakes",
+                              "weakness_tags", "score", "formation", "goals", "stats"}
+        assert props["stats"]["properties"] == {}, "core must not name any stat itself"
+
+
+def test_the_stat_keys_and_the_tracked_metrics_come_from_one_source():
+    """They used to be listed in three places - both schemas and _STAT_METRICS -
+    which is how a stat could be requested from the model and then never stored."""
+    spec = _fc_spec()
+    from core.pipeline.stages import _video_report_schema
+
+    assert set(_video_report_schema(spec)["properties"]["stats"]["properties"]) == set(spec.stats)
+
+
+# --- provider outages --------------------------------------------------------
+# A real incident: Gemini returned 503 for every call. The retry loop had 5
+# attempts at a 600s timeout and no total budget, so a match sat "processing"
+# for the best part of an hour with the progress bar frozen at 95% and nothing
+# reported. These hold the three things that fixed it.
+
+def _req():
+    import urllib.request
+    return urllib.request.Request("https://example.invalid/x", data=b"{}", method="POST")
+
+
+def test_retries_are_bounded_by_wall_clock_not_just_by_count(monkeypatch):
+    import urllib.error
+    from core.ai import gemini_video as gv
+
+    def always_503(req, timeout=None):
+        raise urllib.error.HTTPError("u", 503, "Service Unavailable", {}, None)
+
+    monkeypatch.setattr(gv.urllib.request, "urlopen", always_503)
+    monkeypatch.setattr(gv.time, "sleep", lambda _s: None)   # no real waiting
+
+    with pytest.raises(gv.ModelUnavailable):
+        gv._urlopen_retry(_req(), timeout=600, attempts=50, deadline_s=1)
+
+
+def test_an_outage_is_reported_while_it_retries(monkeypatch):
+    """A silent retry loop is indistinguishable from a hang, which is exactly how
+    this looked from the analyzing page."""
+    import urllib.error
+    from core.ai import gemini_video as gv
+
+    monkeypatch.setattr(gv.time, "sleep", lambda _s: None)
+    monkeypatch.setattr(gv.urllib.request, "urlopen",
+                        lambda req, timeout=None: (_ for _ in ()).throw(
+                            urllib.error.HTTPError("u", 503, "Service Unavailable", {}, None)))
+
+    seen = []
+    with pytest.raises(gv.ModelUnavailable):
+        gv._urlopen_retry(_req(), timeout=5, attempts=3, deadline_s=60,
+                          on_retry=lambda i, n, why: seen.append((i, n, why)))
+    assert seen, "the caller was told nothing while the provider was down"
+    assert seen[0][1] == 3 and "503" in seen[0][2]
+
+
+def test_a_provider_outage_is_a_distinct_failure_from_a_bad_request(monkeypatch):
+    """503 means try again; 400 means the request was wrong. The player-facing
+    message differs, so the types must too."""
+    import urllib.error
+    from core.ai import gemini_video as gv
+
+    monkeypatch.setattr(gv.time, "sleep", lambda _s: None)
+
+    def bad_request(req, timeout=None):
+        raise urllib.error.HTTPError("u", 400, "Bad Request", {}, None)
+
+    monkeypatch.setattr(gv.urllib.request, "urlopen", bad_request)
+    with pytest.raises(RuntimeError) as e:
+        gv._urlopen_retry(_req(), timeout=5, attempts=2, deadline_s=60)
+    assert not isinstance(e.value, gv.ModelUnavailable)

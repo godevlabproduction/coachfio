@@ -52,4 +52,16 @@ class TrendResponse(BaseModel):
     delta: float | None
     improving: bool | None
     average: float | None
+    # Your normal for this metric, from the WHOLE history rather than the
+    # selected window - so "last 5" compares recent form against how you usually
+    # play, instead of against itself. None until there are enough matches for it
+    # to mean anything.
+    baseline: float | None = None
+    baseline_n: int = 0
+    # Where the number came from. "model" means the coach counted it while
+    # watching, with no ground truth to check it against; goals are read off the
+    # scoreboard instead. The UI marks the difference so an estimate does not
+    # look as solid as a measurement.
+    source: str | None = None
+    estimated: bool = False
     points: list[dict[str, Any]]

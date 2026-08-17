@@ -153,7 +153,9 @@ def _match_brief(m) -> dict:
     return {
         "id": m.id,
         "created_at": m.created_at.isoformat() if m.created_at else None,
-        "score": (m.outcome or {}).get("score"),
+        # Player-first: a coach reading a client's match wants it the way the
+        # client experienced it, and the brief carries no side to derive it from.
+        "score": m.scoreline(),
         "result": (m.outcome or {}).get("result"),
         "takeaway": (rep.summary if rep else "") or "",
     }

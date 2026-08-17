@@ -32,6 +32,29 @@ class Settings(BaseSettings):
     # Accounts / usage limits (identity is pluggable - see api/deps.current_user).
     free_match_limit: int = 25        # matches per identity before 402
 
+    # --- session transport (NOT authentication - see core/auth/session.py) ----
+    # Signs the session cookie. The default is a development value: anyone with
+    # it can mint a session for any account, so production MUST set its own.
+    # api/main.py refuses to start with the default when the cookie is marked
+    # secure, which is the closest thing to a deploy-time check we have.
+    # --- model call limits ----------------------------------------------------
+    # Per-attempt socket timeout, and the WALL-CLOCK cap across all retries of one
+    # request. The old behaviour was 600s x 5 attempts with no total cap, so a
+    # provider outage held a match "processing" for the best part of an hour with
+    # the progress bar frozen at 95%. 12 minutes is comfortably longer than a
+    # healthy whole-video call and short enough to tell someone what happened.
+    gemini_http_timeout_s: float = 420.0
+    gemini_http_deadline_s: float = 720.0
+
+    secret_key: str = "dev-only-change-me"
+    session_max_age_days: int = 30
+    # ".coachfio.com" in production so one cookie covers the hub and every game
+    # subdomain. Empty locally: browsers disagree about `Domain=.localhost`, so
+    # the cookie stays host-only in dev and the hub keeps its fragment hand-off.
+    session_cookie_domain: str = ""
+    # HTTPS-only. Off locally, where there is no TLS.
+    session_cookie_secure: bool = False
+
     # OCR: "paddle" | "stub"
     ocr_engine: str = "paddle"
 

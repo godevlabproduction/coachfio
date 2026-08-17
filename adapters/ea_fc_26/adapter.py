@@ -13,7 +13,7 @@ from pathlib import Path
 from core.models.domain import Event, Metric
 from core.models.enums import EventCategory, MetricSource
 from adapters.base.config_adapter import ConfigDrivenAdapter
-from adapters.base.interface import ParsedHud, RegionReading
+from adapters.base.interface import ParsedHud, RegionReading, ReportSpec
 
 _CONFIG = Path(__file__).parent / "config"
 
@@ -60,6 +60,17 @@ class EaFc26Adapter(ConfigDrivenAdapter):
     def issue_vocabulary(self) -> list[dict]:
         from adapters.ea_fc_26.knowledge_base import issue_tags
         return issue_tags()
+
+    def prompt_fragments(self, side: str = "home") -> dict[str, str]:
+        """FC 26's voice in the model prompts. Lives in prompts.py."""
+        from adapters.ea_fc_26.prompts import fragments
+        return fragments(side)
+
+    def report_spec(self) -> ReportSpec:
+        """The football-shaped half of a coaching report. Lives in report.py -
+        core supplies only the envelope."""
+        from adapters.ea_fc_26.report import spec
+        return spec()
 
     # --- competitive standing -> suggested coaching level ---------------------
     # Division Rivals runs Division 10 (lowest) up to Division 1, then Elite.

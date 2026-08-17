@@ -11,6 +11,7 @@ billing, and storage consume them and never change when a game is added.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from collections.abc import Mapping
 from typing import Any
 from uuid import uuid4
 
@@ -76,6 +77,26 @@ class Insight(BaseModel):
     cost_usd: float = 0.0
     created_at: datetime = Field(default_factory=_now)
 
+def player_scoreline(outcome: Mapping[str, Any], side: str) -> str | None:
+    """The scoreline written the way the player experiences it: their goals first.
+
+    The scoreboard is home-away, but the product is a personal coach - the
+    sentence is "you lost 3-4", not "the match finished 4-3". Those two orders
+    used to appear on the same screen: the report title rendered
+    outcome["score"] (home-away) while the report body was restated player-first,
+    so an away player read 4-3 in the header and "3-4 Loss" one line below it.
+
+    Game-agnostic: it needs a two-sided score and which side the player was on,
+    both of which every adapter already records. Returns None when the raw score
+    is missing so callers can fall back to whatever they had.
+    """
+    h, a = outcome.get("score_home"), outcome.get("score_away")
+    if not isinstance(h, int) or not isinstance(a, int):
+        return None
+    gf, ga = (a, h) if side == "away" else (h, a)
+    return f"{gf}-{ga}"
+
+
 
 class Match(BaseModel):
     """A bounded session. Game identity is a plain id + edition - the core never
@@ -110,6 +131,13 @@ class Match(BaseModel):
     updated_at: datetime = Field(default_factory=_now)
     started_at: datetime | None = None
     ended_at: datetime | None = None
+
+    def scoreline(self) -> str:
+        """Player-first scoreline for display. Falls back to the raw home-away
+        string for sources that never recorded the split values."""
+        return player_scoreline(
+            self.outcome or {}, (self.capture or {}).get("player_side", "home")
+        ) or (self.outcome or {}).get("score", "")
 
     def metric(self, key: str) -> Metric | None:
         return next((m for m in self.metrics if m.key == key), None)

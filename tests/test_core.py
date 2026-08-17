@@ -130,3 +130,90 @@ def test_no_game_branching_in_core():
             if any(rx.search(code) for rx in smells):
                 offenders.append(f"{py.relative_to(core_dir)}:{i}: {line.strip()}")
     assert not offenders, f"game-specific branching leaked into /core: {offenders}"
+
+
+def test_core_carries_no_game_specific_prompt_language():
+    """The companion to test_no_game_branching_in_core, one level down.
+
+    A game id never leaked into /core, but its VOCABULARY did: the prompts said
+    "an elite EA Sports FC 26 coach", "home is the TOP row", "jockey with L2/LT",
+    "switch to your left winger". That is as game-specific as `if game == "fc26"`,
+    it just does not look like it. The words now come from
+    `GameAdapter.prompt_fragments()`; the core owns only the SHAPE of a prompt.
+
+    Comments are exempt: several explain a defence by citing the real bug that
+    motivated it, and rewriting those to be game-neutral would delete the reason.
+    """
+    import re
+    from pathlib import Path
+
+    banned = re.compile(
+        r"\b(FC ?2[0-9]|EA Sports|winger|striker|jockey|fullback|full-back|goalkeeper"
+        r"|midfielder|centre-back|half-space|cutback|six-yard)\b", re.I)
+
+    offenders = []
+    for path in Path("core").rglob("*.py"):
+        for n, line in enumerate(path.read_text().splitlines(), 1):
+            code = line.split("#", 1)[0]
+            if banned.search(code):
+                offenders.append(f"{path}:{n}: {line.strip()[:90]}")
+    assert not offenders, "game vocabulary in /core:\n" + "\n".join(offenders)
+
+
+# --- session transport -------------------------------------------------------
+# These cover the CARRIER, not authentication. Proving someone owns an email is
+# the hosted provider's job; nothing here checks a credential.
+
+def _settings():
+    from core.config import Settings
+    return Settings(secret_key="test-key-not-the-default")
+
+
+def test_a_session_token_round_trips():
+    from core.auth.session import make_token, read_token
+
+    s = _settings()
+    assert read_token(make_token("user-123", s), s) == "user-123"
+
+
+def test_a_tampered_session_is_rejected_not_trusted():
+    """The signature covers the value, so swapping in another account's id
+    invalidates it. Without this the cookie would be a self-service login."""
+    from core.auth.session import make_token, read_token
+
+    s = _settings()
+    good = make_token("user-123", s)
+    forged = "user-999" + good[good.index("."):]
+    assert read_token(forged, s) is None
+    assert read_token(good + "x", s) is None
+    assert read_token("", s) is None
+    assert read_token("nonsense", s) is None
+
+
+def test_a_token_signed_with_another_key_is_rejected():
+    from core.config import Settings
+    from core.auth.session import make_token, read_token
+
+    other = Settings(secret_key="a-different-deployment")
+    assert read_token(make_token("user-123", other), _settings()) is None
+
+
+def test_a_session_cannot_be_replayed_as_a_handoff_or_the_reverse():
+    """Different salts. A 30-day session presented as a one-minute hand-off would
+    defeat the point of the hand-off being short-lived."""
+    from core.auth.session import make_handoff, make_token, read_handoff, read_token
+
+    s = _settings()
+    assert read_handoff(make_token("user-123", s), s) is None
+    assert read_token(make_handoff("user-123", s), s) is None
+
+
+def test_an_expired_session_is_rejected():
+    from core.config import Settings
+    from core.auth.session import make_token, read_token
+
+    expired = Settings(secret_key="test-key-not-the-default", session_max_age_days=0)
+    import time
+    tok = make_token("user-123", expired)
+    time.sleep(1.1)
+    assert read_token(tok, expired) is None

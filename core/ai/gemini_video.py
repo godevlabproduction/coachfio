@@ -29,31 +29,80 @@ from core.ai.vision import _parse_json
 _BASE = "https://generativelanguage.googleapis.com"
 
 
-def _urlopen_retry(req, timeout: float, attempts: int = 5) -> bytes:
-    """Read a request body, retrying on transient 429/5xx (Gemini returns 503 a lot
-    on heavy video calls) and network errors with exponential backoff."""
+class ModelUnavailable(RuntimeError):
+    """The provider is refusing work (503/429/5xx) rather than our request being
+    wrong. Separate from a generic failure so the pipeline can tell the player
+    "try again shortly" instead of "analysis failed", which reads as their video
+    being at fault."""
+
+
+# Retries are bounded by WALL CLOCK, not just by count. With 5 attempts at a
+# 600s timeout, a provider outage used to hold a match "processing" for the best
+# part of an hour with the progress bar frozen and nothing said. A total budget
+# means the worst case is stated up front and the player is told inside a few
+# minutes.
+def _urlopen_retry(req, timeout: float, attempts: int = 5,
+                   deadline_s: float | None = None, on_retry=None) -> bytes:
+    """Read a request body, retrying transient 429/5xx (Gemini returns 503 a lot
+    on heavy video calls) and network errors with exponential backoff.
+
+    `deadline_s` caps the TOTAL time across all attempts. `on_retry(attempt,
+    attempts, reason)` is called before each backoff so the caller can report it -
+    a silent retry loop is indistinguishable from a hang.
+    """
     import urllib.error
 
+    started = time.time()
     last = None
+
+    def _budget_left() -> float | None:
+        if deadline_s is None:
+            return None
+        return deadline_s - (time.time() - started)
+
+    def _should_retry(i: int, reason: str) -> bool:
+        if i >= attempts - 1:
+            return False
+        left = _budget_left()
+        wait = min(2 ** i, 8)
+        if left is not None and left <= wait:
+            return False
+        if on_retry:
+            try:
+                on_retry(i + 1, attempts, reason)
+            except Exception:  # noqa: BLE001 - reporting must never break the call
+                pass
+        time.sleep(wait)
+        return True
+
     for i in range(attempts):
+        left = _budget_left()
+        if left is not None and left <= 0:
+            break
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
+            # Never let one attempt overrun the whole budget.
+            t = timeout if left is None else max(5.0, min(timeout, left))
+            with urllib.request.urlopen(req, timeout=t) as resp:
                 return resp.read()
         except urllib.error.HTTPError as e:
             last = e
-            if e.code in (408, 409, 429, 500, 502, 503, 504) and i < attempts - 1:
-                time.sleep(min(2 ** i, 8))
+            transient = e.code in (408, 409, 429, 500, 502, 503, 504)
+            if transient and _should_retry(i, f"HTTP {e.code}"):
                 continue
-            raise RuntimeError(_http_detail(e)) from e
+            detail = _http_detail(e)
+            if transient:
+                raise ModelUnavailable(detail) from e
+            raise RuntimeError(detail) from e
         except urllib.error.URLError as e:
             last = e
-            if i < attempts - 1:
-                time.sleep(min(2 ** i, 8))
+            if _should_retry(i, str(getattr(e, "reason", e))[:60]):
                 continue
-            raise
-    if last:
-        raise last
-    raise RuntimeError("request failed")
+            raise ModelUnavailable(f"could not reach the model: {e}") from e
+
+    raise ModelUnavailable(
+        f"the model did not respond within {deadline_s:.0f}s"
+        + (f" (last: {last})" if last else "")
+    )
 
 
 def _http_detail(e) -> str:
@@ -118,11 +167,15 @@ class VideoResult:
 
 class GeminiVideoModel:
     def __init__(self, api_key: str, in_usd_per_mtok: float = 0.30,
-                 out_usd_per_mtok: float = 2.50, timeout: float = 600.0) -> None:
+                 out_usd_per_mtok: float = 2.50, timeout: float = 600.0,
+                 deadline_s: float | None = None) -> None:
         self._key = api_key
         self.input_usd_per_mtok = in_usd_per_mtok
         self.output_usd_per_mtok = out_usd_per_mtok
         self._timeout = timeout
+        # Wall-clock cap across ALL retries of a single request. None keeps the
+        # old unbounded behaviour; the pipeline always sets it.
+        self._deadline_s = deadline_s
 
     # --- File API upload (resumable protocol) --------------------------------
     def _upload(self, data: bytes, mime: str, display_name: str) -> str:
@@ -185,10 +238,14 @@ class GeminiVideoModel:
 
     def analyze_uri(self, uri: str, model: str, prompt: str, schema: dict | None = None,
                     media_resolution: str = "default", max_tokens: int = 3000,
-                    mime: str = "video/mp4") -> VideoResult:
-        """Run generateContent against an already-uploaded file (no re-upload)."""
+                    mime: str = "video/mp4", on_retry=None) -> VideoResult:
+        """Run generateContent against an already-uploaded file (no re-upload).
+
+        `on_retry(attempt, attempts, reason)` lets the caller report a provider
+        outage instead of sitting silent behind a frozen progress bar."""
         parts = [{"file_data": {"mime_type": mime, "file_uri": uri}}, {"text": prompt}]
-        return self._generate(model, parts, schema, media_resolution, max_tokens)
+        return self._generate(model, parts, schema, media_resolution, max_tokens,
+                              on_retry=on_retry)
 
     def analyze(self, model: str, prompt: str, video: bytes, mime: str = "video/mp4",
                 schema: dict | None = None, media_resolution: str = "default",
@@ -234,7 +291,7 @@ class GeminiVideoModel:
         return {"answer": text, "sources": sources[:4], "cost_usd": cost}
 
     def _generate(self, model: str, parts: list, schema: dict | None,
-                  media_resolution: str, max_tokens: int) -> VideoResult:
+                  media_resolution: str, max_tokens: int, on_retry=None) -> VideoResult:
         gen_cfg: dict[str, Any] = {"maxOutputTokens": max_tokens, "temperature": 0}
         if schema:
             gen_cfg["responseMimeType"] = "application/json"
@@ -250,7 +307,8 @@ class GeminiVideoModel:
             headers={"x-goog-api-key": self._key, "Content-Type": "application/json"},
             method="POST",
         )
-        out = json.loads(_urlopen_retry(req, self._timeout).decode())
+        out = json.loads(_urlopen_retry(
+            req, self._timeout, deadline_s=self._deadline_s, on_retry=on_retry).decode())
 
         text = ""
         try:

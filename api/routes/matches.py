@@ -188,11 +188,22 @@ def complete_upload(match_id: str, session: Session = Depends(db_session),
     return {"match_id": match_id, "status": MatchStatus.QUEUED.value}
 
 
+def _payload(m) -> dict:
+    """Serialise a match with the display scoreline attached.
+
+    Computed on read rather than stored, so every match analysed before this
+    existed gets it too - no migration and no re-running anything.
+    """
+    d = m.model_dump(mode="json")
+    d["outcome"] = {**(d.get("outcome") or {}), "scoreline": m.scoreline()}
+    return d
+
+
 @router.get("/{match_id}")
 def get_match(match_id: str, session: Session = Depends(db_session),
               user: str = Depends(current_user)) -> JSONResponse:
     match = _owned(MatchRepository(session), match_id, user)
-    return JSONResponse(match.model_dump(mode="json"))
+    return JSONResponse(_payload(match))
 
 
 @router.get("/{match_id}/report.pdf")
@@ -351,7 +362,7 @@ def list_matches(
     user: str = Depends(current_user),
 ) -> JSONResponse:
     matches = MatchRepository(session).list(game_id=game_id, edition=edition, identity=user)
-    return JSONResponse([m.model_dump(mode="json") for m in matches])
+    return JSONResponse([_payload(m) for m in matches])
 
 
 @router.get("/{match_id}/progress")
@@ -441,12 +452,27 @@ def trends(game_id: str, edition: str, last: int | None = None,
            session: Session = Depends(db_session),
            user: str = Depends(current_user)) -> list[TrendResponse]:
     matches = MatchRepository(session).list(game_id=game_id, edition=edition, identity=user)
+
+    # The baseline comes from EVERY match, always - never from the window. It is
+    # what the chart shades against, so drawing it from the visible points alone
+    # made the same match render green or red purely according to which range
+    # button was pressed, and made improvement impossible to show.
+    full = {t.key: t for t in build_trends(matches)}
+
     if last and last > 0:
         # `list` is newest-first; trim to the most recent N so the page can ask
         # "how am I doing lately" rather than only "ever".
         matches = matches[:last]
+
+    # Below this a median is noise, not a norm, so the chart shows the line
+    # without claiming it is your normal.
+    MIN_FOR_BASELINE = 4
+
     out: list[TrendResponse] = []
     for t in build_trends(matches):
+        base = full.get(t.key)
+        n_all = len(base.points) if base else 0
+        src = base.source if base else None
         out.append(
             TrendResponse(
                 key=t.key,
@@ -458,6 +484,10 @@ def trends(game_id: str, edition: str, last: int | None = None,
                 delta=t.delta,
                 improving=t.improving,
                 average=t.average,
+                baseline=(base.baseline if base and n_all >= MIN_FOR_BASELINE else None),
+                baseline_n=n_all,
+                source=src,
+                estimated=(src == "model"),
                 points=[{"match_id": p.match_id, "created_at": p.created_at, "value": p.value} for p in t.points],
             )
         )

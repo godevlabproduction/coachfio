@@ -16,11 +16,18 @@ stores or reads data has to change.
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from api.deps import db_session
+from api.deps import current_user, db_session
+from core.auth import (
+    clear_session_cookie,
+    make_handoff,
+    read_handoff,
+    set_session_cookie,
+)
+from core.config import Settings
 from core.storage.users import (
     create_user,
     find_by_email,
@@ -31,6 +38,8 @@ from core.storage.users import (
 )
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+_settings = Settings()
 
 
 class SignUpRequest(BaseModel):
@@ -49,7 +58,8 @@ class SignInRequest(BaseModel):
 
 
 @router.post("/signup")
-def sign_up(body: SignUpRequest, session: Session = Depends(db_session)) -> dict:
+def sign_up(body: SignUpRequest, response: Response,
+            session: Session = Depends(db_session)) -> dict:
     email = normalise_email(body.email)
     if not valid_email(email):
         raise HTTPException(422, "Enter a valid email address.")
@@ -61,15 +71,74 @@ def sign_up(body: SignUpRequest, session: Session = Depends(db_session)) -> dict
     if body.role:
         update_user(session, row.user_id, role=body.role)
         row = find_by_email(session, email) or row
+    set_session_cookie(response, row.user_id, _settings)
+    # user_id is still returned so existing clients keep working while they move
+    # over to the cookie. It stops being needed once nothing reads it.
     return {"user_id": row.user_id, "profile": user_profile(row)}
 
 
 @router.post("/signin")
-def sign_in(body: SignInRequest, session: Session = Depends(db_session)) -> dict:
+def sign_in(body: SignInRequest, response: Response,
+            session: Session = Depends(db_session)) -> dict:
     email = normalise_email(body.email)
     if not valid_email(email):
         raise HTTPException(422, "Enter a valid email address.")
     row = find_by_email(session, email)
     if row is None:
         raise HTTPException(404, "No account found for that email.")
+    set_session_cookie(response, row.user_id, _settings)
     return {"user_id": row.user_id, "profile": user_profile(row)}
+
+
+@router.post("/signout")
+def sign_out(response: Response) -> dict:
+    """Drop the session cookie. Server-side because the cookie is HttpOnly and
+    page scripts cannot delete it themselves - that is the point of HttpOnly."""
+    clear_session_cookie(response, _settings)
+    return {"ok": True}
+
+
+class AdoptRequest(BaseModel):
+    token: str
+
+
+@router.post("/handoff")
+def mint_handoff(user: str = Depends(current_user)) -> dict:
+    """A 60-second token the hub can hand to a game subdomain.
+
+    Needed only while one cookie cannot cover both hosts - locally, where the
+    hosts are localhost and fifa.localhost. In production the cookie is scoped
+    to .coachfio.com and nothing calls this.
+    """
+    if user == "anonymous":
+        raise HTTPException(401, "not signed in")
+    return {"token": make_handoff(user, _settings)}
+
+
+@router.post("/handoff/adopt")
+def adopt_handoff(body: AdoptRequest, response: Response,
+                  session: Session = Depends(db_session)) -> dict:
+    """Exchange a hand-off token for a session cookie on THIS origin.
+
+    The token is verified here rather than trusted: it is signed, single-purpose
+    (its own salt, so a session cookie cannot be presented as one, or vice
+    versa) and expires in a minute.
+    """
+    user_id = read_handoff(body.token, _settings)
+    if not user_id:
+        raise HTTPException(401, "that sign-in link has expired - open the game again")
+    from core.storage.users import get_or_create_user
+    row = get_or_create_user(session, user_id)
+    set_session_cookie(response, row.user_id, _settings)
+    return {"ok": True, "profile": user_profile(row)}
+
+
+@router.get("/session")
+def whoami(user: str = Depends(current_user),
+           session: Session = Depends(db_session)) -> dict:
+    """Who the current cookie resolves to. The frontend calls this on load
+    instead of reading an identity out of localStorage."""
+    if user == "anonymous":
+        return {"signed_in": False}
+    from core.storage.users import get_or_create_user
+    return {"signed_in": True, "profile": user_profile(get_or_create_user(session, user))}

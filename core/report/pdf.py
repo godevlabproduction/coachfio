@@ -1,8 +1,13 @@
 """Coaching report -> PDF. Game-agnostic, like everything else in /core.
 
-Every field this reads (summary, strengths, recurring_mistakes, goals, stats...)
-is part of the CORE coaching-report schema produced by `core/pipeline/stages.py`,
-not of any adapter, so no game id appears here and none may be added - see
+The envelope it reads (summary, strengths, recurring_mistakes, goals, stats...)
+is the CORE coaching-report schema. The per-game sections and their headings are
+NOT: they come from the match's adapter via `report_spec().kv_sections`. This
+file used to carry its own copy of those forty football field labels while its
+docstring claimed to be game-agnostic; a field added to the schema was then
+answered by the model, stored by the API, shown on the web, and silently dropped
+here. No game id appears in this file and none may be added - the adapter is
+looked up from the match - see
 `tests/test_core.py::test_no_game_branching_in_core`.
 
 One builder, so that the emailed copy (planned) and the downloaded one can never
@@ -18,6 +23,7 @@ printed and mailed, so it is dark ink on white.
 from __future__ import annotations
 
 import re
+from core.models.domain import player_scoreline
 from datetime import datetime
 from io import BytesIO
 from typing import Any
@@ -64,50 +70,25 @@ _SECTIONS: list[tuple[str, str, colors.Color]] = [
     ("practice_drills", "Practice focus", MUTED),
 ]
 
-# The template sections, as (payload key, heading, [(field, label)...]). Data, so
-# a new field is one line here and appears in the PDF and nowhere else needs to
-# know. Order is the reading order of the document.
-_KV_SECTIONS: list[tuple[str, str, list[tuple[str, str]]]] = [
-    ("diagnosis", "Executive diagnosis", [
-        ("biggest_strength", "Biggest strength"),
-        ("biggest_repeatable_mistake", "Biggest repeatable mistake"),
-        ("highest_value_habit", "Highest-value habit to fix"),
-        ("main_tactical_problem", "Main tactical problem"),
-        ("main_mechanical_problem", "Main mechanical problem"),
-    ]),
-    ("match_context", "Match context", [
-        ("mode", "Mode"), ("my_formation", "My formation"),
-        ("opponent_formation", "Opponent formation"), ("result", "Result"),
-        ("score_by_phase", "Score by phase"), ("technical_issues", "Technical issues"),
-        ("sample_quality", "Sample quality"), ("confidence", "Confidence"),
-    ]),
-    ("attacking", "Attacking analysis", [
-        ("build_up_angles", "Build-up angles"), ("use_of_width", "Use of width"),
-        ("half_space_occupation", "Half-spaces"), ("third_man_runs", "Third-man runs"),
-        ("striker_movement", "Striker movement"), ("cam_movement", "CAM movement"),
-        ("overlaps_underlaps", "Overlaps / underlaps"),
-        ("cutback_creation", "Cutback creation"), ("shot_selection", "Shot selection"),
-        ("rushes_final_action", "Rushing the final action"),
-    ]),
-    ("defending", "Defensive analysis", [
-        ("shape", "Shape"), ("cdm_positioning", "CDM positioning"),
-        ("centre_back_movement", "Centre-back movement"),
-        ("player_switching", "Player switching"),
-        ("jockey_and_sprint_usage", "Jockey / sprint usage"),
-        ("pressing_angles", "Pressing angles"),
-        ("through_ball_prevention", "Through-ball prevention"),
-        ("cutback_prevention", "Cutback prevention"),
-        ("recovery_after_losing_possession", "Recovery after losing it"),
-        ("fullback_exposure", "Fullback exposure"),
-    ]),
-    ("next_video_test", "Next video to record", [
-        ("match_type", "Match type"), ("formation", "Formation"),
-        ("behaviour_to_practise", "Practise this"),
-        ("behaviour_not_to_change", "Do NOT change this"),
-        ("metrics_to_compare", "Compare these metrics"),
-        ("minimum_sample_size", "Minimum sample"),
-    ]),
-]
+def _kv_sections(match: Any) -> list[tuple[str, str, list[tuple[str, str]]]]:
+    """The flat sections and their labels, from the match's own adapter.
+
+    An unknown or unregistered game yields nothing rather than raising: the rest
+    of the report - summary, strengths, mistakes, goals, practice plan - is core
+    and still renders. A PDF missing its tactical sections beats no PDF.
+    """
+    from adapters.base.registry import UnknownGameError, load_builtin_adapters, registry
+
+    # Idempotent, and cheap. Not relying on a caller having done it: the whole
+    # point of this change is that a section must never go missing quietly, and
+    # "the registry happened to be empty" is exactly that failure again.
+    load_builtin_adapters()
+    try:
+        adapter = registry.get(_field(match, "game_id"), _field(match, "game_edition"))
+    except (UnknownGameError, KeyError, AttributeError):
+        return []
+    return list(adapter.report_spec().kv_sections)
+
 
 _SAFE_NAME = re.compile(r"[^A-Za-z0-9._-]+")
 
@@ -177,7 +158,9 @@ def _field(obj: Any, name: str, default: Any = "") -> Any:
 def report_filename(match: Any) -> str:
     """Stable, filesystem- and header-safe name for the attachment/download."""
     outcome = getattr(match, "outcome", None) or {}
-    score = str(outcome.get("score") or "").replace("-", "v") or "match"
+    side = str((getattr(match, "capture", None) or {}).get("player_side") or "home")
+    line = player_scoreline(outcome, side) or str(outcome.get("score") or "")
+    score = line.replace("-", "v") or "match"
     when = getattr(match, "created_at", None)
     day = when.strftime("%Y-%m-%d") if isinstance(when, datetime) else "report"
     return _SAFE_NAME.sub("-", f"coachfio-{day}-{score}.pdf")
@@ -266,6 +249,7 @@ def build_match_report_pdf(match: Any, *, player_name: str = "") -> bytes | None
 def _render(match: Any, insight: Any, player_name: str, trim: int) -> tuple[bytes, int]:
 
     payload: dict = _field(insight, "payload", {}) or {}
+    kv_sections = _kv_sections(match)
     # Only the last resort clips prose; above that whole sections are dropped so
     # what survives is still complete.
     clip = 200 if trim >= 6 else (240 if trim >= 5 else None)
@@ -286,9 +270,13 @@ def _render(match: Any, insight: Any, player_name: str, trim: int) -> tuple[byte
     )
 
     flow: list[Any] = []
-    flow.append(Paragraph("Coachfio &mdash; match report", st["title"]))
+    flow.append(Paragraph("Coachfio match report", st["title"]))
 
-    score = str(outcome.get("score") or "").strip()
+    # Player-first, like the app, the web report and this document's own body.
+    # This file was missed when the ordering was unified, so an away player got a
+    # PDF headed 4-3 whose Match context read "3-4 Loss" two paragraphs down.
+    side = str((getattr(match, "capture", None) or {}).get("player_side") or "home")
+    score = (player_scoreline(outcome, side) or str(outcome.get("score") or "")).strip()
     result = str(outcome.get("result") or "").strip().title()
     when = getattr(match, "created_at", None)
     bits = [b for b in [
@@ -307,10 +295,10 @@ def _render(match: Any, insight: Any, player_name: str, trim: int) -> tuple[byte
     # Diagnosis and context lead the document - they are the answer, the rest is
     # the working.
     for key in (("diagnosis",) if trim >= 4 else ("diagnosis", "match_context")):
-        spec = next((x for x in _KV_SECTIONS if x[0] == key), None)
-        rows = _kv_rows(payload, key, spec[2], clip) if spec else []
+        section = next((x for x in kv_sections if x[0] == key), None)
+        rows = _kv_rows(payload, key, section[2], clip) if section else []
         if rows:
-            flow.append(Paragraph(spec[1], st["h2"]))
+            flow.append(Paragraph(section[1], st["h2"]))
             flow.append(_kv_table(rows, st))
 
     for key, label, colour in _SECTIONS:
@@ -450,7 +438,7 @@ def _render(match: Any, insight: Any, player_name: str, trim: int) -> tuple[byte
             block.append(Spacer(1, 5))
             flow.append(KeepTogether(block))
 
-    for key, label, fields in _KV_SECTIONS:
+    for key, label, fields in kv_sections:
         if essentials:
             break
         if key in ("diagnosis", "match_context"):

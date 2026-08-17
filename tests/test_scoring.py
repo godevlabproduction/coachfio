@@ -9,7 +9,8 @@ so the trailing-window aggregation can't silently regress.
 from adapters.base.hud_schema import HudRegion
 from adapters.base.interface import RegionReading
 from adapters.ea_fc_26.adapter import EaFc26Adapter
-from core.pipeline.stages import GOAL_READ_LEAD_S, _mmss
+from core.models.domain import Match, player_scoreline
+from core.pipeline.stages import GOAL_READ_LEAD_S, _mmss, _restate_result
 
 adapter = EaFc26Adapter()
 
@@ -115,3 +116,42 @@ def test_final_reflects_end_not_max():
     frames = [("10:00", "0", "5")] * 8 + [("85:00", "0", "2")] * 25  # early '5' phantom, true 2
     parsed = adapter.interpret(_reads(frames))
     assert parsed.outcome["score_away"] == 2
+
+
+class TestScorelineOrdering:
+    """One match must not show two different scorelines on one screen.
+
+    A real report rendered the title from outcome["score"] (home-away, straight
+    off the HUD) while the body was restated player-first, so an away player read
+    "4-3" in the header and "3-4 Loss" one line below it. Both now come from
+    player_scoreline.
+    """
+
+    def test_away_player_sees_their_goals_first(self):
+        assert player_scoreline({"score_home": 4, "score_away": 3}, "away") == "3-4"
+
+    def test_home_player_is_unchanged(self):
+        assert player_scoreline({"score_home": 4, "score_away": 3}, "home") == "4-3"
+
+    def test_missing_split_score_returns_none_so_callers_can_fall_back(self):
+        assert player_scoreline({"score": "4-3"}, "away") is None
+
+    def test_match_scoreline_falls_back_to_the_raw_string(self):
+        m = Match(game_id="ea-fc", game_edition="26", outcome={"score": "4-3"})
+        assert m.scoreline() == "4-3"
+
+    def test_title_and_body_agree_for_an_away_player(self):
+        outcome = {"score": "4-3", "score_home": 4, "score_away": 3}
+        match = Match(game_id="ea-fc", game_edition="26", outcome=outcome,
+                      capture={"player_side": "away"})
+        report: dict = {"match_context": {"result": "whatever the model said"}}
+        _restate_result(report, outcome, "away")
+        # The header renders match.scoreline(); the body renders this line.
+        assert report["match_context"]["result"].startswith(match.scoreline())
+        assert report["match_context"]["result"] == "3-4 Loss"
+
+    def test_verdict_follows_the_player_not_the_home_side(self):
+        outcome = {"score_home": 1, "score_away": 3}
+        report: dict = {"match_context": {}}
+        _restate_result(report, outcome, "away")
+        assert report["match_context"]["result"] == "3-1 Win"

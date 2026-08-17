@@ -42,6 +42,37 @@ def find_by_email(session: Session, email: str) -> UserRow | None:
     return session.execute(stmt).scalars().first()
 
 
+def find_by_auth_subject(session: Session, subject: str) -> UserRow | None:
+    """The account a provider login maps to, or None if it is not linked yet.
+
+    This is the whole point of keeping `auth_subject` separate from `user_id`:
+    the provider owns the subject, we own the id, and everything downstream
+    (matches, usage, coach links) is keyed on the id we own.
+    """
+    subject = (subject or "").strip()
+    if not subject:
+        return None
+    return session.query(UserRow).filter(UserRow.auth_subject == subject).one_or_none()
+
+
+def link_auth_subject(session: Session, user_id: str, subject: str) -> UserRow:
+    """Attach a provider login to an existing account.
+
+    Refuses to move a subject that already points somewhere else: silently
+    re-pointing it would hand one person's matches to another.
+    """
+    subject = (subject or "").strip()
+    if not subject:
+        raise ValueError("auth subject is required")
+    existing = find_by_auth_subject(session, subject)
+    if existing is not None and existing.user_id != user_id:
+        raise ValueError("that login is already linked to another account")
+    row = get_or_create_user(session, user_id)
+    row.auth_subject = subject
+    session.flush()
+    return row
+
+
 def create_user(session: Session, email: str, display_name: str | None = None,
                 skill_level: object = None) -> UserRow:
     row = UserRow(
