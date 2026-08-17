@@ -195,7 +195,22 @@ def _payload(m) -> dict:
     existed gets it too - no migration and no re-running anything.
     """
     d = m.model_dump(mode="json")
-    d["outcome"] = {**(d.get("outcome") or {}), "scoreline": m.scoreline()}
+    out = dict(d.get("outcome") or {})
+    line = m.scoreline()
+    if line:
+        # `score` itself is player-first here, not just the extra `scoreline`
+        # field. The report body has always been written player-first, so any
+        # client reading `score` and rendering it next to that body showed an
+        # away player "4-3" above a line reading "3-4 Loss". Making the headline
+        # field correct means a client gets the right answer without having to
+        # know about a second field.
+        #
+        # The raw home-away read is kept - it is what the scoreboard actually
+        # showed, and score_home/score_away are unchanged either way.
+        out["score_home_away"] = out.get("score")
+        out["score"] = line
+        out["scoreline"] = line
+    d["outcome"] = out
     return d
 
 
