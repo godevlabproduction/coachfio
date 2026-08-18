@@ -73,6 +73,43 @@ def link_auth_subject(session: Session, user_id: str, subject: str) -> UserRow:
     return row
 
 
+def link_or_create_from_provider(session: Session, subject: str, email: str,
+                                 email_verified: bool,
+                                 display_name: str | None = None) -> UserRow:
+    """Resolve a provider login to OUR account, creating one if needed.
+
+    Three cases, in order:
+
+    1. The subject is already linked - return that account. This is every sign-in
+       after the first, and it is why the mapping exists.
+    2. No link yet, but a VERIFIED email matches an existing account - adopt it.
+       This is what stops an account created before the provider existed from
+       being stranded with its matches. It requires the provider to have
+       confirmed the address, because otherwise anyone could claim someone
+       else's account by signing up with their email.
+    3. Otherwise, a new account.
+
+    An UNVERIFIED email never adopts. It gets a fresh account instead, which is
+    the safe failure: a duplicate account is recoverable, a stolen one is not.
+    """
+    subject = (subject or "").strip()
+    if not subject:
+        raise ValueError("provider gave no subject")
+
+    existing = find_by_auth_subject(session, subject)
+    if existing is not None:
+        return existing
+
+    email = normalise_email(email)
+    if email and email_verified:
+        row = find_by_email(session, email)
+        if row is not None:
+            return link_auth_subject(session, row.user_id, subject)
+
+    row = create_user(session, email, display_name)
+    return link_auth_subject(session, row.user_id, subject)
+
+
 def create_user(session: Session, email: str, display_name: str | None = None,
                 skill_level: object = None) -> UserRow:
     row = UserRow(

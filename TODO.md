@@ -171,3 +171,30 @@ stated rules (no shadows/gradients/hover-translate, restrained accent use).
 - Never commit `.env`, API keys, or match videos (already gitignored).
 - The one rule that overrides everything: **no game ids in `/core`**
   (`if game == "fc26"` is a design failure — push it into the adapter).
+
+## Auth: Supabase (decided 2026-08-18)
+
+Provider chosen: **Supabase Auth**. Reasons: it is Postgres-native and we already
+run Postgres, GoTrue is open source and self-hostable so there is an exit, and
+Google/Discord are built in - Discord matters for a gaming audience.
+
+What is already in place (backend groundwork, done):
+- `users.auth_subject` maps the provider's `sub` to OUR `user_id`. The provider's
+  id is never our primary key, so match data (`capture->>'identity'`) does not
+  depend on the vendor and changing provider re-populates one column.
+- Signed session cookie on `.coachfio.com` (`core/auth/session.py`), read at the
+  `current_user` seam. Cookies reach the SSE stream, <video> and PDF links, which
+  cannot send headers.
+- `find_by_auth_subject()` / `link_auth_subject()` in `core/storage/users.py`.
+
+Still to do when connecting it:
+1. Verify the Supabase JWT in `api/deps.current_user` (JWKS or the shared secret)
+   and map `sub` -> `auth_subject` -> our `user_id`.
+2. One endpoint that exchanges a Supabase session for OUR session cookie.
+3. Wire the Google/Discord buttons on both sign-in pages to Supabase's OAuth
+   redirect. The buttons exist and currently explain that they are not connected.
+4. REMOVE the `X-User-Id` dev header and the `?u=` query fallback in
+   `api/deps.py` at the same time - once a provider verifies identity, both
+   become a way around it.
+5. Per-game profile: nest `users.skill_survey` by `game@edition` before CS2
+   ships, or FC and CS2 answers share one flat dict and collide.

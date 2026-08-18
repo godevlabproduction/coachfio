@@ -25,6 +25,29 @@
         <a class="hub-logo" href="/" style="font-size:24px"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
         <p class="hub-body" style="margin-top:8px" data-hub-subtitle>Sign in to your account</p>
       </div>
+      <!-- OAuth first: most people will use it, and burying it under a form
+           reads as "email is the real way in". Not wired to Supabase yet, so the
+           buttons say so on click rather than failing silently. -->
+      <div class="hub-oauth">
+        <button class="hub-oauth__btn" type="button" data-hub-oauth="google">
+          <svg class="hub-oauth__ico" viewBox="0 0 18 18" aria-hidden="true">
+            <path fill="#4285F4" d="M17.6 9.2c0-.6-.05-1.2-.16-1.75H9v3.32h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.55Z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.95v2.33A9 9 0 0 0 9 18Z"/>
+            <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.95a9 9 0 0 0 0 8.1l3.02-2.33Z"/>
+            <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.95l3.02 2.33C4.68 5.16 6.66 3.58 9 3.58Z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <button class="hub-oauth__btn" type="button" data-hub-oauth="discord">
+          <svg class="hub-oauth__ico" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#5865F2" d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.25.5c1.6.4 2.9 1 4.1 1.8a13.9 13.9 0 0 0-12.5 0c1.2-.8 2.6-1.5 4.1-1.8L10.6 3a19.8 19.8 0 0 0-4.9 1.4C2.6 9 1.8 13.5 2.2 17.9A19.9 19.9 0 0 0 8.3 21l1.3-1.8c-1-.4-2-.9-2.8-1.5l.7-.5a14.2 14.2 0 0 0 12 0l.7.5c-.9.6-1.8 1.1-2.8 1.5L18.7 21c2.2-.7 4.3-1.7 6.1-3.1v-.1c.5-5-.8-9.4-4.5-13.4ZM8.9 15.3c-1.2 0-2.2-1.1-2.2-2.4 0-1.4 1-2.5 2.2-2.5s2.2 1.1 2.2 2.5c0 1.3-1 2.4-2.2 2.4Zm6.2 0c-1.2 0-2.2-1.1-2.2-2.4 0-1.4 1-2.5 2.2-2.5s2.2 1.1 2.2 2.5c0 1.3-1 2.4-2.2 2.4Z"/>
+          </svg>
+          Continue with Discord
+        </button>
+      </div>
+      <p class="hub-oauth__note" data-hub-oauth-note hidden></p>
+      <div class="hub-or"><span>or</span></div>
+
       <form data-hub-auth novalidate>
         <label class="hub-field" data-hub-name-field hidden>
           <span class="hub-label">Name</span>

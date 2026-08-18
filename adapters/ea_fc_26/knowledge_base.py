@@ -325,7 +325,12 @@ def build_playbook(hints: str = "", max_remedies: int = 6, max_learned: int = 12
     # deliberately: a move the player's card cannot perform is not advice, and
     # prescribing one reads as the coach not having watched.
     moves = (k.get("skill_moves", {}) or {}).get("entries", []) or []
-    msel = _select_remedies(moves, hints, 4) if hints else []
+    # Falls back to the first few rather than to NOTHING. With no hints this used
+    # to yield an empty list, so a player with no history - every first-time user
+    # - got a report with no skill-move knowledge at all, even though the file
+    # holds nine entries. The list is authored cheapest-first, so the head of it
+    # is the sensible default for someone we know nothing about.
+    msel = _select_remedies(moves, hints, 4) if hints else moves[:3]
     if msel:
         out.append("")
         out.append(
@@ -394,6 +399,8 @@ def build_playbook(hints: str = "", max_remedies: int = 6, max_learned: int = 12
     # squad-fit point is only ever worth making when the footage shows the
     # mismatch.
     profiles = (k.get("player_profiles", {}) or {}).get("entries", []) or []
+    # Kept hint-only: a profile is about a SPECIFIC player, so showing an
+    # arbitrary one to somebody who does not use them is noise, not grounding.
     psel2 = _select_remedies(profiles, hints, 2) if hints else []
     if psel2:
         out.append("")

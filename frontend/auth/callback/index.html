@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/hub.css">
+<title>Signing you in - Coachfio</title>
+</head>
+<!-- Where Supabase sends people back to, for magic links and (later) Google and
+     Discord alike. Deliberately NOT host-specific: it is served from the static
+     mount, so the same page works on coachfio.com and on every game subdomain,
+     and the session cookie is set on whichever origin you landed on. -->
+<body class="hub" data-hub-page="auth">
+<main id="main" class="hub-center">
+  <div class="hub-auth" style="text-align:center">
+    <div class="hub-card" style="padding:32px">
+      <p class="hub-body" data-cb-msg>Signing you in...</p>
+      <p class="hub-small" style="margin-top:14px" data-cb-help hidden></p>
+      <a class="hub-btn hub-btn--primary hub-btn--block" style="margin-top:18px"
+         href="/signin/" data-cb-retry hidden>Back to sign in</a>
+    </div>
+  </div>
+</main>
+<script>
+(function () {
+  var msg = document.querySelector("[data-cb-msg]");
+  var help = document.querySelector("[data-cb-help]");
+  var retry = document.querySelector("[data-cb-retry]");
+
+  function fail(text) {
+    msg.textContent = "That did not work";
+    help.textContent = text;
+    help.hidden = false;
+    retry.hidden = false;
+  }
+
+  // Supabase returns the session in the URL FRAGMENT, which browsers never send
+  // to a server - so the token cannot appear in our access logs or in a Referer
+  // header. It is read here, exchanged for an HttpOnly cookie, and scrubbed from
+  // the address bar so it is not left in history or in a copied link.
+  var frag = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+  var token = frag.get("access_token");
+  var err = frag.get("error_description") || frag.get("error");
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}
+
+  if (err) { fail(decodeURIComponent(err.replace(/\+/g, " "))); return; }
+  if (!token) { fail("This link is missing its sign-in token. Ask for a new one."); return; }
+
+  fetch("/api/auth/provider-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ access_token: token }),
+  }).then(function (r) {
+    if (!r.ok) return r.json().catch(function () { return {}; })
+      .then(function (b) { throw new Error(b.detail || "Sign-in failed."); });
+    return r.json();
+  }).then(function (r) {
+    // Nothing to store: the backend set an HttpOnly session cookie and the app
+    // reads its identity from that. A mirrored copy in localStorage is what used
+    // to go stale and make a game site load the PREVIOUS account.
+    try { localStorage.removeItem("coachio.user"); } catch (e) {}
+    // Straight into the product. replace() so Back does not return here with a
+    // token that has already been spent.
+    location.replace("/hub/");
+  }).catch(function (e) { fail(e.message); });
+})();
+</script>
+</body>
+</html>

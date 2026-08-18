@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterator
 
-from fastapi import Header, Query, Request
+from fastapi import Header, Request
 from sqlalchemy.orm import Session
 
 from core.auth import read_session
@@ -15,34 +15,31 @@ _settings = Settings()
 def current_user(
     request: Request,
     x_user_id: str | None = Header(default=None),
-    u: str | None = Query(default=None),
 ) -> str:
-    """Identity seam. The ONE place a hosted auth provider plugs in.
+    """Identity seam. Everything that owns data is keyed on what this returns.
 
-    Resolution order, most trustworthy first:
+    The signed session cookie is the only thing trusted. It is set after Supabase
+    has verified who someone is (api/routes/auth.py), is HttpOnly so page scripts
+    cannot read it, and is scoped to `.coachfio.com` in production so it covers
+    the hub and every game subdomain.
 
-      1. The signed session cookie (core/auth/session.py). Set at sign-in,
-         scoped to `.coachfio.com` in production so it covers the hub and every
-         game subdomain, and sent automatically by the SSE stream, the <video>
-         element and PDF links - none of which can set a header.
-      2. `X-User-Id`, the development header. Trivially forged; it survives for
-         the CLI, the tests and tools/. Harmless while (1) is equally forgeable
-         at sign-in; it must be REMOVED the day a provider lands, or it becomes
-         a bypass around the provider.
-      3. `?u=`, for the same header-less callers as (1). Redundant now that the
-         cookie reaches them, and kept only so links already in the wild do not
-         break. Remove with (2).
+    WHAT USED TO BE HERE, and why it is gone: an `X-User-Id` header and a `?u=`
+    query parameter, both unverified. Either let any caller claim any account by
+    knowing its id - no password, no token. That was tolerable while sign-in was
+    equally forgeable; next to a real provider it is just a way around it. The
+    frontend now sends neither: the cookie reaches the SSE stream, <video> and
+    PDF links on its own.
 
-    Connecting a provider means: verify its token, map the subject claim through
-    `users.auth_subject` to OUR user_id, and return that. Nothing downstream
-    changes - all 44 call sites and every ownership check stay as they are.
+    The header survives ONLY behind `ALLOW_DEV_USER_HEADER`, off by default, so
+    the CLI and tools can act as a user without a browser. api/main.py refuses to
+    start if it is on while session cookies are marked Secure.
     """
-    return (
-        read_session(request, _settings)
-        or (x_user_id or "").strip()
-        or (u or "").strip()
-        or "anonymous"
-    )
+    user = read_session(request, _settings)
+    if user:
+        return user
+    if _settings.allow_dev_user_header and x_user_id:
+        return x_user_id.strip() or "anonymous"
+    return "anonymous"
 
 
 def db_session() -> Iterator[Session]:

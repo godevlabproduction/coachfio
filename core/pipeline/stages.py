@@ -757,6 +757,34 @@ def _player_block(capture: dict | None) -> str:
     return "\n".join(lines) + "\n\n"
 
 
+def _playbook_hints(ctx, capture: dict | None = None) -> str:
+    """What this player keeps getting wrong, as free text for the adapter to rank
+    its knowledge against.
+
+    The playbook scores its entries against these hints and drops whole
+    categories when there are none - skill moves and player profiles were gated
+    behind `if hints else []`, so on the single-call path (which passes "") they
+    NEVER reached the coach, and the 420 learned facts were taken as the first
+    twelve rather than the relevant twelve.
+
+    Everything here is already loaded for other reasons: the recurring weakness
+    tags and recent advice come from the player's past matches, the skill level
+    and control scheme from their profile. No extra query, no extra cost - the
+    playbook block is the same size either way, it just contains the right things.
+    """
+    bits: list[str] = []
+    h = ctx.player_history or {}
+    bits += [str(i.get("tag", "")) for i in (h.get("issues") or [])]
+    bits += [str(a) for a in (h.get("recent_advice") or [])]
+    if h.get("formation"):
+        bits.append(str(h["formation"]))
+    cap = capture if capture is not None else (ctx.match.capture or {})
+    for k in ("skill_level", "control_scheme"):
+        if cap.get(k):
+            bits.append(str(cap[k]))
+    return " ".join(b for b in bits if b).strip()
+
+
 def _history_block(history: dict | None, vocab: list[dict]) -> str:
     """Prompt block: this player's recurring problems across past matches + the
     weakness-tag vocabulary to classify this match."""
@@ -1202,7 +1230,8 @@ class Stage3CoachingReport(Stage):
             return
 
         prompt = (
-            self._facts_preamble(ctx.match) + "\n\n" + adapter.coaching_playbook()
+            self._facts_preamble(ctx.match) + "\n\n"
+            + adapter.coaching_playbook(_playbook_hints(ctx))
             + "\n\n" + (adapter.stage_prompt(3) or "Coach this match.")
         )
         schema = adapter.coaching_schema()
@@ -1959,7 +1988,7 @@ class GeminiVideoCoaching(Stage):
         srow = "TOP" if side == "home" else "BOTTOM"
         sbadge = "LEFT" if side == "home" else "RIGHT"
         obadge = "RIGHT" if side == "home" else "LEFT"
-        playbook = adapter.coaching_playbook("")
+        playbook = adapter.coaching_playbook(_playbook_hints(ctx))
         history = _history_block(ctx.player_history, adapter.issue_vocabulary())
         player_ctx = _player_block(ctx.match.capture)
 
@@ -2005,7 +2034,7 @@ class GeminiVideoCoaching(Stage):
             from concurrent.futures import ThreadPoolExecutor as _TPE
             ctx.emit(self.name, "scoring", "reading the scoreboard timeline")
             score_pool = _TPE(max_workers=1)
-            score_future = score_pool.submit(_read_score_timeline, ctx.source_bytes, s)
+            score_future = score_pool.submit(_read_score_timeline, ctx.source_bytes, s, frag)
 
         ctx.emit(self.name, "running", f"single-call coaching read on {s.gemini_video_model}")
         # The file is uploaded once (prepare); retry the generate on an empty/truncated

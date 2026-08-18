@@ -46,6 +46,22 @@ class Settings(BaseSettings):
     gemini_http_timeout_s: float = 420.0
     gemini_http_deadline_s: float = 720.0
 
+    # --- Supabase (identity only; all app data stays in our own Postgres) -----
+    # Empty disables it and the dev email sign-in stays in charge, so the app
+    # still runs for anyone who has not set these.
+    supabase_url: str = ""
+    supabase_anon_key: str = ""
+
+    @property
+    def supabase_enabled(self) -> bool:
+        return bool(self.supabase_url and self.supabase_anon_key)
+
+    # An UNVERIFIED `X-User-Id` header that lets any caller be any account. It
+    # exists so the CLI and tools can act as a user without a browser session.
+    # Off by default, and api/main.py refuses to boot with it on while cookies
+    # are Secure - because in production it is simply a way around Supabase.
+    allow_dev_user_header: bool = False
+
     secret_key: str = "dev-only-change-me"
     session_max_age_days: int = 30
     # ".coachfio.com" in production so one cookie covers the hub and every game

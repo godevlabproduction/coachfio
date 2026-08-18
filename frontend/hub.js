@@ -11,13 +11,20 @@
 (function () {
   "use strict";
 
-  var ID_KEY = "coachio.user";
+  var ID_KEY = "coachio.user";       // legacy; cleared on sign-out
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
 
-  function identity() {
-    try { return localStorage.getItem(ID_KEY) || ""; } catch (e) { return ""; }
+  // The session is an HttpOnly cookie, not a value this file can read. `_me`
+  // caches what /api/auth/session answered, resolved once before anything
+  // renders. See the note in coach.js for why the localStorage id had to go.
+  var _me = "";
+  function identity() { return _me; }
+  function setIdentity(v) { _me = v || ""; }
+  function bootSession() {
+    return api("/api/auth/session").then(function (d) {
+      _me = (d && d.signed_in && d.profile && d.profile.user_id) || "";
+    }).catch(function () { _me = ""; });
   }
-  function setIdentity(v) { try { localStorage.setItem(ID_KEY, v); } catch (e) {} }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -26,7 +33,7 @@
   function api(path, opts) {
     opts = opts || {};
     opts.headers = opts.headers || {};
-    if (identity()) opts.headers["X-User-Id"] = identity();
+    // Same origin, so the session cookie rides along on its own.
     return fetch(path, opts).then(function (r) {
       if (!r.ok) return r.text().then(function (t) { throw new Error(t || r.statusText); });
       return r.status === 204 ? null : r.json();
@@ -41,6 +48,32 @@
   function gameUrl(site, root) {
     var port = location.port ? ":" + location.port : "";
     return location.protocol + "//" + site.label + "." + (root || location.hostname) + port + "/";
+  }
+
+  // Entering a game is a jump to another ORIGIN, and a cookie set on
+  // coachfio.com is not sent to fifa.coachfio.com unless it is scoped to the
+  // parent domain. Locally it cannot be (browsers disagree about
+  // `Domain=.localhost`), so the session is handed over explicitly: a 60-second,
+  // single-purpose token in the URL FRAGMENT, which the game site swaps for its
+  // own cookie on arrival.
+  //
+  // This is also what fixes signing in as a different account and finding the
+  // game still on the previous one - the game origin is told who is signed in
+  // NOW, instead of trusting whatever it saw last.
+  //
+  // Only a plain left click is intercepted, so cmd/ctrl/middle-click and "open
+  // in new tab" keep working; those get the plain URL and pick the session up
+  // from the shared cookie in production.
+  function enterGame(e, card) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (!identity()) return;              // signed out: nothing to hand over
+    e.preventDefault();
+    var href = card.getAttribute("href");
+    api("/api/auth/handoff", { method: "POST" })
+      .then(function (r) {
+        location.href = r && r.token ? href + "#h=" + encodeURIComponent(r.token) : href;
+      })
+      .catch(function () { location.href = href; });
   }
 
   function icon(name) { return '<span class="material-symbols-outlined">' + name + "</span>"; }
@@ -100,6 +133,11 @@
 
     host.innerHTML = '<div class="hub-games" data-hub-games-grid>' + cards.join("") + "</div>";
 
+    // Hand the CURRENT session to the game origin on the way in.
+    Array.prototype.forEach.call(host.querySelectorAll(".hub-gcard"), function (card) {
+      card.addEventListener("click", function (e) { enterGame(e, card); });
+    });
+
     // Search filters the grid by name/genre - real functionality over a
     // small dataset beats a decorative input that does nothing.
     var search = $("[data-hub-search]");
@@ -138,7 +176,11 @@
       out.addEventListener("click", function (e) {
         e.preventDefault();
         try { localStorage.removeItem(ID_KEY); } catch (err) {}
-        location.href = "/signin/";
+        // HttpOnly: only the server can drop the cookie, and the navigation must
+        // wait or it cancels the request and the session survives.
+        api("/api/auth/signout", { method: "POST" })
+          .catch(function () {})
+          .then(function () { location.href = "/signin/"; });
       });
     }
     api("/api/usage").then(function (u) {
@@ -157,8 +199,33 @@
     }).catch(function () {});
   }
 
+  // The backend builds the Supabase authorize URL, so the redirect target is
+  // decided server-side from the requesting origin rather than trusted from the
+  // page. A provider that is not enabled in Supabase yet answers 503, and the
+  // button says so instead of bouncing the user somewhere broken.
+  function initOauthButtons() {
+    var note = $("[data-hub-oauth-note]");
+    var LABEL = { google: "Google", discord: "Discord" };
+    Array.prototype.forEach.call(document.querySelectorAll("[data-hub-oauth]"), function (b) {
+      b.addEventListener("click", function () {
+        var name = LABEL[b.getAttribute("data-hub-oauth")] || "That provider";
+        b.disabled = true;
+        api("/api/auth/oauth/" + b.getAttribute("data-hub-oauth"))
+          .then(function (r) { location.href = r.url; })
+          .catch(function () {
+            b.disabled = false;
+            if (!note) return;
+            note.textContent = name + " sign-in is not switched on yet. "
+              + "Use your email below for now.";
+            note.hidden = false;
+          });
+      });
+    });
+  }
+
   function initAuth() {
     var form = $("[data-hub-auth]");
+    initOauthButtons();
     if (!form) return;
     if (identity()) { location.replace("/hub/"); return; }
 
@@ -195,16 +262,17 @@
       if (!email) { return showError("Enter your email address."); }
 
       submit.disabled = true;
-      var body = mode === "up"
-        ? { email: email, display_name: name, role: "player" }
-        : { email: email };
-      api("/api/auth/" + (mode === "up" ? "signup" : "signin"), {
+      // One flow for both modes. A magic link signs you in if you have an
+      // account and creates one if you do not, so "sign in" and "sign up" stop
+      // being different actions - and there is no password to forget, reset or
+      // leak. Supabase answers identically either way, so this cannot be used to
+      // find out which addresses are registered.
+      api("/api/auth/magic-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }).then(function (r) {
-        setIdentity(r.user_id);
-        location.href = "/hub/";
+        body: JSON.stringify({ email: email, name: name }),
+      }).then(function () {
+        sent(email);
       }).catch(function (err) {
         submit.disabled = false;
         showError(String(err.message || err).slice(0, 200));
@@ -216,12 +284,67 @@
       errBox.textContent = msg;
       errBox.hidden = false;
     }
+
+    // Replace the form with a "check your email" state. The address is echoed
+    // back because a typo is the single most common reason a link never arrives,
+    // and it is the one thing the person can check themselves.
+    function sent(email) {
+      var card = form.parentNode;
+      if (!card) return;
+      card.innerHTML =
+        '<div style="text-align:center">'
+        + '<span class="material-symbols-outlined" style="font-size:40px;color:var(--h-violet)">'
+        + "mark_email_read</span>"
+        + '<h1 class="hub-h3" style="margin-top:12px">Check your email</h1>'
+        + '<p class="hub-body" style="margin-top:8px">We sent a sign-in link to '
+        + "<strong>" + esc(email) + "</strong>. It is good for one use.</p>"
+        + '<p class="hub-small" style="margin-top:16px">Wrong address, or nothing after '
+        + 'a minute? <a class="hub-textlink" href="/signin/" '
+        + 'style="color:var(--h-violet-2)">Try again</a>.</p></div>';
+    }
+  }
+
+  // Finish a Supabase sign-in that landed on this page.
+  //
+  // Supabase only redirects to URLs on its allow-list and SILENTLY falls back to
+  // the project's Site URL otherwise - so a missing entry does not error, it just
+  // drops you on the home page with a valid token in the fragment and nobody to
+  // read it. Any hub page therefore completes the exchange rather than only
+  // /auth/callback.
+  //
+  // The backend sets an HttpOnly session cookie; nothing is stored here.
+  function adoptProviderToken() {
+    var frag = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+    var token = frag.get("access_token");
+    if (!token) return Promise.resolve();
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    return api("/api/auth/provider-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ access_token: token }),
+    }).then(function (r) {
+      if (r && r.user_id) setIdentity(r.user_id);   // in-memory only
+      // Signing in should land you IN the product, not wherever Supabase
+      // happened to drop the token. When the redirect allow-list is set this
+      // never runs - the callback page handles it - but a fallback landing on
+      // the marketing page and stopping there is not a sign-in, it just looks
+      // like one failed.
+      if (document.body.getAttribute("data-hub-page") !== "hub") {
+        location.replace("/hub/");
+        // Never resolves, so the router does not paint the page we are leaving.
+        return new Promise(function () {});
+      }
+    }).catch(function () {});   // expired or already spent: carry on as a guest
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    var page = document.body.getAttribute("data-hub-page");
-    if (page === "hub") initHub();
-    else if (page === "auth") initAuth();
-    else initLanding();
+    // Adopt any token in the fragment, THEN ask the server who we are, and only
+    // then decide what to render - each page branches on identity() immediately.
+    adoptProviderToken().then(bootSession).then(function () {
+      var page = document.body.getAttribute("data-hub-page");
+      if (page === "hub") initHub();
+      else if (page === "auth") initAuth();
+      else initLanding();
+    });
   });
 })();

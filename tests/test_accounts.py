@@ -121,3 +121,112 @@ class TestCoachAthleteContext:
 
     def test_blank_athlete_is_ignored(self):
         assert "THIRD person" not in _player_block({"athlete": "   "})
+
+
+# --- provider linking ---------------------------------------------------------
+# The rule that decides whether an account created BEFORE the auth provider
+# existed keeps its matches, or is stranded while a duplicate takes its place.
+# No DB, matching the rest of this file: the lookups are stubbed and what is
+# under test is which branch is taken.
+
+class _Row:
+    def __init__(self, user_id, email="", subject=None):
+        self.user_id = user_id
+        self.email = email
+        self.auth_subject = subject
+
+
+@pytest.fixture()
+def linking(monkeypatch):
+    """Stub the four lookups `link_or_create_from_provider` builds on, and record
+    what it decided to do."""
+    from core.storage import users as u
+
+    state = {"by_subject": {}, "by_email": {}, "created": [], "linked": []}
+
+    def find_by_auth_subject(_s, subject):
+        return state["by_subject"].get(subject)
+
+    def find_by_email(_s, email):
+        return state["by_email"].get(email)
+
+    def create_user(_s, email, display_name=None, skill_level=None):
+        row = _Row(f"new-{len(state['created'])}", email)
+        state["created"].append(row)
+        state["by_email"][email] = row
+        return row
+
+    def link_auth_subject(_s, user_id, subject):
+        owner = state["by_subject"].get(subject)
+        if owner is not None and owner.user_id != user_id:
+            raise ValueError("that login is already linked to another account")
+        row = next((r for r in list(state["by_email"].values()) + state["created"]
+                    if r.user_id == user_id), _Row(user_id))
+        row.auth_subject = subject
+        state["by_subject"][subject] = row
+        state["linked"].append((user_id, subject))
+        return row
+
+    monkeypatch.setattr(u, "find_by_auth_subject", find_by_auth_subject)
+    monkeypatch.setattr(u, "find_by_email", find_by_email)
+    monkeypatch.setattr(u, "create_user", create_user)
+    monkeypatch.setattr(u, "link_auth_subject", link_auth_subject)
+    return state
+
+
+def test_a_verified_email_adopts_the_existing_account(linking):
+    """The founding account owns 15 matches keyed on its user_id. Signing in with
+    Google on the same address must land on THAT account, not a new one."""
+    from core.storage.users import link_or_create_from_provider
+
+    existing = _Row("founder", "player@example.com")
+    linking["by_email"]["player@example.com"] = existing
+
+    got = link_or_create_from_provider(None, subject="sub-1",
+                                       email="player@example.com",
+                                       email_verified=True)
+
+    assert got.user_id == "founder", "the existing account (and its matches) was stranded"
+    assert not linking["created"], "a duplicate account was made instead of adopting"
+
+
+def test_an_unverified_email_never_adopts_an_account(linking):
+    """Otherwise anyone could take over an account by signing up with its address
+    at a provider that does not confirm ownership. A duplicate is recoverable; a
+    stolen account is not."""
+    from core.storage.users import link_or_create_from_provider
+
+    victim = _Row("victim", "victim@example.com")
+    linking["by_email"]["victim@example.com"] = victim
+
+    got = link_or_create_from_provider(None, subject="sub-attacker",
+                                       email="victim@example.com",
+                                       email_verified=False)
+
+    assert got.user_id != "victim", "an unverified email took over an account"
+    assert linking["created"], "expected a fresh account instead"
+
+
+def test_the_same_subject_always_returns_the_same_account(linking):
+    """Every sign-in after the first. If this created a second account, a user
+    would silently lose their history on their second visit."""
+    from core.storage.users import link_or_create_from_provider
+
+    first = link_or_create_from_provider(None, subject="sub-stable",
+                                         email="a@example.com", email_verified=True)
+    second = link_or_create_from_provider(None, subject="sub-stable",
+                                          email="changed@example.com",
+                                          email_verified=True)
+
+    assert first.user_id == second.user_id
+    assert len(linking["created"]) == 1
+
+
+def test_a_subject_is_required(linking):
+    """A provider that returns no subject must fail loudly, not create an
+    unreachable account."""
+    from core.storage.users import link_or_create_from_provider
+
+    with pytest.raises(ValueError):
+        link_or_create_from_provider(None, subject="", email="x@example.com",
+                                     email_verified=True)

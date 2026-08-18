@@ -512,3 +512,58 @@ def test_a_provider_outage_is_a_distinct_failure_from_a_bad_request(monkeypatch)
     with pytest.raises(RuntimeError) as e:
         gv._urlopen_retry(_req(), timeout=5, attempts=2, deadline_s=60)
     assert not isinstance(e.value, gv.ModelUnavailable)
+
+
+def test_every_scoreboard_helper_call_passes_all_its_arguments():
+    """A real regression, caught only by reading a finished match's warnings.
+
+    `_read_score_timeline` gained a `frag` parameter when the prompts moved to
+    the adapter. Two call sites; one was updated. The one that was missed sits
+    inside a ThreadPoolExecutor, so the TypeError surfaced as a Future exception,
+    got caught by a broad `except Exception` and became the warning "scoreboard
+    score read failed" - the match still completed, still cost money, and quietly
+    fell back to model-guessed goal times instead of the deterministic scoreboard
+    read that is the whole point of that stage.
+
+    Parsed rather than pattern-matched, so multi-line calls and
+    `executor.submit(fn, ...)` are both counted properly.
+    """
+    import ast
+    import inspect
+
+    import core.pipeline.stages as st
+
+    tree = ast.parse(inspect.getsource(st))
+    watched = ("_read_score_timeline", "_deep_read_goals")
+
+    def required_args(fn):
+        params = inspect.signature(fn).parameters.values()
+        return [p.name for p in params
+                if p.default is inspect.Parameter.empty
+                and p.kind in (inspect.Parameter.POSITIONAL_ONLY,
+                               inspect.Parameter.POSITIONAL_OR_KEYWORD)]
+
+    seen = 0
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        # direct: fn(...)
+        if isinstance(node.func, ast.Name) and node.func.id in watched:
+            name, passed = node.func.id, node.args
+        # deferred: pool.submit(fn, ...)
+        elif (isinstance(node.func, ast.Attribute) and node.func.attr == "submit"
+              and node.args and isinstance(node.args[0], ast.Name)
+              and node.args[0].id in watched):
+            name, passed = node.args[0].id, node.args[1:]
+        else:
+            continue
+
+        seen += 1
+        need = required_args(getattr(st, name))
+        given = len(passed) + len({k.arg for k in node.keywords if k.arg})
+        assert given >= len(need), (
+            f"{name} (line {node.lineno}) needs {len(need)} arguments {need} "
+            f"but this call passes {given}"
+        )
+
+    assert seen >= 3, f"expected to find the known call sites, found {seen}"

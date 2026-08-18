@@ -182,3 +182,59 @@ def test_lengthy_thresholds_are_available_to_the_coach():
     pb = kb.build_playbook(hints="my striker never got there, he looked slow off the mark")
     assert "Lengthy" in pb
     assert "does not make them faster everywhere" in pb
+
+
+# --- the playbook must actually reach the coach -------------------------------
+# Skill moves and player profiles were gated behind `if hints else []`, and the
+# single-call path (the one that runs by default) passed hints="". So nine
+# authored skill-move entries sat in the brain and appeared in exactly zero
+# reports, and the 420 learned facts were taken as the first twelve rather than
+# the twelve relevant to the player.
+
+def test_skill_moves_reach_a_player_we_know_nothing_about():
+    """A first-time user has no history, so no hints. That must not mean no
+    knowledge - it used to yield an empty skill-move list."""
+    from adapters.ea_fc_26.knowledge_base import build_playbook
+
+    assert "SKILL MOVES" in build_playbook("")
+
+
+def test_hints_change_which_knowledge_is_selected():
+    """If hints did not reorder anything, passing them would be pointless."""
+    import re
+
+    from adapters.ea_fc_26.knowledge_base import build_playbook
+
+    def moves(hints: str) -> list[str]:
+        pb = build_playbook(hints)
+        m = re.search(r"SKILL MOVES.*?(?=\n[A-Z][A-Z ]{4,}|\Z)", pb, re.S)
+        return [ln[2:40] for ln in (m.group(0).splitlines() if m else []) if ln.startswith("- ")]
+
+    default = moves("")
+    dribbling = moves("loses the ball dribbling under pressure, poor close control")
+    assert default, "no hints must still surface something"
+    assert dribbling, "hinted selection must not come back empty"
+    assert dribbling != default, "hints made no difference to the selection"
+
+
+def test_the_pipeline_passes_real_hints_not_an_empty_string():
+    """The gate above is only useful if the caller supplies hints. Both video
+    paths used to call coaching_playbook("") or with no argument at all."""
+    import ast
+    import inspect
+
+    import core.pipeline.stages as st
+
+    for node in ast.walk(ast.parse(inspect.getsource(st))):
+        if (isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "coaching_playbook"):
+            assert node.args, (
+                f"coaching_playbook() called with no hints at line {node.lineno} - "
+                "skill moves and player profiles will be dropped"
+            )
+            arg = node.args[0]
+            assert not (isinstance(arg, ast.Constant) and not arg.value), (
+                f'coaching_playbook("") at line {node.lineno} - empty hints drop '
+                "whole categories of knowledge"
+            )

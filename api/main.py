@@ -50,6 +50,14 @@ async def lifespan(app: FastAPI):
                 "before serving over HTTPS - sessions are forgeable until you do."
             )
         log.warning("SECRET_KEY is the development default - fine locally, never in production.")
+    if _s.allow_dev_user_header:
+        if _s.session_cookie_secure:
+            raise RuntimeError(
+                "ALLOW_DEV_USER_HEADER is on while session cookies are Secure. That header "
+                "is unverified - anyone could send X-User-Id and be any account, bypassing "
+                "Supabase entirely. Turn it off before serving over HTTPS."
+            )
+        log.warning("ALLOW_DEV_USER_HEADER is on - X-User-Id is trusted without verification.")
     yield
 
 

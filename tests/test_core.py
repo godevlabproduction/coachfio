@@ -217,3 +217,63 @@ def test_an_expired_session_is_rejected():
     tok = make_token("user-123", expired)
     time.sleep(1.1)
     assert read_token(tok, expired) is None
+
+
+# --- the seam trusts the cookie and nothing else ------------------------------
+# Both of these were live until Supabase worked: an unverified header and an
+# unverified query parameter, either of which let a caller be any account by
+# knowing its id. They are the reason "connect a provider" was only half the job.
+
+def _req(headers=None, cookies=None):
+    from starlette.datastructures import Headers
+    from starlette.requests import Request
+
+    raw = [(k.lower().encode(), v.encode()) for k, v in (headers or {}).items()]
+    if cookies:
+        raw.append((b"cookie", "; ".join(f"{k}={v}" for k, v in cookies.items()).encode()))
+    return Request({"type": "http", "headers": raw, "query_string": b"", "method": "GET",
+                    "path": "/", "scheme": "http", "server": ("test", 80)})
+
+
+def test_an_unverified_header_is_not_an_identity():
+    from api.deps import current_user
+
+    got = current_user(_req(), x_user_id="somebody-elses-id")
+    assert got == "anonymous", "the X-User-Id header still grants an account"
+
+
+def test_a_valid_session_cookie_is_an_identity():
+    from api.deps import _settings, current_user
+    from core.auth.session import SESSION_COOKIE, make_token
+
+    tok = make_token("user-123", _settings)
+    assert current_user(_req(cookies={SESSION_COOKIE: tok})) == "user-123"
+
+
+def test_a_forged_cookie_is_not():
+    from api.deps import current_user
+    from core.auth.session import SESSION_COOKIE
+
+    assert current_user(_req(cookies={SESSION_COOKIE: "user-123.forged.sig"})) == "anonymous"
+
+
+def test_the_dev_header_works_only_when_explicitly_enabled(monkeypatch):
+    """The CLI needs it; production must not have it. Enabling it is a deliberate
+    act, and api/main.py refuses to boot with it on behind HTTPS."""
+    import api.deps as deps
+
+    monkeypatch.setattr(deps._settings, "allow_dev_user_header", True)
+    assert deps.current_user(_req(), x_user_id="cli-user") == "cli-user"
+
+    monkeypatch.setattr(deps._settings, "allow_dev_user_header", False)
+    assert deps.current_user(_req(), x_user_id="cli-user") == "anonymous"
+
+
+def test_current_user_no_longer_accepts_a_query_parameter():
+    """`?u=` put an account id in URLs, so it landed in access logs and Referer
+    headers. The cookie reaches the SSE stream, <video> and PDF links instead."""
+    import inspect
+
+    from api.deps import current_user
+
+    assert "u" not in inspect.signature(current_user).parameters

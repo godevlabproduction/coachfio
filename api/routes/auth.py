@@ -20,6 +20,8 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from fastapi import Request
+
 from api.deps import current_user, db_session
 from core.auth import (
     clear_session_cookie,
@@ -27,9 +29,17 @@ from core.auth import (
     read_handoff,
     set_session_cookie,
 )
+from core.auth.supabase import (
+    EmailRateLimited,
+    SupabaseError,
+    oauth_url,
+    send_magic_link,
+    verify_access_token,
+)
 from core.config import Settings
 from core.storage.users import (
     create_user,
+    link_or_create_from_provider,
     find_by_email,
     normalise_email,
     update_user,
@@ -86,6 +96,103 @@ def sign_in(body: SignInRequest, response: Response,
     row = find_by_email(session, email)
     if row is None:
         raise HTTPException(404, "No account found for that email.")
+    set_session_cookie(response, row.user_id, _settings)
+    return {"user_id": row.user_id, "profile": user_profile(row)}
+
+
+# ---- Supabase ---------------------------------------------------------------
+# The provider proves WHO someone is. We still issue our own session cookie, so
+# every request after sign-in is answered without calling Supabase, and the rest
+# of the app is unchanged - `current_user` reads the same cookie either way.
+
+
+class MagicLinkRequest(BaseModel):
+    email: str
+    # Where Supabase should send them back to. Checked against our own hosts
+    # below: an open redirect here would let someone bounce a real sign-in link
+    # off our domain to a site they control.
+    redirect_to: str | None = None
+
+
+class ProviderSessionRequest(BaseModel):
+    access_token: str
+
+
+def _safe_redirect(request: Request, wanted: str | None) -> str:
+    """A callback URL on the SAME origin as the request, whatever was asked for."""
+    base = str(request.base_url).rstrip("/")
+    if wanted:
+        from urllib.parse import urlparse
+        w, b = urlparse(wanted), urlparse(base)
+        if (w.scheme, w.netloc) == (b.scheme, b.netloc):
+            return wanted
+    return f"{base}/auth/callback"
+
+
+@router.post("/magic-link")
+def magic_link(body: MagicLinkRequest, request: Request) -> dict:
+    """Email a sign-in link. Answers the same way whether or not the address has
+    an account, so it cannot be used to find out who is registered."""
+    if not _settings.supabase_enabled:
+        raise HTTPException(503, "Email sign-in is not configured yet.")
+    email = normalise_email(body.email)
+    if not valid_email(email):
+        raise HTTPException(422, "Enter a valid email address.")
+    try:
+        send_magic_link(email, _safe_redirect(request, body.redirect_to), _settings)
+    except EmailRateLimited as exc:
+        # A provider quota, not a mistake the person made - so say what to do
+        # rather than showing them the raw 429 body.
+        raise HTTPException(
+            429,
+            "Too many sign-in emails have gone out in the last hour. "
+            "Wait a few minutes and try again.",
+        ) from exc
+    except SupabaseError as exc:
+        raise HTTPException(
+            502, f"Could not send the sign-in email. {exc}") from exc
+    return {"sent": True}
+
+
+@router.get("/oauth/{provider}")
+def oauth_redirect(provider: str, request: Request) -> dict:
+    """Where the Google/Discord buttons should send the browser."""
+    if provider not in ("google", "discord"):
+        raise HTTPException(404, "unknown provider")
+    if not _settings.supabase_enabled:
+        raise HTTPException(503, f"{provider.title()} sign-in is not configured yet.")
+    return {"url": oauth_url(provider, _safe_redirect(request, None), _settings)}
+
+
+@router.post("/provider-session")
+def provider_session(body: ProviderSessionRequest, response: Response,
+                     session: Session = Depends(db_session)) -> dict:
+    """Exchange a verified Supabase token for OUR session cookie.
+
+    The token is checked with Supabase rather than trusted, and the account it
+    resolves to is linked through `auth_subject` - so the provider's id is never
+    our primary key and a match's owner does not depend on the vendor.
+    """
+    if not _settings.supabase_enabled:
+        raise HTTPException(503, "Sign-in is not configured yet.")
+    try:
+        user = verify_access_token(body.access_token, _settings)
+    except SupabaseError as exc:
+        raise HTTPException(502, f"Could not reach the sign-in service: {exc}") from exc
+    if not user:
+        raise HTTPException(401, "That sign-in link has expired. Please request a new one.")
+
+    meta = user.get("user_metadata") or {}
+    row = link_or_create_from_provider(
+        session,
+        subject=str(user["id"]),
+        email=user.get("email") or "",
+        # Supabase only sets this once the address is proven - by clicking the
+        # emailed link, or by the OAuth provider asserting it.
+        email_verified=bool(user.get("email_confirmed_at")),
+        display_name=(meta.get("full_name") or meta.get("name")
+                      or meta.get("user_name") or None),
+    )
     set_session_cookie(response, row.user_id, _settings)
     return {"user_id": row.user_id, "profile": user_profile(row)}
 

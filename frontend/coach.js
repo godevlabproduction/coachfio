@@ -23,29 +23,84 @@
   var SITE = { game: null, sites: [] };
 
   // ---- identity ------------------------------------------------------------
-  // The signed-in account. The backend reads it from the X-User-Id header at the
-  // `current_user` auth seam; a hosted provider replaces this whole block with a
-  // real token and nothing else in the app has to change.
-  var ID_KEY = "coachio.user";
-  function identity() {
-    try { return localStorage.getItem(ID_KEY) || ""; } catch (_) { return ""; }
-  }
-  function setIdentity(v) {
-    try { localStorage.setItem(ID_KEY, v); } catch (_) {}
-  }
+  // The signed-in account, carried by an HttpOnly cookie the server sets at
+  // sign-in (core/auth/session.py). It used to be a user id in localStorage sent
+  // as an X-User-Id header, which had three problems the cookie fixes:
+  //
+  //   - The header was UNVERIFIED. Anyone could send someone else's id and read
+  //     their matches. Fine while there was no real auth; a hole next to one.
+  //   - localStorage is per-ORIGIN, so signing in on coachfio.com left
+  //     fifa.coachfio.com on whatever account it saw last - which is why
+  //     entering a game after switching accounts loaded the OLD one.
+  //   - HttpOnly means page scripts cannot read it, so an XSS bug cannot steal
+  //     the session the way it could read localStorage.
+  //
+  // `_me` caches what the server said, resolved ONCE before any page renders
+  // (see bootSession), so identity() stays synchronous and its ~20 call sites
+  // are unchanged. It is never a source of truth.
+  var ID_KEY = "coachio.user";       // legacy; cleared on sign-out
+  var _me = "";
+  function identity() { return _me; }
+  function setIdentity(v) { _me = v || ""; }
   function clearIdentity() {
-    try { localStorage.removeItem(ID_KEY); } catch (_) {}
+    _me = "";
+    try { localStorage.removeItem(ID_KEY); localStorage.removeItem(ROLE_KEY); } catch (_) {}
+    // HttpOnly: only the server can drop the cookie.
+    return j("/api/auth/signout", { method: "POST" }).catch(function () {});
+  }
+
+  // The role decides one nav item, and it used to arrive only with
+  // /api/account - so every page painted a four-item nav and grew a fifth a
+  // moment later. Remembering the last known role lets that item be there on
+  // FIRST paint; the API still has the final say and corrects a wrong guess.
+  // Cleared on sign-out, so the next account does not inherit it.
+  var ROLE_KEY = "coachio.role";
+  function cachedRole() {
+    try { return localStorage.getItem(ROLE_KEY) || ""; } catch (_) { return ""; }
+  }
+  function rememberRole(r) {
+    try { localStorage.setItem(ROLE_KEY, r); } catch (_) {}
   }
   function withAuth(headers) {
-    var h = headers || {};
-    var id = identity();
-    if (id) h["X-User-Id"] = id;
-    return h;
+    // The cookie travels on its own. Kept as a no-op so the call sites that pipe
+    // headers through do not all have to change.
+    return headers || {};
   }
-  // For <video> and EventSource, which cannot set request headers.
-  function authQuery(sep) {
-    var id = identity();
-    return id ? (sep || "?") + "u=" + encodeURIComponent(id) : "";
+  // Was `?u=<id>` for callers that cannot set headers - the SSE stream, <video>
+  // and PDF links. Same-origin requests send the cookie automatically, so those
+  // are covered and this is empty. Kept as a function because the URLs are built
+  // in several places.
+  function authQuery() { return ""; }
+
+  // Arriving from the hub, or straight from a provider sign-in. Both hand over
+  // in the URL FRAGMENT, which browsers never send to a server, so nothing lands
+  // in an access log. Whatever is found is exchanged for a cookie on THIS origin
+  // and scrubbed from the address bar.
+  function adoptFragmentSession() {
+    var frag = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+    var handoff = frag.get("h");            // from the hub
+    var token = frag.get("access_token");   // straight from Supabase
+    if (!handoff && !token) return Promise.resolve();
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (_) {}
+    var call = handoff
+      ? j("/api/auth/handoff/adopt", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: handoff }) })
+      : j("/api/auth/provider-session", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ access_token: token }) });
+    return call.catch(function () {});   // expired or spent: carry on as a guest
+  }
+
+  // Resolve the session before anything renders. A failure here means "signed
+  // out", never a broken page.
+  function bootSession() {
+    return adoptFragmentSession()
+      .then(function () { return j("/api/auth/session"); })
+      .then(function (d) {
+        _me = (d && d.signed_in && d.profile && d.profile.user_id) || "";
+      })
+      .catch(function () { _me = ""; });
   }
 
   // ---- API helpers ---------------------------------------------------------
@@ -86,7 +141,7 @@
       fd.append("file", file, file.name);
       var xhr = new XMLHttpRequest();
       xhr.open("POST", API + "/api/matches/" + id + "/source");
-      if (identity()) xhr.setRequestHeader("X-User-Id", identity());
+      xhr.withCredentials = true;   // same-origin, but explicit about the cookie
       xhr.upload.onprogress = function (e) {
         if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total);
       };
@@ -835,7 +890,7 @@
         // opposite ends instead of sitting together as one action group.
         '<div class="row wrap">'
         + '<a class="btn btn--secondary" href="/api/matches/' + esc(m.id) + '/report.pdf'
-        + (identity() ? "?u=" + encodeURIComponent(identity()) : "") + '" download>'
+        + '" download>'
         + icon("download") + "Download PDF</a>"
         + '<a class="btn btn--secondary" href="/moment/?id=' + esc(m.id) + '">'
         + icon("play_circle") + "Watch the moments</a></div>")
@@ -920,7 +975,7 @@
         var dl = $('a[href*="/report.pdf"]');
         if (dl) dl.href = "/api/clients/" + encodeURIComponent(clientId)
           + "/report/" + encodeURIComponent(qs("id")) + ".pdf"
-          + (identity() ? "?u=" + encodeURIComponent(identity()) : "");
+          ;
         var head = $(".page-head");
         if (head) {
           var note = document.createElement("p");
@@ -1684,7 +1739,7 @@
       var fd = new FormData();
       fd.append("file", f, f.name);
       var url = API + "/api/account/avatar"
-        + (identity() ? "?u=" + encodeURIComponent(identity()) : "");
+        ;
       fetch(url, { method: "POST", body: fd })
         .then(function (r) {
           if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || "Upload failed"); });
@@ -1712,8 +1767,10 @@
     });
 
     $("[data-cx-signout]").addEventListener("click", function () {
-      clearIdentity();
-      location.href = "/signin/";
+      // Navigate only AFTER the server has dropped the cookie - firing and
+      // forgetting lets the navigation cancel the request, which leaves the
+      // session alive and signs you straight back in.
+      clearIdentity().then(function () { location.href = "/signin/"; });
     });
   }
 
@@ -2031,6 +2088,10 @@
   // rather than the word "Account" - useful when switching between accounts.
   function loadAccountNav() {
     if (!identity()) return;
+    // Paint the role-dependent item straight away from the last known role, so
+    // the nav does not visibly grow once /api/account comes back.
+    var guess = cachedRole();
+    if (guess) applyRoleNav(guess);
     // The match-count readout used to sit in the app bar; it was noise on every
     // page. The limit is still enforced server side (402 when exceeded).
     var linkEl = $('.appbar__end a[href="/account/"]');
@@ -2043,31 +2104,11 @@
         linkEl.setAttribute("aria-label", accountLabel(d.profile) + " - account");
         linkEl.setAttribute("title", accountLabel(d.profile));
       }
-      // Role decides the fifth nav item: coaches get the office, players the
-      // locker. Injected here (this runs on every page) instead of editing
-      // seven HTML files - and re-marked, because markNav ran before this.
+      // The API is authoritative; it only has to do anything if the cached
+      // guess above was wrong or missing.
       var role = (d.profile || {}).role || "player";
-      var target = role === "coach"
-        ? { href: "/office/", label: "Office", ic: "business_center" }
-        : { href: "/locker/", label: "My locker", ic: "checklist" };
-      var nav = $(".nav");
-      if (nav && !$('[data-nav="' + target.href + '"]', nav)) {
-        var a = document.createElement("a");
-        a.className = "nav__link"; a.href = target.href;
-        a.setAttribute("data-nav", target.href);
-        a.innerHTML = icon(target.ic) + target.label;
-        nav.appendChild(a);
-      }
-      var tab = $(".tabbar");
-      if (tab && !$('[data-nav="' + target.href + '"]', tab)) {
-        var t = document.createElement("a");
-        t.className = "tabbar__item"; t.href = target.href;
-        t.setAttribute("data-nav", target.href);
-        t.innerHTML = icon(target.ic) + target.label;
-        var acct = $('[data-nav="/account/"]', tab);
-        tab.insertBefore(t, acct || null);
-      }
-      markNav();
+      rememberRole(role);
+      applyRoleNav(role);
     }).catch(function () {});
   }
 
@@ -2859,6 +2900,47 @@
   }
 
   // ---- nav -----------------------------------------------------------------
+  var ROLE_NAV = {
+    coach: { href: "/office/", label: "Office", ic: "business_center" },
+    player: { href: "/locker/", label: "My locker", ic: "checklist" },
+  };
+
+  // Put the role's nav item in the bar and the mobile tab strip, removing the
+  // other role's if it is already there - which happens when the cached guess
+  // was wrong, or someone actually switched role. Idempotent, so calling it
+  // twice (cached guess, then the API's answer) does nothing the second time.
+  function applyRoleNav(role) {
+    var target = ROLE_NAV[role] || ROLE_NAV.player;
+    var other = ROLE_NAV[role === "coach" ? "player" : "coach"];
+
+    var nav = $(".nav");
+    if (nav) {
+      var stale = $('[data-nav="' + other.href + '"]', nav);
+      if (stale) stale.remove();
+      if (!$('[data-nav="' + target.href + '"]', nav)) {
+        var a = document.createElement("a");
+        a.className = "nav__link"; a.href = target.href;
+        a.setAttribute("data-nav", target.href);
+        a.innerHTML = icon(target.ic) + target.label;
+        nav.appendChild(a);
+      }
+    }
+
+    var tab = $(".tabbar");
+    if (tab) {
+      var staleT = $('[data-nav="' + other.href + '"]', tab);
+      if (staleT) staleT.remove();
+      if (!$('[data-nav="' + target.href + '"]', tab)) {
+        var t = document.createElement("a");
+        t.className = "tabbar__item"; t.href = target.href;
+        t.setAttribute("data-nav", target.href);
+        t.innerHTML = icon(target.ic) + target.label;
+        tab.insertBefore(t, $('[data-nav="/account/"]', tab) || null);
+      }
+    }
+    markNav();
+  }
+
   function markNav() {
     var path = location.pathname.replace(/index\.html$/, "");
     if (path.length > 1 && path.slice(-1) !== "/") path += "/";
@@ -2884,10 +2966,12 @@
     // The root domain is a landing page, not the app: no match hosts to render
     // into and no game to render them about, so it takes its own path.
     if (document.body.hasAttribute("data-cx-root")) {
-      bootSite().then(renderGameTiles);
+      bootSession().then(bootSite).then(renderGameTiles);
       return;
     }
-    bootSite().then(startRouter);
+    // Session first: the router branches on identity() on its very first line,
+    // so resolving it afterwards would render a guest page for a signed-in user.
+    bootSession().then(bootSite).then(startRouter);
   });
 
   function renderGameTiles() {
