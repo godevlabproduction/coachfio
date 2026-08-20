@@ -848,3 +848,404 @@ entries:
   - meta
   - goalkeeper
   reviewed: false
+- id: what-button-combination-executes-the-low-finesse-shot-mechan
+  detail: To execute a low finesse shot in *EA Sports FC 26*, hold the finesse shot
+    modifier while double-tapping the shoot button—**R1 + Circle + Circle** on PlayStation
+    or **RB + B + B** on Xbox. This is performed by holding R1/RB, pressing the shoot
+    button to build power, and immediately tapping it again to keep the curved shot
+    low along the ground.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE9EUt_f-9sIiUADlgqaRudR9pkNsGKBVwDP6onfoKJv7gXhAG4px0kNcEvD2whE35xQxH3bl6O2DwSSq8jXLYglo80Eqx_VEt0zAgiCGjkoCdvm3Idv0iUAgHYs3xgxHNyL2MzgyKfZz0kWyipGoUQNBTNP1hSEob6CPhnlHo2YpCdC8SIn22_CuZ9emYVbfpotW5F0-xK_tmTfvzfgmiIC7VPhC9pcA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGo3sT2mGcMk2kOHQG2tAknxs_Q-9HJjjO4O0v35s4HxMUo5K8h-GlkZiDyptvVbNN8ZWJe6jAyg4lKD7ApbgDiKGVh2DxIBmUJJ46ywOYKd4RLSifDp1Td1SB4jJsN1redshn66U6iUl6ahIhchnsSC4v1WI-UrDg9O0-ZIHd-Bm8QsWvmvAgkeG0vr9730cvBL3c=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEXKfEha8NzbeMmQ3c99T-RZH-vYAXjm-UD8IurT7liE4LiEjyXgSBZmjEaPtaDCO8EvbiM7csMduJ7XhqQR4tq8g4V6Xd6HemwKne6lRhnVu5pCDf3d_yhafoDinFxq1NLp16e1sT399VN2G9ecKvZpHXGwC1y5fcOE0ejsAIMuTmFVtflk2Lu_sVri6IioIJ5UbOKC7MvVR_Ek88=
+  tags: []
+  reviewed: false
+- id: how-does-the-team-press-quick-tactic-impact-player-fatigue-i
+  detail: Activating the Team Press quick tactic instructs players to aggressively
+    swarm opponents and close down passing lanes, which causes a rapid surge in stamina
+    depletion. Repeated or sustained use significantly accelerates player fatigue
+    across the team, lowering overall physical effectiveness and stamina for the remainder
+    of the match.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH3Uxm-uV5bPDs_5_G2s6BVOX5qGazOirYjEUzNYJkGAuM5DIqEoXvtk6U4KgXJj22gNMsKwF_c5BbQU5heOO4oGNU-_M8rCYp46cpmKQGqOax7iMYFitgR3WbmC8qYTg==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF7r_mVpZPtOLQIQBxs5x_XwKRo55WI90HBCVyq0Mg3iiFozOvcWYlTxpFTuPIrnHl252kBfA_qZDKvr0THpizLYYEVpL-sR8yFeJkYZ54dzZHg_3cTO1jcXfNcBanryH0=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHjc-B1E1mb0Tx8ubV720uDk8Sz03z4Q0IPcjzQGeYno7mshSdfKp-Oqb5_-lIR7kwr8xySbrVn6_XyhFHvE1uk6yffMfFK8tIYwKHyeck1I2_hhdBgw2E1G0QRjzafj9_3ZAqZfYTcCU1_fb3rY6nfex8Jv3ZZxATIdOP_miXBmfuceuU=
+  tags: []
+  reviewed: false
+- id: what-are-the-requirements-for-triggering-the-what-a-hit-evol
+  detail: To be eligible for the **What a Hit** evolution in EA Sports FC 26, a player
+    card must have the **CM** position, a maximum overall rating of **87**, and a
+    maximum pace of **93**. Additionally, the player must have at most **10 PlayStyles**,
+    a maximum of **2 PlayStyles+**, and cannot be of the **World Tour Silver Stars**
+    rarity.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgth_aqQlutbKqIYoz_NssZSqNVp4u9kAq_RRfQ2Oa-BVyquJFWnAGlXd5Raa2RjP30HVDGSx-vqMbFabMhbFQzt_4Cwx5lnlY37cEADd1fbrZE25Tpl8IYNogIjhRYFfBEpM83f1Yx_4KQRUx7vhoEJe99C4vLj-3O3CynI8=
+  tags: []
+  reviewed: false
+- id: how-does-the-overload-set-pieces-quick-tactic-alter-player-p
+  detail: The **Overload Set Pieces** quick tactic does not alter player positioning
+    during open-play build-up. Instead, it functions as an in-game toggle that exclusively
+    increases the number of attacking players positioned inside the opposition penalty
+    box during set pieces, such as corner kicks and free kicks.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGFkBs2swiKVq22MySOBXp66pVE_-MaeapwxSgfQxVmYCzYuyX1mQKDqiAcemJWxRfecaIPx4vuCQgGpXgiZj3Fk95hsrZbmq_noePSr6C-448IbwAHzRFuyaY9t0qLgac9zn7Y2g==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEQy9KZy158CfbEbfe7CKgOM0eZtJoXMqAZENhoPmtfiDGfK_8YsbamYsrdd0QKLEyR2hMT8G4nP6xNvwYbXuovouhyV0doDj1oxp3ebU6VS5_L4jDRO-GyCvMqAvk4R_mTVBnlCyuG-0caWtABWGezzlKlbTVZ_BNv1WHZmTgts0QQofRVfNJY8Fz_
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF5JnCACNfXbrFIRutg_HyScfDHw-ozRFINHajbd2cBQoRujh1Z7dhoQkHFA-7Nhsk3r8fCrG4k3kw8V-VanNw7vPXp_60bDY61y7pIAFG00IsBNkN13jFoSHL0aXUHT9rH
+  tags: []
+  reviewed: false
+- id: how-do-player-roles-affect-automated-defensive-tracking-duri
+  detail: Under FC IQ Player Roles, assigned roles and their tactical focuses (such
+    as Defend, Holding, or Balanced) determine an off-ball player's recovery sprint
+    priority and defensive positioning when possession is lost. Defensive-minded roles
+    immediately track back to cover passing lanes and protect key central spaces,
+    whereas attacking or roaming roles delay tracking and remain higher up the pitch
+    during fast breaks.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGSLXW33IRBCi0q0fr5Mh_QcCqzmOVqylEx82K8wtS_9HQOeZoBRG8O3TN4LNnN7SWTZa75VlNuu5B6tp40fPknhUAnsmEPXW0GdQCTEVJ9mZ79SNFLJCqS
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHs4qrpihNR1uimn-0w5lCXoKc-LAZmvkY0tb_RFPEW18XXMlHBuHJbjjSZNapGV_mOG79KhZ9AUBSkl6vCgWMk3XkLA6okjU-9Tl0t275Lqwmlo2FlLtMUnr04V8rjDeSLq1ac1UMzkNJH9JzJp_bG_PFkxw==
+  tags: []
+  reviewed: false
+- id: how-does-the-team-press-quick-tactic-affect-stamina-depletio
+  detail: Activating the "Team Press" quick tactic causes rapid, temporary stamina
+    depletion across your outfield players as they aggressively sprint to close down
+    opponents and cut off passing lanes. The tactic remains active for up to 20 seconds
+    (or until possession is regained), causing significantly higher stamina drain
+    during that window before entering a cooldown period. Repeatedly triggering it
+    throughout a match will quickly exhaust your players' overall stamina and reduce
+    their performance attributes.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHcpUHXuYasZ_ZIShCfgP91IdoGkcHyFMdhezlyPcTySJfyr7etNOuuMvXhfyBJWld7i2jEIhNtkx3HQ_jwvdXdh_RR2M5EkM26V9wl6LAu1GJE4pZEa9bf6MyFNfinOapdith-dVUJYt5P_xrMXfHQnOhxZICcpDrJYYXCgtrdBwXWKOODrWD-PlyvBcN-AT_BEVeZW3ABsoc-UrDSS1Z7eqrqcjhJvHPcACw=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHgvb7Cr4diFnGJWmWwdDN67N-8y6_4AINDntHccQjSwWc-xA3vV9KO2-v4AzkuPpLr3wPyGMCFBEpeaYYKkjaobkChgNOPYr2wbfoe0u5CXDuk5TT_wg8rzOS3F1Qgjgc=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEaTwaa4j95oq7IXjAmoGj-f3UpE-PGDLKX3hLhtB9PkZ7LfmEft3kQuvgv5za2WBQPsnWY47BkMjVGUs5mNgLONvJGOnTChX95_1kg2KgTLZfQ36o1CJCGZIfZbw==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGRaR4o4mvDDNtCHcTrUk5dq1VOkE2DCHDBwNQrbi0f55TSoXUGbxdLbyQK9ePItNP-wNr37UaHdp1ucXKR-6bLGhUg9t1w3SbT2ob1vuW247w-Dbhh_PIpyjpxA8534PheFhv7cxIlRtkRsbInYsPj4tx3jjvIGIdZRF_B9ltbsePoAjnAimJ41IFmDwOuhQUm4j4AyyS-iLc=
+  tags: []
+  reviewed: false
+- id: what-specific-attribute-boosts-are-granted-by-the-advanced-f
+  detail: The Advanced Forward evolution cards (such as ST Advanced Forward+ / Advanced
+    Forward++) grant no direct numerical attribute boosts. Instead, they exclusively
+    upgrade an eligible striker's FC IQ Player Role proficiency to the Advanced Forward+
+    or Advanced Forward++ tactical role.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEWar1lUFk55qumz622FZOPLybbAi3a0s7d02NFBvfL9ooc-0qQWp9G-gmuC12owYkPoO3-xNynUWikLU9XDYoG7m70HaYa91ivrbnDUL_r-JsA-RqN-S_QOpHnpRzfVti_bCTnvWHzj7syz2Dd46E=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHrpRHV72XiouUTcQ9hCQb7V2V4-xMIbkHyulX-OytDkIguxO6RqEAvs_19o0xJSynyHYZdI7FGt0EYdlOIzgy7ypoO2fcPqA7o6Ch1p4NQuYMnakAoXC_UHEKhFKMNiBgObtWRQ3ev-i3C_2KH0RFQ5Q==
+  tags: []
+  reviewed: false
+- id: how-does-manual-goalkeeper-movement-affect-shot-coverage-in-
+  detail: In *EA Sports FC 26*, manual goalkeeper movement allows players to adjust
+    their keeper's positioning with the right stick to anticipate and block specific
+    shooting angles, such as far-post finishes. However, title updates significantly
+    restrict open-play manual movement to just 1–2 steps at reduced speed, limiting
+    cross-goal coverage and leaving the opposite side open if guessed incorrectly.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwYFQnqvw3AxrsOxxD0IhIoSPvqJq0uKs4Dz7uDCZhRedhC4KzalF2l3BW1sZN78F3x3j3nIApv0XiLIi5xnZDpMjn2dqeQfziWnlp-Trbmh-savZ1cG-_oP0fj86NlZFjZ4zYfanDtdRA0U6o6qRRxtfVp4Rulw==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8In681o4z3y0tAFpvwSv4b-qXzXKwcsoKdZDXSvCX1mp-8DaryvI7g__vc_sBBEAlsF6shXyid-lcHhx1smMEbo09uSrgCcUfMzY9Xz2vkJTcgjrGVQuYLEH2qx2K_wJmccj8EJVOF4Lhnwp9zr4Yv57Yylu9bQ==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGguVoALwYTHr8YMgSOAz9o35Bp2LHlXhsrZcS6wuPqBUXX-7QG8vwaDVaHM1G6Dj5FGbReEVC4KZi5sNp8Uuh9Kgm1Br6k_VyWjOQOhiv-7UiqBXpmnHpl69cDpTP7nSQdniebQ1Wi6Hkz5kdFlDXobtWj6fpAw5Bm5saS4ZnyTwGqB4AHT4G_1A==
+  tags: []
+  reviewed: false
+- id: what-quick-tactic-inputs-trigger-team-press-in-fc-26
+  detail: To trigger Team Press using quick tactics, press **Up on the D-Pad** to
+    open the Quick Tactics menu, followed by **Left on the D-Pad**. On PC using default
+    keyboard controls, this corresponds to pressing the **Up Arrow** key followed
+    by the **Left Arrow** key.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEN8ZgiBGY6HQnWQkjGgT_7CXFmhqcAvfSoJACeckSirN7MPXvnTbzmDHNz5GMCFznx1IFzSX5o4c0gnmkQs89H3GOnylrNPdwU25wVEfddlEx_u0Tg6yNIWcjoQ_XVx5pIzuFVo-OfmDMvgf03lo95Ntoi7OfKwOQzOrb08vdHJ3e6mxRpm7U=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEf94yoDhxxnz00IeCNbHsmu7ik8eRfvqseR4naYYhWN3cJ_eGkkD4ROk6CZ6wMO3WbT5QR68rx9eDrSQ1XsqWFJlstA-TCb0iQFsnP_BYW69smWIkN73NRs5l1KFv1rQ==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF18MfAFK56KOrNvQQ0n7E2dgWEyCzTSCDF8BE6c_yGoEwJtRMzW_WPztHngll9qIpVIdXe-0aIW5Xu6PYceqvWaq5zN3m3SwpPC3xWm1jM1YKfcYnNxzyo9RZzGnE2mZ4TbkdzRng=
+  tags: []
+  reviewed: false
+- id: how-does-the-advanced-forward-role-affect-striker-positionin
+  detail: In *EA Sports FC 26*, the Advanced Forward role positions the striker close
+    to the opposition’s defensive line while actively moving to open passing lanes
+    to support build-up play. Depending on the assigned focus (Attack, Support, or
+    Versatile), the player balances showing as a receiving outlet with making direct
+    runs in behind the defense to exploit space.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHA9XDMQ5_bfFCodfRH1Aiup04-9KZnKzHkWJG4Wxni5Zs8Jb_DCspOqjCN14kve8DoPSaoj8in3MzBaiz7faih5d4q29Z1drschN5dgPWsjjY=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFh7piQzcmv6fcUXxYzu2Q3hdy4nrQCBZ0jGlYT2NdjJnOSLjsrMINsxffs-9re-hGYXDmjet1SRf4qQ6phcSRq0RiLd-Y8ApWcec_50GAa1ftsuoxLLPgxYTq6b5FjSQc-
+  tags: []
+  reviewed: false
+- id: what-is-the-function-of-the-quick-tactics-team-press-mechani
+  detail: In *EA Sports FC 26*, activating the 'Team Press' Quick Tactic instructs
+    AI-controlled teammates to temporarily push high up the pitch and aggressively
+    pressure the opponent with the ball while cutting off passing lanes to force a
+    turnover. Using this mechanic significantly increases player stamina depletion
+    while active.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHeZaKJYCoGPxJZYRZvI9sgpRL-8wDV7T7AaBIA29d3OUJfGF98Q--YvwENg-rt5w8NRXcxtOrTZLGMjSbNmhE1Pi4cZtac5ng_vFburesLnTLJpIkkxYhMRMMc4YpS7Q==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAHkg_CUkxQuqA6DzsnGYJjCuckkjjlLPcqjjltX2ARUjEAiAHPzxbXsBh_WTckQq6J42rYuk_GDw143lXF5BjdQz8a6a-FHRfMfrykynKl8oSyGBo7eehdBtPItpraA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGxiiQ19wkvjcussueDiRDckGa-_sWeZHqyFaFqeiKrwiedAY-P9eEyv6odq7LMIn-8LMBTNuwmYTmW6QnDTtbByXzcSUqyPSRbXUFoTn6bPGkO0jWUyfZI2Q5j5woDaxc=
+  tags: []
+  reviewed: false
+- id: what-are-the-objectives-required-to-complete-the-what-a-hit-
+  detail: To complete the "What a Hit" Evolution in EA Sports FC 26, you must complete
+    5 challenge levels. Each level requires playing 2 matches in Squad Battles on
+    a minimum Semi-Pro difficulty (or in Rush, Rivals, Champions, or Live Events)
+    using your active EVO player. In total, completing all levels requires playing
+    10 matches with your player.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEkm3Kq6G1FK7YsZfsaAyvBI2_op4FD7pX1tgrDg2mBVwbpCEAVT-75wAM7JrKSuq3aVUoy9FzNj-d8E-19OzeGuxxdITg_JfUbGlUEIZ2GN-fkz4rXtl-8E5edn-h5IkTUpTRcixqEVc0=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEty2T6k5xB_pPh5xCHkQWzJ9hw1KYoSdYzT1MVWSpjytE-OGSOKUyImEWsDyx2HSrCrHx5BWAGsuJJKFUFdaKAOMCuBETy7FEsTlHDCo2ULv95urSanfQ-LpdJukw_airDCahxV_Mk311IFX4wtZmmtLCTWfHrZajU_Nnods1JymHNaQfnmTKPlYh2seHHvNZp_XaR0RY=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEWnhtIlJ7OfsliEmLk621YnHDiZtea1UfioCK9QORb6tNnF2aar3l_dv4Kb-dYsJDkVc359SkNTiLwTykPQa86Gw1flGIAp9x9Dx9KqtvavhgMYONnpgWRtJsWXpJ6sl5UTXI=
+  tags: []
+  reviewed: false
+- id: how-does-high-team-pressing-impact-defensive-line-spacing-in
+  detail: In EA Sports FC 26, activating high team pressing pushes the defensive line
+    higher up the pitch to compress the vertical spacing between the defense and midfield.
+    This restricts central passing lanes and creates a tighter defensive block, but
+    it leaves extensive open space behind the backline that is vulnerable to counter-attacks
+    and through balls.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHr678dQxi0uJMQUD7O99BifQ5nc3ZaNjgNzCaoWu4Q-vYQWpdpUf7BXa2pmSPol2va1H7-rCqwn0BwPk1c6mPGpxRhF-qtPg2tVwtCiFKsYWyeseBA4YZ8hDowxlwXF6_g
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGmCTH71x7Vy15-bFmrEM4Lt63Xa0125EH58f5tkjUmIoVFJ52pLaGpHLlONpV8xyb6u3WhHq-UCapeqkTEVUdYqmFl7y-VeeN2XTI1QHGc4BTuE_gKRroKFPtYw-NB2U0rpzH_VyGMTH6FzlV5xyB0
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwkz26UdFGMfUIV2ZFptR8PZC47bIrJ3shbshnMe27yR4JP9qxncQFHb4DZKCehp7T6ZzasKkXUEZXtIs6_ilKtPyn0BZ-0PlgzjHLnE2bffRh_J8rINq_45asPTc92tDlC_2zrvOL
+  tags: []
+  reviewed: false
+- id: what-are-the-most-effective-custom-tactics-to-prevent-centra
+  detail: To counter central overloads in EA Sports FC 26, the most effective setup
+    is using double-pivot formations (such as the 4-2-3-1 or 4-2-1-3) featuring CDMs
+    assigned to dedicated Holding or Defending roles. Pairing this with a mid-block
+    or balanced defensive approach compacts the central channel and cuts off passing
+    lanes between the lines. Additionally, keeping fullbacks on balanced or defensive-minded
+    roles prevents wide spaces from being exploited while forcing opposing central
+    runners into congested midfield areas.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH5gc_OG60tx684MSJnRyVqP4ccTLUYYNi2aNCC6GJeMzPKYh3lyRLH-IxG-N7OZgHe45lUTy7Fsvk8POXAF46q0aejK-M_N0lBGaO9RQtsXXq936KznGL_-7HYHyTp1hzyJ6dGfPw1iDhQFmxcayIvSNy8fLNWn-hFoDNtzJ89-LM38flHimJmDMB9GzrVfDPB9A==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH95inecHR1P5JqOPigfq_FxXSpKrn4tsVoVxdmbOFcWx4bsrtJdBL_4qjIMJEqxPSkDsLEituwskRmd4R0bHHtIdoxbOaqznP3aA96qYirW9nMZXTj4E3DXpliqpJSU7nV8xQF
+  tags: []
+  reviewed: false
+- id: what-are-the-best-manual-switching-settings-to-prevent-cbs-f
+  detail: To keep center-backs from stepping out of position, set **Auto Switching**
+    to *Air Balls and Loose Balls* (or *Manual*) and **Auto Switching Move Assistance**
+    to *None*. Using **Player Relative** for Right Stick Switching further ensures
+    accurate manual control without unwanted automated momentum pulling defenders
+    out of line.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF5ss3yW0Gvt_7QRWSgyiEkIUdHLaI3pFW4W-fokOrA3fGIpKE0s86-rqi4iotgO6Z7UWTLWF90xKLH1rxsho3RV_fMkXUWgRQUc6BHLkuFYFy1X-u1pp2U9blYRMXTDqmX-_HMOk7kzFvbfjV_x3rTz-IgBJqupVvoK1EUbuEwwl_bInbSlfSFPsk=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFTD4kN46h5E9Rkri_WGnIgvr14xi4C219Nafkh34HEpl7_zvr5aHA2NiUzfO075x512s4KuJaOwRO1RB8_PBZujLfQS4v1jy8KvwhFhjjmck4PBuOIphov3mME_7Thmj8mrf08SdOCJdG-
+  tags: []
+  reviewed: false
+- id: what-is-the-exact-controller-input-for-triggering-an-immedia
+  detail: To trigger a trivela shot, hold **L2** on PlayStation or **LT** on Xbox
+    while pressing the **Shoot** button (**Circle** / **B**) and directing your shot
+    with the Left Stick. Inputting this combination before making contact while running
+    onto the ball triggers an immediate first-time trivela shot.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH766uuAJUZ5je8OLqDx2gZa_C_oCrdWEix_e-WISPpvaOqOiJy__d0Ip2JrBSG2gteR5_cjDRjShlpkmlmxxiAtYWUgSpnf2dJjtc3MtBGrrV9eaWPQSO5wsUZN1wAnV_yyO3sQSLAg9I48g66IrntNPoVKlt2
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgL7DJ0N_pUg5eXaDhfunT44HkHsxMdWL6sf-kSDb0XoE38m4OhrHEIZ96QV74qxBmOGpI_kRbVcthKYGSUPc1xBVLqp7Nb-jsJ5JuUeTydc8NRhCsXhiaAsX-FxTKtErdwowr3KjyD0BnMG8=
+  tags: []
+  reviewed: false
+- id: how-do-manual-player-triggered-runs-l1-lb-interact-with-the-
+  detail: Against an opponent using a high defensive depth, triggering manual runs
+    (L1/LB) during a fast counter-attack exploits the large pocket of open space behind
+    their high backline, allowing attackers to break clear on goal with through balls.
+    Conversely, against a low defensive depth, the opponent's backline sits deep and
+    compact near the penalty area, compressing the running space and requiring precise
+    timing or directional run adjustments to avoid running into defenders or straying
+    offside.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFZn2Axjz0qUt_eeyCgQQXzfQNsSEqmMtMdYT04gW33qmEM_--5WbFf9ajVXto1NXza4b9den7wbzyn4mudSlgqAxJ9EyOJClCkeuaxW24ZvnLSJHFaF7paC0xxexI7U8WpihybmtAH66HCnwYzmGTjeXyb-59EfA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFy82wpVUGtGnxlLX8s58LZIptJEYumencXF96yFljwH9mZtOpUmtMM9thrAFVYUFij6BDtzA8kg2w-iUH5ppndTGj6N7wcAy7GIX6lPN0LJH8KfsmS2BsN0Jyz6qNyMt-L4mLo791-bU7nhquIx8rRORRjktEoVTCzw18sSzFwF5BVRXm9zat5rMU-UUQ-cwepw2xqZpPymD0NTTg3DS8rwBQhzYlBxRjOSdV3
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFslSBzIKZboPS8bz2SJOXzCmHUNjMBANLfLP-Pr0lSwjh4O7XpZr_J3gxSat4JxIRgFrmJPCya4sfLkG02allAfNEfzVtHZWPolMaP580UT5-Xl9wnOxYpoNRWnaSbYqxXvV8h0YIM7CWTiFtEQD5kYzm62bdQ694muldRoBSNYwNyRVufucZbNU_45xdFVw==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFpHPp1QGi6nh5iLd_TtET8QUnCLNldSLHN5osJuDq8RClidmZEFYj9SUBFfgFtCSL2vIak2wySzqda6eIOl3RFl3_LuqloLPqDaH5vydkNQkuksH8tRiW0WTTWJCZ6B9DjvjCIyNhis9UA0D7jIJQ0tyvc7OjVJew=
+  tags: []
+  reviewed: false
+- id: how-does-the-corner-kick-attacking-target-player-assignment-
+  detail: 'In *EA Sports FC 26*, the **Attacking Corner: Target Player** assignment
+    designates a specific teammate as the primary focal point and aerial target inside
+    the penalty area. This role places the chosen player in a central scoring position
+    (typically around the penalty spot) and directs their movement to attack and contest
+    the delivery for headers or volleys.'
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHKz7hKHAJxeNYl-cfaCYyG_ncUZti0mE9sauudoCC0YDCerbEIFfCSdixYQFGY76LapDv70rTT2l010mFnjrg5rlmlU9xqeDQ9RDIcOsJZ_VEsFhQ-FJQ_4xEyNQMFakWwLpzn7_1D6NnxsyPR2dyauIWCt2C2ON3wWjZPET9so3k8f_39GicFNIe74BppO3BvB_tteN0Nml9zcKs0zV0hk-eT68NCPMeoo10vGgKWFqWyshvqmGIAAs6ZDGb-HM4=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEjY1YsWXloJfbHnAsRZtPyGzq1-3ftwMUYK5ygND6tWBj_DhdJ1cDkXC4282JGW3XBFeSVBU36nqXGNRfL_unQDXmIOuPg7CF0Y7gHJNn3UruOjj5sBZQw9UziTSLJPmR7WnoRObJ-L809SOCsmRp8c9YcE1Hd7_m4zwjFc2rx-s8sU5rSiF1eJbWw
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG222r7pSd8INmevbXqgxlaBP7gTcyCpBwCPLOmlkRUDqDnsaqSMSp5B9xnU5jNxMAlvC-6YvTB_1zdKg2RCVC4gG0bCsEFcV1bhaOJfJOpughlYr3qYXrJtuOsE5MMybQcAeHY7zk7iRgAcPC0CnsUb8ce
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGYnnjNaNIXa-pYsiMvBBFWiLvJb5HxaZuPUjAMPA-VeW9Gi_9JgF5YJ2y5Sn9ag1myL1YO2cDaebbMm5nPKIZDBhboaurXwUA9F_w7ejzrAZUagGEr3Y218wINJZLdUgWODSM_hQFJyadwIoWwzXdA99g=
+  tags: []
+  reviewed: false
+- id: what-specific-player-attributes-are-boosted-by-the-party-at-
+  detail: The 'Party at the Back' Evolution in *EA Sports FC 26* provides stat boosts
+    across pace (Acceleration and Sprint Speed), passing (Vision, Short Passing, and
+    Long Passing), and dribbling (Agility, Balance, Reactions, and Composure). It
+    additionally upgrades all core defensive attributes (Defensive Awareness, Interceptions,
+    Heading Accuracy, Standing Tackle, and Sliding Tackle) as well as physical stats
+    (Jumping, Stamina, Strength, and Aggression).
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGMwBWI_iLrcOl8xl0JagJBd2Z3qjNGyMMFgkORpxvjGc1xPny2uqu50tLzm02z_-5mqh-7lY8ybrs085DVlgCPYODx00D6gda_VwQl8zn15wJ8IXjI1-rzD3IEfA22rVAejKjTH3RoHGnVVg==
+  tags: []
+  reviewed: false
+- id: how-does-player-fatigue-affect-late-game-sprint-speed-in-fc-
+  detail: In *EA Sports FC 26* Ultimate Team (Competitive Gameplay), fatigue does
+    not reduce the sprint speed or acceleration of user-controlled players, who maintain
+    their maximum pace attributes regardless of stamina levels. Conversely, AI-controlled
+    players experience a reduction in sprint speed and acceleration that scales proportionally
+    with their fatigue level.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFt_OAYpJsPvi3bV13rcfSzaPS5yv-zUj3sIFSaQYxTqBJKblt6_NDEnDfMCBjQw-sXfr7lj_KSw4_KYr6l6YlOAQy7Qj-R4DKBRXEq4QzMxVszliLRlyu9SZnr0jGLQqE=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHcjkbmfQafvUiKEoZGjLeuvpW0-bP8Tm_RtV54zsYhF7wS-c2zguNNGXND4BJF_vE6Lf4qYTAPmCv91SPe_BSuECSVTPifZ6X8bIYiacrH5AeOnwPZ_3L3mrrFLdNZ9addfi5GDY1jntkbNKkD1qXqQVLDTLZrPTr7O-YaQOV3PQ==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEAxkExluno722J5s3eSWk5BuvxoC6cH6sBzFKwuT8aAyn38qSzK1D43IKZHUuqtzCkQaNqKmaxO8Qx3BIXKWN-vJPKWDpPBJ6HGsN9tprUz6QKFBJbXwmete22DLfucU3zcJ54WSZ-E5KQ2gvrZJ7-DkK-0bjoqUi_bgWrMyPWav5oZuhQECCWaTeq2-c=
+  tags: []
+  reviewed: false
+- id: what-specific-tactic-trigger-causes-full-backs-like-a-t-nour
+  detail: In EA Sports FC's tactical system (FC IQ), full-backs invert during build-up
+    play when assigned the **Falseback** (or **Inverted Wingback**) Player Role. In
+    possession, this role triggers the full-back to vacate wide positions and tuck
+    inside into central midfield to provide numerical superiority and passing support.
+    The specific behavior is further modulated by the role's assigned focus (such
+    as Defend or Build-Up).
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFbEOStln_uxWslPN3Q-9dvm_7VY-ryUgQ8M1i_3czab_rDfV6flrqIMOW0uoCVWVSrL2P88vkTApvKEPbc-HqFexZl1T4swhcqWnFxufk3NTd0Dc7ssE_-O3vM_SmVtYX9ZqSHCZGzyVB5eHbiXZZzaaj0Qn6jzthVhUPY3Pd2b03LE9LFLuajRQfJZGGqBkHoIlfQxPhsiA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFVpdnvZ4QWwJ79Gc1HVCgfUKaYRKPwDCs690zKjk-EpTYb-wk70m7W1EcLXIQ5MXzif0YJo0MT6EziHDBNaL0C6p3E7Uf_6cfZH8Cf9rBYPZfb85Rw4UOINcs4aT8D46j0Fw==
+  tags: []
+  reviewed: false
+- id: what-exact-attribute-boosts-does-the-party-at-the-back-evolu
+  detail: 'In EA Sports FC 26 Ultimate Team, Level 4 of the **Party at the Back**
+    Evolution provides the following exact attribute boosts:
+
+
+    * **Aggression:** +15 (capped at 87)
+
+    * **Jumping:** +15 (capped at 90)
+
+    * **Strength:** +15 (capped at 84)
+
+
+    *(Additionally, completing Level 4 grants the Bruiser PlayStyle, Jockey PlayStyle+,
+    and the Fullback++ player role.)*'
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHJg7Zk_adHOPTtsdC_O6nQ07gzuUIhO3ARpZbq4-BKpa27d1unTHm3dPmF0hIxpqtSh00hiXjlWhmD2VTiNue-kSy-8FSG0jgBNHJ3NYveqQ_AZNZoMve9A3x7tqIV4MRLxRTgG2-rjSjwty6dvVsVsPAUpmL4r6dVndODZcn-EP4zks-Z
+  tags: []
+  reviewed: false
+- id: how-does-fc-26-s-manual-goalkeeper-positioning-system-affect
+  detail: In EA Sports FC 26, manual goalkeeper movement (via R3/right stick) allows
+    players to manually shift the keeper 1–2 steps toward the near post to close down
+    tight-angle, close-range shooting lanes. However, because manual movement speed
+    and recovery are restricted, committing early to the near post leaves the far
+    post completely exposed if the attacker opts for an across-goal or finesse finish.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFUuxI9zQccI5FqORHY3JfZAYZSEiFEMZsgflkPe6cmLFwyfOMioXQtxeYwzobBUYtl4_3vsVeX2dMkE7kIn2H1zMXM2BVQwfCD3Uxne5xGESkWPW_kPG-86Rrw2J8xMsgriLcTaQ-i90B9GHoZVMcxwAOgmqmEny5pja75Hzj6n4S3VTLcHDYJlMvOhhIG
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG7PKZkUC2WVHVazODq5qwuQEaunpmrTMNB--jv2U6UY73BREmFbN31otJNCApYGQ-UNNNvCkHJhdycMyyVHc3X6cbB0rR7EaCiwZmXVE9llndGo_1M52lq4zg7_IFmpueoZGfvufTWD2E79vTSBbiHu0YoFIqoVEFPskwfikpnnxe7
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGH3hdUEz5i9lYylR3qMO9ACeE9qce_fm_hsBvc9m_3wX5beD_B0xBVrNOz630Jz90I-EWv-ROTppmO47iD8NHOelXdtMJYDXkBIVxXFDMvxtmmUKmUlEZok82B3QjLkTz7db6_d6F54AcqX3I5AwtVPuwyDhXOm_H8T_LwNIWEuVvLDTXdilFDBWOgvV6EHCZpTWJgUzsbDEU=
+  tags: []
+  reviewed: false
+- id: how-does-the-controlled-acceleration-type-affect-defensive-r
+  detail: In EA Sports FC 26, the Controlled acceleration type provides a steady,
+    linear progression to top speed rather than rapid initial bursts or delayed top-end
+    momentum. For defensive recovery, it allows defenders to track back and reposition
+    with balanced, consistent pace over medium distances, providing reliable coverage
+    without specializing strictly in short-distance sprints (Explosive) or long-distance
+    chases (Lengthy).
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4cSLpvPYStUX3hMusieFjvsJkwId3ujNEYfgbjtT7JvtIrra6Iw4aD6mJ8m2khSc5oog5HNmD9Wc02X8v8XL87rMcshEtKPfMrPgQOQvykujHMj4Kr71JKDYfSA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEIQGwIMbIBEjEiMSxwe9-JWqellfgSiINxOd9KlqD_f79aAfEc96tnVN_28-WR-CJ838DTRzZB9ZTn89OuDZrWtJC8veSEFE2pAzbuwmwbt0SyYzY2pH1eKuPx73MamOJD-LkrFjVwR0yyfvLKjkjTlLmQjtiAs-zTnZRZTHu33JDQLsMt
+  tags: []
+  reviewed: false
+- id: what-is-the-most-effective-manual-goalkeeper-positioning-tec
+  detail: To defend near-post cutbacks, press and hold the right analog stick (R3/RS)
+    to manually shift the goalkeeper one or two steps toward the near post to shut
+    down the immediate shooting angle. Because manual keeper movement in open play
+    is restricted to short distances, only small micro-adjustments should be made
+    so the keeper remains positioned to react if the attacker passes inside.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQENmww8_cnAJ99hq0lgOjrwvBjBL8y-7fWpFKeRLmmz8_7Xy1FDRYquSv37TLX0fKqfwDZpHZS-DLvMmAXdSP5PLTPNwpvcLB3xZEKpSbKXI47OBTq0bNpsMmBKRkYl5icEe1jYIKtq9h0pAlPQtpxberOx-JLEX1eHq6v37k2dX6jSKz90qClX28g0fAdn
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE6P28K3kppF4dav_eZg9IHS9ykEV-0bON78QdOPaNaEgC3k9Rj_gfd1gmUvlGbRwO4eEZQjQ1rWa_PdzS4eseOS4-1dLL-4sSjkJgk0jHZr2D9UHxKC5SXQrvS3pKg8gynmx2l710w6HyH_xyPxjSumoOK4_S14KwFFvOJyL_34a0G
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4wUCdMMosgEegoLPsySdpVUlIAIdf-k3NqWtinNhiPlfu6tipXcW83VtlT-EWNkvv5gB_1wwhDO2rHMJNPPzNlg3YZleuClmbV6L4YU_RRjCPsgKp8k3rDil81mkFvJbdaYkhczQR0pK9rRc0ygSh7Te2EfZQY8XYivwDTsiuwmRPv2WxygX6ras=
+  tags: []
+  reviewed: false
+- id: how-does-the-overload-set-pieces-quick-tactic-impact-midfiel
+  detail: The "Overload Set Pieces" quick tactic commits extra outfield players, including
+    midfielders, into the penalty box during attacking corners and free kicks. Consequently,
+    this leaves fewer players positioned outside the area to provide defensive cover,
+    significantly compromising midfield balance and increasing vulnerability to fast
+    counter-attacks during defensive transitions.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFctT5hl9wimrz-0a9zJF7BIad-duS8IqnfhdGsM8r-1FoI9rh0AB7wTHp3-eAA_zGGI1O0lU59rb77JkhTyNnmKbQC6Dzocir5wFxaQf7qI2QynO8z6JhIH2pM1QuWyO-6OzUq
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4HurI1pWaGAR8Y-gw1dZVpYM9zZiYEgH0f62zUIRKFhVnt7D_0TgPR5aroulvaS0_AgWwFvNnYv-VL01RuVuido58u2tOFjQkMAZihuVWj5-M_eZMXJ5HnwYMkRiBqg==
+  tags: []
+  reviewed: false
+- id: how-does-tactical-custom-tactics-switching-function-during-a
+  detail: During active gameplay in EA Sports FC 26, players can switch custom tactics
+    without pausing by pressing Left on the D-pad to open the in-match tactical overlay.
+    From this menu, selecting the corresponding directional input activates one of
+    up to five pre-configured custom tactic presets. This immediately updates the
+    team's formation, tactical approach, and assigned player roles on the fly.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHiMt3Pnr-kzoPbnVPglCGbx5wzlnLX6QjwM4nKTumlgzjHq4joSp-QP6GG_T_RdyEvHo20BFkYfVOIUNl2Mh5gFZxdVQpxBmEI2SS-ct9htvqphWOQB5RAMRUzGTVB-1CB
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHqX6_ByVg1ebxDGzQ186jHMplpOObFl4jUeVy3z_Io4nA7QVuhS23VG_U5gFgHwOTvsiNOwvlG6ejnzVHU7Aam5rWm2IcVluLzlHRvFzj1icCH1apHoVnfnYnVXhjNbH9yRSCPaNjGUQEEj3mCdjVgy57uT7MoXoO6ZyXXDNuLeDDV2JMrn3aL-9rDLXAexewS-0bA2SY=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEDZWhdNeEz2Nt5LnkKPEuFhVq_Wj3pr0Wr2b9oUETkLrLKdhLFL39VGWvFu7pDEEc6SVR-FMPwwmzuXMMi0YzwjeE8qffjvHDw1G4KYwWUHsZ65LmlweBc_XuF2_cjB_Bo5LRX6JSka-orSbVpHbJ6yIFuu90AgwZK2qRnzZC3
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF3MV38nFvGfLd4mlKiVq-BY-lDU9g_Ht23fPLlVoNaZkaLCca5r1hQ01tlbVvhM-Ip5ILMt6Q8TM3OEDqFgi7H3i42XWkGTKrR8vIGlGy6HlihZ_O_XR4uAI4=
+  tags: []
+  reviewed: false
+- id: what-are-the-exact-triggers-for-activating-manual-goalkeeper
+  detail: To activate manual goalkeeper movement in *EA Sports FC 26*, click and hold
+    the **Right Stick (R3 on PlayStation / RS on Xbox)** and push it in the desired
+    direction. Holding the input allows you to manually reposition the goalkeeper
+    to anticipate shots or cover angles.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGsChNmhiECT5rrrfO7zLsqSp3_zIa2HMTnk_hItvi4QvtHYxBUAWK4zaRd7hr4PAdzrzXFfUjUwEWKOkVH-FKYMUCw4j3PZs3vl2dGVFago8aRNPHVYB501c6t7V32lLM=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG6Uu0Uv9osPLVo1X9g0onoruZa-Du-5z1GxKNZyosIIw41i5cJ-ZD6j38Ol3E-RGuiJ-oZ4LFH6HxEtg5KtKKjm_o4-CC_1aGG1R1HKS3X2D8VBwfZHZTvvVTqKVt3fAdDdnp86gyOPhczV3hIb92NdOt6M-jva0OweAClZF1kRM9E7Oo=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFdmOFlKy5VWCO7i12xCYuxIEIZBv7G7yn168RZ8kPwRrgQ491oQD2uQBbExOJsT472ciGdGlMcRqgxqoqSNqUP2zEcN2LpZmyu1Ej6BJFZdWYHKIUEMLNvKcl3-c8yAXO6Q2pMlGvmZE8R40XGRTi_8IJxdMUh7qMZHBeTyZ3dSUcY-3Wv6Un0K1yJpYNt
+  tags: []
+  reviewed: false
+- id: how-does-overload-set-pieces-quick-tactic-impact-defensive-t
+  detail: Activating the 'Overload Set Pieces' quick tactic commits additional outfield
+    players into the penalty box during attacking corners and free kicks. This reduces
+    the number of players positioned in rest defense and around the perimeter of the
+    area, leaving fewer defenders back to slow down or break up counter-attacks. Consequently,
+    it significantly heightens vulnerability to rapid transitions if the opponent
+    wins and clears the ball.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG85kmfdV6GdJe3wJtGg7WwE5CJbLh7eRQqm-w_ZZ1FpdAj6ShKbRSFGcrToY5PRFEW7HB7I3rxVuOTjrYmiWjSYXnatB2zZAqqF66PDm7mmPxccT9l6MvusJDpYYEb2S0=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEPPRdigEpgDLhBAexsHRJT9mkFmNi_Nh-9iZYSjWC3Wj1HrkbgEAsvx9U809HHWCE3NUbG0MB5go4k1M30oKP9InMDyewgTB8vcasM6SMmaYSGBr2nByQZB-JhK3LOIA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEYuXLgwRTfA-kXYOQpSsOPCQt5a63qElneen2_VgdN9C1hK8WkcNANKVDYXx1WoSCjSPqdDO9ExTeqh1E4egm9sD-cFk8etVjMhCXxFCCNW1dUA3l8IObkNu3SrrBny-Bys1qf6f8KYvl-ALHb-MRLTSRtBKT9-UPA29uRNcJiGqE9NJTVcPph_W_DbBIcs98RBTZo2O3ewI-y5zKdTHeAxzMg4WMwEg==
+  tags: []
+  reviewed: false
+- id: what-is-the-difference-between-controlled-and-explosive-acce
+  detail: Explosive acceleration provides an immediate, sharp burst of speed that
+    allows agile wingers to quickly beat defenders over short distances before leveling
+    off. In contrast, Controlled acceleration offers a steady and balanced increase
+    in pace, maintaining a more uniform and consistent sprint over longer distances.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHYX7heOrI8CuGvLDJzZ5UgLTt83l7jTfiFRMChLtmq4O1L-NErYNDg5W18Qf-57DUboNeoCyOmKwPTbJGgvzUHG-QgijmgWv724_uhw7tmIaTZW7o5jSDV50CTxIq75hr_GoB0vChAg_8bDVj2bqn2Dy2ObBIlvXw=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFnMRUGX28wDCFLCJ3G6pQzySpbdrjlMpxTEFmBiX5xHrxbSOcAukaQvcqTuakrI_lgC474VwktzCEscMvn4HNVhpQCowuiGQniByJzna8AdjhR7M2RN7qIKTGxiq8=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGas6L4vvZlAgObY3LtzYAfi-l6WIvyoPF5qAYlKCTM8jS4_VFMuoA8CYLVv1BmlnQSqkf1ReOxFItRyN0_T4_0pSCI-f8Dy-X45GrN5R9uJk68QcY-zKyhgWF7EhetJAOHfSJOxYdL-ulqrd2EFisS9xU_qWXyAaeae5RlJMsvrTliQqEiDQ==
+  tags: []
+  reviewed: false
+- id: how-do-intercept-playstyle-animations-assist-manual-cb-jocke
+  detail: In *EA Sports FC 26*, the Intercept PlayStyle assists manual CB jockeying
+    by granting greater defensive reach and triggering contextual leg-extension animations
+    to automatically cut off tight passing lanes. These animations allow defenders
+    to intercept low driven passes and cutbacks inside the penalty area without needing
+    a manual tackle input or breaking jockey posture. Furthermore, they increase the
+    probability of cleanly retaining the ball rather than giving away hazardous deflections
+    or rebounds inside the box.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGPobHHglp1tAJgWJodKnunC1as6qx2p6CUB5ZGHz8nohU7eJEvOTHCF6ABaP54SjOGCsowqkwGdFu9hv5kvzIObQJpUlbZ0wAkufQDqW2gZjMonYFpouqQ3krJfoG9mShtN8s=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFfAyp3J4TW4cdOoEtTdOcu-a-CzVy28cusHAxB7sYV2SqnyqW9Z2In9UlWVbM_Kfuy3drhuDXk4pAMAtJibuKq-TsBNeWbapf7CRMPGr8fgofYuDwL6FbFENJnvfR-vzs=
+  tags: []
+  reviewed: false
+- id: how-do-specific-player-roles-affect-ai-off-ball-positioning-
+  detail: In EA Sports FC 26, assigned player roles and focuses directly determine
+    an AI player's recovery path, urgency, and defensive shape when possession is
+    lost. Depending on the specific role (such as holding, dropping to form backline
+    cover, or stepping out to contest passing lanes), the AI adjusts how quickly and
+    deeply it tracks back into the base defensive structure. Players with higher role
+    familiarity (Role+ and Role++) execute these off-ball defensive transitions with
+    improved positioning awareness and reaction times.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH0pT2cOMdXgDf5FekXTiFjFugpCzOevbY4aUMnLtpgA6uTKPs_JVOgrii-4EuHBXb0CCZ6QWekQJWdfwQqOuUx75GjMQ6GZUVp08BcWPsh1_0iJaM9ksRg
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG0_aDsALbTgPS7_hs1e7TtZorlPZpEwAZ5MI2TtM7TMNJqr0v8gHaztHWUoGdqff1gHwGzOb1aJkDv83cZs-bLvq-1kuin_JUeCOG0Psj19S5-4nuaDScySsk=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEVyM9ZzdNFMB8ev2MVnXgyThWiCyapr2EPh2QL6qoftN2Ml6GKsQ5np3WKbQqw8alDHU9I7TRdOEYTruWRBi_3eXM7woCrOHd6Z1HzildGasqTUng3OUXC41qz1MMWaIx1Ms-EmU07dZj5KBEWIvbfpSoJMLo=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEbPX_6Nuuy3FGIGsq1kqQ67zim42SjE8GBaibrpNhYo68fboE-pUyN8diLEH7A2A6a6WEa5dudyx5P-641X6nBQv2hgJ0jjG9G0aHtdQ1EbyX43ZXBfAbEunFT9qSCDeg2Nxeq1myrgiyWkb8uiwLLdxRZdLs4RCl3Bw==
+  tags: []
+  reviewed: false
+- id: what-is-the-most-effective-manual-jockey-control-scheme-for-
+  detail: The most effective manual jockey technique in the penalty area involves
+    holding **L2** (PlayStation) or **LT** (Xbox) to square up and mirror the attacker's
+    movements while maintaining close positioning. Players should avoid continuously
+    holding sprint (Speed Jockey) inside the box, instead feathering the left stick
+    and only tapping tackle when the attacker commits to an angle or shot.
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGIhTLxtLxZqqg77YwYPMjRyipXmbdySlH7imIBdREDv4eXq4WjWYTd7H3AoSN9MPAp3EtqRvklkmsvyBVFi3npY0jXmzBQv9RCf5EDijhsqg9oBr7QHaIOYw3l_OJjvp4V9A16kIZ-_DyjSRdK-V_cVhVJMbz
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEs7AIJALb0Pu3tPeT5weoRSc6c_tsjISk55Ajgf7TMh4VgaUhLEzjhopvKsDVCEoRQzDMwrWQVjj3zwq_d9LTNW7ws4K3nCE7zx0cNcFZ7BwfQTrjZR5LKqbQZap5cr3w49OEe
+  tags: []
+  reviewed: false

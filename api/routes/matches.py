@@ -17,6 +17,7 @@ from api.schemas import (
     CreateMatchRequest,
     CreateMatchResponse,
     FrameUploadResponse,
+    ReportFeedbackRequest,
     TrendResponse,
 )
 from core.config import get_settings
@@ -27,6 +28,7 @@ from core.report import build_match_report_pdf, report_filename
 from core.models.enums import SourceType
 from core.storage.frame_keys import frame_key, frame_prefix, source_key
 from core.storage.objectstore import get_object_store
+from core.storage import report_feedback as rf
 from core.storage.repository import MatchRepository
 from core.storage.usage import get_usage, increment_usage
 from core.storage.users import get_or_create_user
@@ -219,6 +221,33 @@ def get_match(match_id: str, session: Session = Depends(db_session),
               user: str = Depends(current_user)) -> JSONResponse:
     match = _owned(MatchRepository(session), match_id, user)
     return JSONResponse(_payload(match))
+
+
+@router.post("/{match_id}/feedback")
+def submit_feedback(match_id: str, body: ReportFeedbackRequest,
+                    session: Session = Depends(db_session),
+                    user: str = Depends(current_user)) -> dict:
+    """Record what the player thought of this report.
+
+    Ownership is checked first - a verdict is personal, and one account must not
+    be able to write feedback against another's report.
+    """
+    _owned(MatchRepository(session), match_id, user)
+    try:
+        row = rf.record(session, user_id=user, match_id=match_id,
+                        rating=body.rating, section=body.section, note=body.note)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    return {"rating": row.rating, "section": row.section, "note": row.note}
+
+
+@router.get("/{match_id}/feedback")
+def read_feedback(match_id: str, session: Session = Depends(db_session),
+                  user: str = Depends(current_user)) -> dict:
+    """What this person already said, so reopening the report shows it back
+    rather than asking again."""
+    _owned(MatchRepository(session), match_id, user)
+    return {"feedback": rf.for_match(session, user, match_id)}
 
 
 @router.get("/{match_id}/report.pdf")

@@ -468,6 +468,11 @@ def _lite_report_schema(spec) -> dict:
             # the same finding twice in two different voices.
             "strengths": strs, "recurring_mistakes": strs,
             "weakness_tags": strs,
+            # Things the model saw but is unsure about - fuel for self-learning.
+            # This lived only on the two-pass watch schema, so on the single-call
+            # path (the default) NOTHING was ever collected and the brain could
+            # not grow no matter what ENABLE_SELF_LEARNING said.
+            "knowledge_gaps": strs,
             **spec.sections,
             "score": {"type": "object",
                       "properties": {"home": {"type": "integer"}, "away": {"type": "integer"}}},
@@ -792,6 +797,24 @@ def _history_block(history: dict | None, vocab: list[dict]) -> str:
     out = [f"WEAKNESS TAGS (choose 'weakness_tags' ONLY from this list): {tags}"] if tags else []
     if not history:
         return "\n".join(out)
+
+    # What this player said was wrong with previous reports. FIRST in the block,
+    # because a report that repeats a mistake the reader already pointed out
+    # costs more trust than any single extra insight earns.
+    complaints = [c for c in (history.get("complaints") or []) if c]
+    if complaints:
+        lines = []
+        for c in complaints[:4]:
+            where = f" about {c['section']}" if c.get("section") else ""
+            said = f': "{str(c.get("note"))[:240]}"' if c.get("note") else ""
+            lines.append(f"  - rated {c.get('rating', '?')}/5{where}{said}")
+        out.append(
+            "THE PLAYER'S FEEDBACK ON YOUR PREVIOUS REPORTS. These are their words "
+            "about what you got wrong. Do not make the same mistake again. If you "
+            "still believe a disputed point, give the specific evidence from THIS "
+            "match that supports it - otherwise drop it:\n" + "\n".join(lines)
+        )
+
     n = history.get("matches", 0)
     # Learned player profile (personalization across matches).
     prof = []
@@ -2147,6 +2170,14 @@ class GeminiVideoCoaching(Stage):
             )
         ]
         _stats_to_metrics(ctx, d.get("stats", {}), spec)
+
+        # Same self-learning step the two-pass path runs. Without this the gaps
+        # would be collected and then dropped, which is barely better than not
+        # collecting them.
+        gaps = [str(g) for g in (d.get("knowledge_gaps") or []) if g]
+        if s.enable_self_learning and gaps:
+            self._learn(ctx, model, gaps, frag)
+
         ctx.emit(self.name, "done", f"coaching ready, cost=${ctx.cost.total:.4f}")
 
     @staticmethod

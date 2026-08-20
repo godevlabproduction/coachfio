@@ -934,9 +934,250 @@
           + icon("receipt_long") + "Evidence log"
           + '<span class="material-symbols-outlined disclosure__chevron">expand_more</span></summary>'
           + '<div class="disclosure__body"><div class="log">' + ev + "</div></div></details></section>"
-        : "");
+        : "")
+
+      + feedbackBlock(p, rep.summary);
 
     wireChips(m.id);
+    wireFeedback(m.id);
+  }
+
+  // The last thing on the page, after the coaching has been read - which is the
+  // only moment someone has an opinion worth capturing. A rating alone would be a
+  // vanity metric, so the two fields that matter are WHICH section let them down
+  // and WHAT was wrong with it; that sentence is handed to the model on the next
+  // match with an instruction not to repeat the mistake.
+  //
+  // Section options come from the report itself rather than a fixed list, so a
+  // section the report did not render is never offered.
+  var FEEDBACK_SECTIONS = [
+    ["summary", "Coach's summary"], ["diagnosis", "Executive diagnosis"],
+    ["match_context", "Match context"], ["strengths", "What you did well"],
+    ["recurring_mistakes", "Recurring mistakes"], ["goals", "Goal by goal"],
+    ["event_log", "Key moments"], ["attacking", "Attacking analysis"],
+    ["defending", "Defensive analysis"], ["practice_plan", "Practice plan"],
+    ["tactical_changes", "Tactical recommendation"],
+    ["elite_comparison", "Elite comparison"], ["next_video_test", "Next video to record"],
+  ];
+
+  function feedbackBlock(p, summary) {
+    var opts = FEEDBACK_SECTIONS.filter(function (kv) {
+      if (kv[0] === "summary") return !!(summary && String(summary).trim());
+      var v = p[kv[0]];
+      if (!v) return false;
+      return typeof v === "string" ? v.trim() : (v.length || Object.keys(v).length);
+    });
+    var stars = [1, 2, 3, 4, 5].map(function (n) {
+      return '<button class="fb-star" type="button" data-fb-rating="' + n + '"'
+        + ' aria-label="' + n + ' out of 5">' + icon("star") + "</button>";
+    }).join("");
+    // One question, one click. The rating SAVES on the star press - no Send
+    // button to reach, no "pick a rating first" error to bump into - and the
+    // detail only appears afterwards, for the people who have something to say.
+    // Asking everything up front is what makes an end-of-page form get skipped.
+    return '<section class="section fb__section"><div class="card fb" data-fb-card>'
+      + '<div class="fb__head">'
+      + '<span class="tile tile--accent fb__tile">' + icon("rate_review") + "</span>"
+      + '<div class="fb__headtext"><h3 class="fb__title">Was this report useful?</h3>'
+      + '<p class="fb__sub" data-fb-sub>Your rating shapes the next one.</p></div>'
+      + '<div class="fb-stars" data-fb-stars>' + stars
+      + "</div></div>"
+      + '<div class="fb__more" data-fb-more hidden>'
+        // A real dropdown, not a <select>: the option LIST in a native select is
+        // drawn by the operating system, so it cannot be themed - on macOS it is
+        // a light popup in the middle of a dark app. The trigger keeps the same
+        // shape; the panel is ours. The value lives in a hidden input, so
+        // everything that reads #fb-section is unchanged.
+        + '<div class="fb__dd" data-fb-dd>'
+        + '<input type="hidden" id="fb-section" value="">'
+        + '<button class="fb__ddbtn" type="button" data-fb-ddbtn aria-haspopup="listbox"'
+        + ' aria-expanded="false"><span data-fb-ddlabel>Which part let you down?</span>'
+        + icon("expand_more", "fb__chev") + "</button>"
+        + '<div class="fb__ddpanel" role="listbox" data-fb-ddpanel hidden>'
+        + '<button class="fb__ddopt" type="button" role="option" data-v="">'
+        + "Nothing in particular</button>"
+        + opts.map(function (kv) {
+            return '<button class="fb__ddopt" type="button" role="option" data-v="'
+              + esc(kv[0]) + '">' + esc(kv[1]) + "</button>";
+          }).join("")
+        + "</div></div>"
+      + '<textarea class="fb__note" id="fb-note" rows="2" aria-label="What was wrong?"'
+      + ' placeholder="What exactly was wrong? e.g. you said I dive in with my CB, but I was '
+      + 'switching to press"></textarea>'
+      + '<div class="fb__actions">'
+      + '<span class="fb__said" data-fb-said></span>'
+      + '<button class="btn btn--primary btn--sm" data-fb-send>Send</button></div>'
+      + "</div></div></section>";
+  }
+
+  function wireFeedback(matchId) {
+    var card = $("[data-fb-card]");
+    if (!card) return;
+    var rating = 0;
+    var said = $("[data-fb-said]", card);
+    var sub = $("[data-fb-sub]", card);
+    var more = $("[data-fb-more]", card);
+    // Hovering star 3 should show THREE stars filled, not just the third one -
+    // otherwise the control does not tell you what clicking will actually give
+    // you. `hover` is that preview; it beats the saved rating while the pointer
+    // is over the row, and falls back to it on the way out.
+    var hover = 0;
+
+    function paint() {
+      var level = hover || rating;
+      $$("[data-fb-rating]", card).forEach(function (b) {
+        b.classList.toggle("is-on", Number(b.getAttribute("data-fb-rating")) <= level);
+      });
+      card.classList.toggle("is-rated", !!rating);
+    }
+
+    function save(extra) {
+      return j("/api/matches/" + matchId + "/feedback", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rating: rating,
+          section: extra ? $("#fb-section", card).value : "",
+          note: extra ? ($("#fb-note", card).value || "").trim() : "",
+        }),
+      });
+    }
+
+    $$("[data-fb-rating]", card).forEach(function (b) {
+      var n = Number(b.getAttribute("data-fb-rating"));
+      b.addEventListener("mouseenter", function () { hover = n; paint(); });
+      b.addEventListener("focus", function () { hover = n; paint(); });
+      b.addEventListener("click", function () {
+        rating = n;
+        hover = 0;
+        paint();
+        // Pop only on a real choice. Tying it to the filled state would fire it
+        // on every hover, which is noise rather than feedback.
+        b.classList.remove("just-picked");
+        void b.offsetWidth;
+        b.classList.add("just-picked");
+        more.hidden = false;
+        // Low scores are the ones worth explaining, so ask directly rather than
+        // leaving a neutral prompt that reads the same either way.
+        sub.textContent = rating <= 3
+          ? "Thanks. What did it get wrong?"
+          : "Thanks. Anything it still got wrong?";
+        save(false).catch(function () {
+          said.textContent = "Could not save that rating.";
+        });
+      });
+    });
+
+    // ---- the section dropdown ---------------------------------------------
+    // Hand-built because a native <select>'s option list is drawn by the OS and
+    // cannot be themed. That means the keyboard behaviour a select gives free
+    // has to be written: arrows to move, Enter to choose, Escape to close, and
+    // focus returning to the trigger so tabbing does not jump to the top.
+    var dd = $("[data-fb-dd]", card);
+    if (dd) {
+      var ddBtn = $("[data-fb-ddbtn]", dd);
+      var ddPanel = $("[data-fb-ddpanel]", dd);
+      var ddLabel = $("[data-fb-ddlabel]", dd);
+      var ddInput = $("#fb-section", dd);
+      var ddOpts = $$(".fb__ddopt", dd);
+
+      function ddOpen(open) {
+        ddPanel.hidden = !open;
+        dd.classList.toggle("is-open", open);
+        ddBtn.setAttribute("aria-expanded", String(open));
+        if (open) {
+          // Downward is what people expect, so only flip up when there is
+          // genuinely not room below - this card is the last thing on the page,
+          // so that does happen. Measured after unhiding, or the panel has no
+          // height to measure.
+          var r = ddBtn.getBoundingClientRect();
+          var need = ddPanel.offsetHeight + 8;
+          var below = window.innerHeight - r.bottom;
+          dd.classList.toggle("is-up", below < need && r.top > below);
+          // If it opens downward and the page cannot show it, bring it into view
+          // rather than leaving half a list off-screen.
+          if (!dd.classList.contains("is-up") && below < need) {
+            ddPanel.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }
+          var cur = ddOpts.filter(function (o) { return o.getAttribute("data-v") === ddInput.value; })[0];
+          (cur || ddOpts[0]).focus();
+        }
+      }
+      function ddPick(v, text) {
+        ddInput.value = v;
+        ddLabel.textContent = text;
+        dd.classList.toggle("is-set", !!v);
+        ddOpts.forEach(function (o) {
+          o.setAttribute("aria-selected", String(o.getAttribute("data-v") === v));
+        });
+      }
+
+      ddBtn.addEventListener("click", function () { ddOpen(ddPanel.hidden); });
+      ddOpts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          ddPick(o.getAttribute("data-v"), o.textContent);
+          ddOpen(false);
+          ddBtn.focus();
+        });
+        o.addEventListener("keydown", function (e) {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            var next = ddOpts[i + (e.key === "ArrowDown" ? 1 : -1)];
+            if (next) next.focus();
+          } else if (e.key === "Escape") {
+            ddOpen(false);
+            ddBtn.focus();
+          }
+        });
+      });
+      // Clicking anywhere else closes it, which is the one behaviour people
+      // notice only when it is missing.
+      document.addEventListener("click", function (e) {
+        if (!dd.contains(e.target)) ddOpen(false);
+      });
+      dd._pick = ddPick;
+    }
+
+    var starRow = $("[data-fb-stars]", card);
+    if (starRow) {
+      starRow.addEventListener("mouseleave", function () { hover = 0; paint(); });
+      starRow.addEventListener("focusout", function () { hover = 0; paint(); });
+    }
+
+    // Show what they already said, so reopening a report does not ask again.
+    j("/api/matches/" + matchId + "/feedback").then(function (d) {
+      var f = d && d.feedback;
+      if (!f) return;
+      rating = f.rating || 0;
+      paint();
+      if (rating) {
+        more.hidden = false;
+        sub.textContent = "You rated this already - change it any time.";
+      }
+      if (f.section) {
+        var opt = $$(".fb__ddopt", card).filter(function (o) {
+          return o.getAttribute("data-v") === f.section;
+        })[0];
+        if (opt && dd && dd._pick) dd._pick(f.section, opt.textContent);
+      }
+      if (f.note) $("#fb-note", card).value = f.note;
+    }).catch(function () {});
+
+    $("[data-fb-send]", card).addEventListener("click", function () {
+      var btn = this;
+      var note = ($("#fb-note", card).value || "").trim();
+      btn.disabled = true;
+      save(true).then(function () {
+        btn.disabled = false;
+        // Only promise the coach will act on it when it actually will: a high
+        // rating with nothing written is stored but never shown to the model.
+        said.textContent = (note || rating <= 3)
+          ? "Saved - your next report will take this into account."
+          : "Saved.";
+      }).catch(function (e) {
+        btn.disabled = false;
+        said.textContent = e.message || "Could not save that.";
+      });
+    });
   }
 
   function wireChips(matchId) {

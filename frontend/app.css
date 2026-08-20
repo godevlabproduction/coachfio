@@ -1790,3 +1790,131 @@ body.is-modal { overflow: hidden; }
     transition-duration: .001ms !important;
   }
 }
+
+/* ---- report feedback ---------------------------------------------------- */
+/* The last card on a long page, so it gets a little more presence than the rest
+   - an accent tile, a soft wash behind it, and stars that respond - to earn a
+   look after several screens of dense text. Everything else in the report stays
+   flat on purpose; this is the one thing asking for an action. */
+/* The accent wash is painted ON the card rather than by a child element:
+   clipping a child needs overflow:hidden, and that also clipped the dropdown
+   panel, which has to escape the card to be usable. */
+.fb {
+  position: relative;
+  display: flex; flex-direction: column; gap: 0;
+  border-color: var(--accent-line);
+  background-image: radial-gradient(220px 140px at 100% 0%, var(--accent-soft), transparent 70%);
+  background-repeat: no-repeat;
+  transition: background-image .3s ease;
+}
+.fb.is-rated {
+  background-image: radial-gradient(260px 170px at 100% 0%, var(--accent-soft), transparent 72%);
+}
+
+.fb__head {
+  position: relative;
+  display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
+}
+.fb__tile { flex: 0 0 auto; }
+.fb__headtext { flex: 1 1 220px; min-width: 0; }
+.fb__title { font-size: var(--t3); font-weight: 600; margin: 0; }
+.fb__sub { font-size: var(--t2); color: var(--text-muted); margin: 3px 0 0; max-width: 52ch; }
+
+/* Bare glyphs, not buttons-in-boxes: five outlined stars read as "pick a
+   number", five bordered squares read as a toolbar. */
+.fb-stars { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.fb-star {
+  display: grid; place-items: center;
+  width: 34px; height: 34px; padding: 0;
+  border: 0; border-radius: 8px; background: none;
+  color: var(--text-disabled); cursor: pointer;
+  transition: color .12s ease, background-color .12s ease, transform .12s ease;
+}
+.fb-star:hover { color: var(--warn); background: var(--surface-2); transform: translateY(-1px); }
+.fb-star:active { transform: scale(.9); }
+.fb-star.is-on { color: var(--warn); }
+.fb-star.just-picked { animation: fb-pop .22s ease; }
+.fb-star.is-on .material-symbols-outlined { font-variation-settings: "FILL" 1; }
+.fb-star .material-symbols-outlined { font-size: 24px; }
+@keyframes fb-pop { 0% { transform: scale(1) } 45% { transform: scale(1.22) } 100% { transform: scale(1) } }
+
+.fb__more {
+  position: relative;
+  display: flex; flex-direction: column; gap: 10px;
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--divider);
+  animation: fb-reveal .2s ease both;
+}
+@keyframes fb-reveal { from { opacity: 0; transform: translateY(-5px) } to { opacity: 1 } }
+
+/* Hand-built dropdown. A native <select> renders its option list through the
+   operating system, so on macOS a dark app gets a light popup and none of the
+   theme applies. The trigger keeps a select's shape so it still reads as one. */
+/* Space under the last card so a downward panel has somewhere to go rather
+   than being pinned against the end of the page. */
+.fb__section { padding-bottom: 220px; }
+
+.fb__dd { position: relative; }
+.fb__ddbtn {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--input-bg); color: var(--text-muted);
+  font-family: inherit; font-size: var(--t2); text-align: left; cursor: pointer;
+  transition: border-color .12s ease, color .12s ease;
+}
+.fb__ddbtn:hover { border-color: var(--border-strong); }
+.fb__ddbtn:focus-visible { outline: none; border-color: var(--accent); box-shadow: var(--ring); }
+/* Once something is chosen it is content, not a prompt, so it gets full weight. */
+.fb__dd.is-set .fb__ddbtn { color: var(--text); }
+.fb__dd.is-open .fb__ddbtn { border-color: var(--accent); }
+.fb__chev {
+  flex: 0 0 auto; color: var(--text-faint); font-size: 18px;
+  transition: transform .16s ease;
+}
+.fb__dd.is-open .fb__chev { transform: rotate(180deg); }
+
+/* Opens downward, like any dropdown. `is-up` flips it only when the viewport has
+   no room below - which happens here, because this card is the last thing on the
+   page. Direction is decided in JS, after measuring. */
+.fb__ddpanel {
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 20;
+  display: flex; flex-direction: column;
+  max-height: 196px; overflow-y: auto; padding: 6px;
+  border: 1px solid var(--border-strong); border-radius: 10px;
+  background: var(--elevated);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .45);
+  animation: fb-dd .14s ease both;
+}
+.fb__dd.is-up .fb__ddpanel { top: auto; bottom: calc(100% + 6px); }
+@keyframes fb-dd { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1 } }
+.fb__dd.is-up .fb__ddpanel { animation-name: fb-dd-up; }
+@keyframes fb-dd-up { from { opacity: 0; transform: translateY(4px) } to { opacity: 1 } }
+.fb__ddopt {
+  padding: 9px 10px; border: 0; border-radius: 6px;
+  background: none; color: var(--text-secondary);
+  font-family: inherit; font-size: var(--t2); text-align: left; cursor: pointer;
+  transition: background-color .1s ease, color .1s ease;
+}
+.fb__ddopt:hover { background: var(--surface-2); color: var(--text); }
+.fb__ddopt:focus-visible { outline: none; background: var(--surface-2); color: var(--text); }
+.fb__ddopt[aria-selected="true"] { color: var(--accent); font-weight: 600; }
+
+.fb__note {
+  width: 100%; resize: vertical; min-height: 62px;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--input-bg); color: var(--text);
+  font-family: inherit; font-size: var(--t2); line-height: 1.5;
+  transition: border-color .12s ease;
+}
+.fb__note::placeholder { color: var(--text-disabled); }
+.fb__note:focus { outline: none; border-color: var(--accent); box-shadow: var(--ring); }
+
+.fb__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+.fb__said { font-size: var(--t2); color: var(--text-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fb__more, .fb__ddpanel { animation: none; }
+  .fb__chev { transition: none; }
+  .fb-star, .fb-star.just-picked { animation: none; transition: color .12s ease; }
+  .fb-star:hover, .fb-star:active { transform: none; }
+}

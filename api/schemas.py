@@ -65,3 +65,17 @@ class TrendResponse(BaseModel):
     source: str | None = None
     estimated: bool = False
     points: list[dict[str, Any]]
+
+
+class ReportFeedbackRequest(BaseModel):
+    """A verdict on one report, filled in after reading it.
+
+    `section` is which part let them down and `note` is what was wrong with it.
+    The note is the half that matters: "bad" is not actionable, "you said I dive
+    in but I was switching to press" is, and that sentence is what the model is
+    shown next time.
+    """
+
+    rating: int                # 1-5
+    section: str = ""          # e.g. "defending" - free-form; sections are the adapter's
+    note: str = ""

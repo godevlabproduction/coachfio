@@ -437,10 +437,17 @@ def test_core_declares_no_game_sections_of_its_own():
     from adapters.base.interface import ReportSpec
     from core.pipeline.stages import _lite_report_schema, _video_report_schema
 
-    for build in (_video_report_schema, _lite_report_schema):
+    core_envelope = {"summary", "strengths", "recurring_mistakes", "weakness_tags",
+                     "score", "formation", "goals", "stats"}
+    # The single-call schema also asks for knowledge_gaps; the two-pass one does
+    # not, because there they come from the observation schema instead.
+    expected = {
+        _video_report_schema: core_envelope,
+        _lite_report_schema: core_envelope | {"knowledge_gaps"},
+    }
+    for build, want in expected.items():
         props = build(ReportSpec())["properties"]
-        assert set(props) == {"summary", "strengths", "recurring_mistakes",
-                              "weakness_tags", "score", "formation", "goals", "stats"}
+        assert set(props) == want
         assert props["stats"]["properties"] == {}, "core must not name any stat itself"
 
 

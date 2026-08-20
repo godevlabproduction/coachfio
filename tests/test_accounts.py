@@ -230,3 +230,83 @@ def test_a_subject_is_required(linking):
     with pytest.raises(ValueError):
         link_or_create_from_provider(None, subject="", email="x@example.com",
                                      email_verified=True)
+
+
+# --- report feedback ----------------------------------------------------------
+# The only signal in the product that says whether the COACHING was any good.
+# Everything else improves what the coach says; this is what can tell you
+# whether saying it was right.
+
+class _FakeSession:
+    """Enough of a Session for the validation and shaping logic. The suite is
+    deliberately DB-free, and what matters here is the rules, not SQLAlchemy."""
+
+    def __init__(self):
+        self.added = []
+
+    def execute(self, *_a, **_k):
+        class _R:
+            @staticmethod
+            def scalar_one_or_none():
+                return None
+        return _R()
+
+    def add(self, row):
+        self.added.append(row)
+
+    def flush(self):
+        pass
+
+
+@pytest.mark.parametrize("bad", [0, 6, -1, 100])
+def test_a_rating_outside_one_to_five_is_refused(bad):
+    from core.storage import report_feedback as rf
+
+    with pytest.raises(ValueError):
+        rf.record(_FakeSession(), user_id="u", match_id="m", rating=bad)
+
+
+def test_a_verdict_keeps_the_section_and_the_note():
+    """The note is the half that matters - 'bad' is not actionable, 'you said I
+    dive in but I was switching to press' is, and that sentence is what the model
+    is shown next time."""
+    from core.storage import report_feedback as rf
+
+    s = _FakeSession()
+    row = rf.record(s, user_id="u", match_id="m", rating=2,
+                    section="defending", note="  you read that backwards  ")
+    assert row.rating == 2
+    assert row.section == "defending"
+    assert row.note == "you read that backwards"      # trimmed
+
+
+def test_praise_without_a_note_is_not_put_in_front_of_the_model():
+    """A bare 5 stars gives the model nothing to act on, and padding the prompt
+    with 'they liked it' spends attention that should go on what to fix."""
+    from core.storage.models import ReportFeedbackRow
+    from core.storage import report_feedback as rf
+
+    rows = [
+        ReportFeedbackRow(id="1", user_id="u", match_id="a", rating=5, section="", note=""),
+        ReportFeedbackRow(id="2", user_id="u", match_id="b", rating=2, section="defending", note=""),
+        ReportFeedbackRow(id="3", user_id="u", match_id="c", rating=5, section="goals",
+                          note="the second goal was not a cutback"),
+    ]
+
+    class _S(_FakeSession):
+        def execute(self, *_a, **_k):
+            class _R:
+                @staticmethod
+                def scalars():
+                    class _X:
+                        @staticmethod
+                        def all():
+                            return rows
+                    return _X()
+            return _R()
+
+    got = rf.recent_complaints(_S(), "u")
+    kept = {c["match_id"] if "match_id" in c else c["section"] for c in got}
+    assert len(got) == 2, "a bare 5-star with no note should be dropped"
+    assert "defending" in kept, "a low rating is a signal even with no note"
+    assert "goals" in kept, "praise WITH a specific correction is still useful"

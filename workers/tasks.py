@@ -77,6 +77,11 @@ def run_match_pipeline(match_id: str) -> dict:
     if identity:
         with session_scope() as session:
             player_history = MatchRepository(session).recurring_issues(identity)
+            # What the player said was WRONG with recent reports. Loaded here
+            # with the rest of their memory so the coach is told what to fix
+            # before it writes, rather than repeating it and being told again.
+            from core.storage import report_feedback as _rf
+            player_history["complaints"] = _rf.recent_complaints(session, identity)
 
     duration_ms = max((f.timestamp_ms for f in frames), default=0)
     adapter = registry.get(match.game_id, match.game_edition)

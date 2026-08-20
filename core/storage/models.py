@@ -17,6 +17,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -146,6 +147,48 @@ class UserRow(Base):
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, onupdate=_now)
+
+
+class ReportFeedbackRow(Base):
+    """What the player thought of one report, and what specifically was wrong.
+
+    Nothing else in the product records whether the coaching was any GOOD. The
+    knowledge base can grow and the prompts can change, but without a verdict
+    there is no way to tell whether any of it helped - so the coach could only
+    get louder, never more correct. This is the signal that closes that loop.
+
+    Deliberately ONE row per report rather than per coaching point: it is filled
+    in after reading, when someone has an opinion about the report as a whole,
+    and a form people actually finish beats a finer-grained one they abandon.
+
+    `section` is which part let them down and `note` is what was wrong with it -
+    that pair is what gets handed back to the model next time. The note is the
+    valuable half: "wrong" is not actionable, "you said I dive in but I was
+    switching to press" is.
+    """
+
+    __tablename__ = "report_feedback"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String(128), index=True)
+    match_id: Mapped[str] = mapped_column(String(32), index=True)
+
+    # 1-5. Coarse on purpose: it is a temperature reading, not a metric.
+    rating: Mapped[int] = mapped_column(Integer, default=0)
+    # Section key as the report renders it ("defending", "practice_plan", ...).
+    # Free-form because the sections come from the ADAPTER - core must not hold a
+    # list of one game's section names.
+    section: Mapped[str] = mapped_column(String(48), default="")
+    note: Mapped[str] = mapped_column(Text, default="")
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now, onupdate=_now)
+
+    __table_args__ = (
+        # One verdict per person per report; changing your mind updates it.
+        UniqueConstraint("user_id", "match_id", name="uq_report_feedback_user_match"),
+    )
 
 
 class CoachLinkRow(Base):
