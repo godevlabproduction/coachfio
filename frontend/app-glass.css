@@ -1,0 +1,889 @@
+/* GLASS SKIN for the game-site app pages. Loaded AFTER app.css, hub.css and
+   hub-dark.css on every page that app-shell.js wraps (body[data-app-page]).
+
+   Two jobs:
+   1. Bridge app.css's tokens onto the hub's theme tokens, so every component
+      app.css already styles (cards, inputs, tables, badges...) follows the
+      light/dark theme and the game palette without being rewritten.
+   2. Turn the surfaces into the liquid-glass material: page-level containers
+      are glass, things INSIDE them are plain translucent fills - glass never
+      stacks on glass. */
+
+body[data-app-page] {
+  --bg: var(--h-bg);
+  --surface-1: var(--h-surface);
+  --surface-2: var(--h-surface-2);
+  --surface-3: var(--h-surface-2);
+  --elevated: var(--h-surface);
+  --input-bg: var(--h-surface);
+  --border: var(--h-line);
+  --border-strong: var(--h-line-2);
+  --border-focus: var(--h-violet);
+  --divider: var(--h-line);
+  --text: var(--h-ink);
+  --text-secondary: var(--h-ink-2);
+  --text-muted: var(--h-ink-3);
+  --text-faint: var(--h-ink-3);
+  --text-disabled: var(--h-ink-3);
+  --accent: var(--h-violet);
+  --accent-hover: var(--h-violet-2);
+  --accent-dark: var(--h-violet-deep);
+  --accent-fg: var(--acc-ink);
+  --accent-soft: var(--h-violet-soft);
+  --accent-line: var(--h-violet-line);
+  --font: var(--h-font);
+  --font-display: var(--h-mono);
+  --ring: 0 0 0 2px var(--h-bg), 0 0 0 4px var(--h-violet);
+  color-scheme: light;
+}
+body[data-app-page].hub--dark { color-scheme: dark; }
+
+/* the old chrome is gone; belt and braces if a page still carries it */
+body[data-app-page] .appbar, body[data-app-page] .tabbar { display: none !important; }
+
+/* ---- layout: the page's main sits in the shell's content column ---------- */
+body[data-app-page] .hub-content > main { display: block; padding: 0 0 24px; }
+body[data-app-page] .container { max-width: none; padding-inline: 0; }
+body[data-app-page] .page { padding-top: 4px; padding-bottom: 24px; }
+body[data-app-page] .page-head { margin-bottom: 18px; }
+body[data-app-page] .t-display, body[data-app-page] .t-section, body[data-app-page] .t-title,
+body[data-app-page] h1, body[data-app-page] h2, body[data-app-page] h3 { font-family: var(--h-mono); letter-spacing: -.02em; }
+
+/* sidebar nav: coach.js adds the role item as a bare .nav__link - same pill */
+body[data-app-page] .hub-side__nav.nav { display: flex; flex-direction: column; gap: 6px; margin: 14px 0 0; padding: 0; height: auto; }
+body[data-app-page] .hub-side__nav .nav__link {
+  display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: calc(var(--r) - 12px);
+  color: var(--h-ink-2); text-decoration: none; font-family: var(--h-mono); font-size: 14px; font-weight: 600;
+  border: 0; background: none; height: auto; line-height: normal;
+  transition: background-color .3s var(--spring), color .2s ease, transform .3s var(--spring);
+}
+body[data-app-page] .hub-side__nav .nav__link:hover { color: var(--h-ink); background: var(--pill-hover); transform: scale(1.02); }
+body[data-app-page] .hub-side__nav .nav__link[aria-current="page"] { color: var(--h-ink); background: var(--pill-on); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+body[data-app-page] .hub-side__nav .nav__link .material-symbols-outlined { font-size: 19px; }
+body[data-app-page] .hub-side__link.nav__link::after { display: none; }
+
+/* ---- glass containers ---------------------------------------------------- */
+body[data-app-page] .card, body[data-app-page] .panel, body[data-app-page] .chat,
+body[data-app-page] .modal, body[data-app-page] .auth, body[data-app-page] .dropzone,
+body[data-app-page] .video-frame, body[data-app-page] .phero, body[data-app-page] .welcome {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  border-radius: calc(var(--r) - 6px);
+}
+body[data-app-page] .video-frame { background: #000; }
+
+/* ---- fills: everything that lives INSIDE a glass container --------------- */
+body[data-app-page] .tile, body[data-app-page] .well, body[data-app-page] .stat,
+body[data-app-page] .facts, body[data-app-page] .match-row, body[data-app-page] .msg,
+body[data-app-page] .kv-list, body[data-app-page] .idcard, body[data-app-page] .pcard,
+body[data-app-page] .stepcard, body[data-app-page] .goal, body[data-app-page] .moment-item,
+body[data-app-page] .client-row, body[data-app-page] .cmatch, body[data-app-page] .focus-card,
+body[data-app-page] .ev, body[data-app-page] .pattern, body[data-app-page] .log,
+body[data-app-page] .skeleton, body[data-app-page] .empty, body[data-app-page] .alert {
+  background: var(--fill-bg); border: 1px solid var(--fill-border); box-shadow: none;
+  border-radius: calc(var(--r) - 14px);
+}
+body[data-app-page] .msg--mine { background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink); }
+body[data-app-page] .table thead, body[data-app-page] .table th { background: var(--fill-bg); }
+body[data-app-page] .table td, body[data-app-page] .table th { border-color: var(--h-line); }
+body[data-app-page] .divider { background: var(--h-line); }
+
+/* ---- controls ------------------------------------------------------------ */
+body[data-app-page] .input, body[data-app-page] .select, body[data-app-page] textarea,
+body[data-app-page] input[type="text"], body[data-app-page] input[type="email"], body[data-app-page] input[type="search"] {
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink); border-radius: 12px;
+}
+body[data-app-page] .input:focus, body[data-app-page] .select:focus, body[data-app-page] textarea:focus { border-color: var(--h-violet); box-shadow: var(--ring); }
+body[data-app-page] .btn { border-radius: 999px; font-family: var(--h-mono); transition: transform .3s var(--spring), background-color .2s ease; }
+body[data-app-page] .btn:hover { transform: scale(1.04); }
+body[data-app-page] .btn:active { transform: scale(.97); }
+body[data-app-page] .btn--primary {
+  background: var(--acc-glass); color: var(--acc-ink); border: 1px solid var(--acc-border);
+  -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+body[data-app-page] .btn--primary:hover { background: var(--acc-glass-hover); }
+body[data-app-page] .btn--secondary, body[data-app-page] .btn--ghost, body[data-app-page] .btn--outline,
+body[data-app-page] .icon-btn { background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink); }
+body[data-app-page] .badge, body[data-app-page] .chip, body[data-app-page] .pill {
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink); border-radius: 999px;
+}
+body[data-app-page] .badge--win { background: color-mix(in oklab, var(--good) 28%, var(--fill-bg)); }
+body[data-app-page] .badge--loss { background: color-mix(in oklab, var(--bad) 28%, var(--fill-bg)); }
+body[data-app-page] .tabs, body[data-app-page] .segmented { background: var(--fill-bg); border: 1px solid var(--fill-border); border-radius: 999px; padding: 4px; }
+body[data-app-page] .link, body[data-app-page] a.link { color: var(--h-violet-2); }
+body[data-app-page] .progress { background: var(--fill-bg); }
+body[data-app-page] .progress > * { background: var(--h-violet); }
+
+/* hub.css's 'a { color: inherit }' wins over app.css .link - put the accent back
+   on the in-content links app.css styles, keep inheritance everywhere else */
+body[data-app-page] .report a:not(.btn), body[data-app-page] .prose a:not(.btn) { color: var(--h-violet-2); }
+
+@media (prefers-reduced-transparency: reduce) {
+  body[data-app-page] .card, body[data-app-page] .panel, body[data-app-page] .chat,
+  body[data-app-page] .modal, body[data-app-page] .auth, body[data-app-page] .dropzone {
+    -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--h-surface);
+  }
+}
+
+/* app.css reserved 240px on the left for its old fixed side bar (the desktop
+   appbar). The glass shell carries its own sidebar inside the flex row, so
+   that reservation is just a hole. Same edges as the game home. */
+body[data-app-page] { padding-left: 0; }
+
+/* ==== polish pass (from the upload-page review; applies to every page) ====
+   Containers are glass, rows are fills, lists are NOT boxes. Padding and
+   radii follow the shell's grid (18px gap, concentric corners). */
+
+/* page head: breathe at the top, align with the sidebar's logo row */
+body[data-app-page] .hub-content > main { padding-top: 6px; }
+body[data-app-page] .page-head { padding: 4px 4px 18px; margin-bottom: 18px; border-bottom: 1px solid var(--h-line); }
+body[data-app-page] .page-head__sub { margin-top: 8px; color: var(--h-ink-2); }
+body[data-app-page] .stack { gap: 18px; }
+
+/* .pcard is a right-column CARD (was wrongly a fill): glass, real padding */
+body[data-app-page] .pcard {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  border-radius: calc(var(--r) - 6px); padding: 20px 22px 22px;
+}
+body[data-app-page] .card { padding: 22px 24px; }
+body[data-app-page] .pcard__title { font-family: var(--h-mono); font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+body[data-app-page] .pcard__sub { color: var(--h-ink-3); margin-top: 4px; }
+
+/* .facts is a LIST, not a box: no frame on the list, each fact is its own row */
+body[data-app-page] .facts { background: none; border: 0; box-shadow: none; padding: 0; gap: 10px; }
+body[data-app-page] .facts--stack { gap: 8px; }
+body[data-app-page] .fact {
+  padding: 10px 12px; gap: 12px; border-radius: 12px; font-size: 13.5px; color: var(--h-ink-2);
+  background: var(--fill-bg); border: 1px solid var(--fill-border);
+}
+body[data-app-page] .fact .material-symbols-outlined {
+  width: 30px; height: 30px; flex: 0 0 30px; border-radius: 9px; display: grid; place-items: center;
+  font-size: 17px; color: var(--h-violet-2); background: var(--acc-glass); border: 1px solid var(--acc-border);
+}
+
+/* dropzone: a dashed FILL inside its card (was glass-on-glass) */
+body[data-app-page] .dropzone {
+  background: var(--fill-bg); border: 1px dashed var(--h-line-2); box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border-radius: calc(var(--r) - 14px); min-height: 240px; padding: 36px 24px;
+  transition: background-color .2s ease, border-color .2s ease;
+}
+body[data-app-page] .dropzone:hover, body[data-app-page] .dropzone:focus-visible { background: var(--pill-hover); border-color: var(--h-violet-line); }
+body[data-app-page] .dropzone__icon {
+  width: 56px; height: 56px; border-radius: 16px; margin-bottom: 14px;
+  background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--h-violet-2);
+}
+body[data-app-page] .dropzone__title { font-family: var(--h-mono); font-weight: 600; }
+body[data-app-page] .dropzone__hint { color: var(--h-ink-3); }
+
+/* match rows: roomier, hover wash, quiet chevron */
+body[data-app-page] .match-row { padding: 12px 14px; gap: 12px; border-radius: 12px; transition: background-color .2s ease, border-color .2s ease; }
+body[data-app-page] .match-row:hover { background: var(--pill-hover); border-color: var(--h-line-2); }
+body[data-app-page] .match-row > .material-symbols-outlined:last-child { color: var(--h-ink-3); }
+
+/* segmented control: a pill track with pill buttons; the pressed one is accent glass */
+body[data-app-page] .segmented { padding: 4px; gap: 4px; border-radius: 999px; background: var(--fill-bg); border: 1px solid var(--fill-border); }
+body[data-app-page] .segmented__btn {
+  height: 34px; padding: 0 16px; border-radius: 999px; border: 1px solid transparent;
+  font-family: var(--h-mono); font-weight: 600; color: var(--h-ink-2);
+  transition: background-color .25s var(--spring), color .2s ease;
+}
+body[data-app-page] .segmented__btn:hover { color: var(--h-ink); background: var(--pill-hover); }
+body[data-app-page] .segmented__btn[aria-pressed="true"] {
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
+}
+
+/* form fields: consistent height + spacing under their labels */
+body[data-app-page] .input, body[data-app-page] .select, body[data-app-page] textarea { padding: 11px 14px; min-height: 44px; }
+body[data-app-page] .field > label, body[data-app-page] .ffield > span:first-child { color: var(--h-ink-2); margin-bottom: 6px; display: block; }
+body[data-app-page] .hint { color: var(--h-ink-3); }
+
+/* numbered step badges in card headers */
+body[data-app-page] .step__dot { background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--acc-ink); }
+
+/* ==== REPORT + remaining pages =============================================
+   Level rule: .section > .card / .panel / .disclosure / .helpbar / .fb are
+   GLASS containers; rows inside them (.goal, .ev, .stat, .well, .kv, .log
+   items, .pattern rows, .catch chips, .prio callouts) are FILLS or hairline
+   rows; icon tiles are small accent-glass squares, never boxes. */
+
+/* un-box things my generic fill rule caught that are NOT boxes */
+body[data-app-page] .log, body[data-app-page] .pattern, body[data-app-page] .points,
+body[data-app-page] .kv-list { background: none; border: 0; box-shadow: none; padding: 0; border-radius: 0; }
+
+/* icon tiles (card heads, feedback, account): 30px accent-glass squares */
+body[data-app-page] .tile {
+  width: 30px; height: 30px; padding: 0; border-radius: 9px; display: grid; place-items: center;
+  background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--h-violet-2); box-shadow: none;
+}
+body[data-app-page] .tile .material-symbols-outlined { font-size: 17px; }
+body[data-app-page] .tile--accent { background: color-mix(in oklab, var(--good) 30%, var(--fill-bg)); color: var(--good); border-color: var(--fill-border); }
+body[data-app-page] .tile--danger { background: color-mix(in oklab, var(--bad) 30%, var(--fill-bg)); color: var(--bad); border-color: var(--fill-border); }
+body[data-app-page] .tile--warn { background: color-mix(in oklab, var(--warn) 30%, var(--fill-bg)); color: var(--warn); border-color: var(--fill-border); }
+body[data-app-page] .tile--info { background: color-mix(in oklab, var(--info) 30%, var(--fill-bg)); color: var(--info); border-color: var(--fill-border); }
+
+/* rhythm: sections sit on the shell's 18px grid, not app.css's 48px */
+body[data-app-page] .section { margin-bottom: 18px; }
+body[data-app-page] .section__head { margin-bottom: 12px; padding: 0 4px; }
+body[data-app-page] .card__head { margin-bottom: 14px; gap: 12px; }
+body[data-app-page] .card__title { font-family: var(--h-mono); font-size: 15px; font-weight: 700; }
+body[data-app-page] .eyebrow { font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .1em; color: var(--h-ink-3); }
+body[data-app-page] .t-section { font-family: var(--h-mono); color: var(--h-ink-3); }
+body[data-app-page] .scoreline__value { font-family: var(--h-mono); color: var(--h-ink); }
+body[data-app-page] .grid { gap: 14px; }
+
+/* goals timeline: rows are fills; conceded goals carry their fix line */
+body[data-app-page] .goal { padding: 14px 16px; gap: 16px; border-radius: 12px; }
+body[data-app-page] .goal__fix { color: var(--h-ink-2); margin-top: 8px; }
+body[data-app-page] .goal__body p { color: var(--h-ink); }
+body[data-app-page] .badge--win { color: var(--good); }
+body[data-app-page] .badge--loss { color: var(--bad); }
+body[data-app-page] .badge--warn { background: color-mix(in oklab, var(--warn) 28%, var(--fill-bg)); color: var(--warn); }
+body[data-app-page] .badge--info { background: color-mix(in oklab, var(--info) 28%, var(--fill-bg)); color: var(--info); }
+
+/* deep-read well inside a goal row: a quieter inset, not a second frame */
+body[data-app-page] .well { background: rgba(0, 0, 0, .12); border-color: var(--fill-border); padding: 12px 14px; border-radius: 10px; }
+body[data-app-page].hub--glass .well { background: rgba(255, 255, 255, .35); }
+
+/* key/value rows + priorities */
+body[data-app-page] .kv { border-bottom-color: var(--h-line); padding: 10px 0; }
+body[data-app-page] .kv dt { color: var(--h-ink-3); }
+body[data-app-page] .kv dd { color: var(--h-ink); }
+body[data-app-page] .prio__n { color: var(--h-violet-2); }
+body[data-app-page] .prio__say {
+  padding: 12px 14px; margin-top: 12px; border-radius: 12px; font-family: var(--h-mono); font-size: 13px;
+  background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--acc-ink);
+}
+body[data-app-page] .focus-card { border-left: 3px solid var(--h-violet); }
+body[data-app-page] .focus-card__text { color: var(--h-ink); }
+
+/* patterns (recurring mistakes) - rows with a meter */
+body[data-app-page] .pattern { padding: 10px 0; border-bottom: 1px solid var(--h-line); }
+body[data-app-page] .pattern:last-child { border-bottom: 0; }
+body[data-app-page] .pattern__label { color: var(--h-ink); }
+body[data-app-page] .pattern__count { font-family: var(--h-mono); color: var(--h-ink-3); }
+body[data-app-page] .pattern__meter { background: var(--fill-bg); border-radius: 99px; height: 6px; overflow: hidden; }
+body[data-app-page] .pattern__fill { background: var(--h-violet); }
+
+/* evidence cards, catch chips, log rows */
+body[data-app-page] .ev { padding: 14px 16px; border-radius: 12px; }
+body[data-app-page] .ev__head { border-bottom-color: var(--h-line); }
+body[data-app-page] .catch { background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink); }
+body[data-app-page] .log__item { border-bottom-color: var(--h-line); padding: 10px 0; }
+body[data-app-page] .log__time { color: var(--h-violet-2); font-family: var(--h-mono); }
+body[data-app-page] .log__text { color: var(--h-ink-2); }
+
+/* disclosures + helpbar: glass containers in their own right */
+body[data-app-page] .disclosure, body[data-app-page] .helpbar {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  border-radius: calc(var(--r) - 6px);
+}
+body[data-app-page] .disclosure > summary { padding: 16px 22px; font-family: var(--h-mono); font-weight: 600; color: var(--h-ink); }
+body[data-app-page] .disclosure__body { padding: 18px 22px 22px; border-top-color: var(--h-line); }
+body[data-app-page] .helpbar { padding: 16px 22px; margin-top: 18px; }
+
+/* feedback card: drop the old pink radial, stars in accent */
+body[data-app-page] .fb { background-image: none; border-color: var(--lq-border); }
+body[data-app-page] .fb-star { color: var(--h-ink-3); }
+body[data-app-page] .fb-star[aria-pressed="true"], body[data-app-page] .fb-star.is-on,
+body[data-app-page] .fb-star:hover { color: var(--h-violet-2); }
+body[data-app-page] .fb__ddbtn, body[data-app-page] .fb__ddpanel { background: var(--fill-bg); border: 1px solid var(--fill-border); border-radius: 12px; }
+
+/* stats page: stat tiles, deltas, the trend chart */
+body[data-app-page] .stat { padding: 16px 18px; border-radius: 14px; }
+body[data-app-page] .stat__label { font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--h-ink-3); }
+body[data-app-page] .stat__value { color: var(--h-ink); }
+body[data-app-page] .stat__delta { color: var(--h-ink-2); }
+body[data-app-page] .dev__axis { stroke: var(--h-line-2); }
+body[data-app-page] .dev__dot { fill: var(--h-violet); }
+body[data-app-page] .dev__tip { background: var(--h-surface-2); border: 1px solid var(--h-line-2); color: var(--h-ink); }
+
+/* filled fields (account, upload) + level/role pickers */
+body[data-app-page] .ffield { background: var(--fill-bg); border: 1px solid var(--fill-border); border-radius: 12px; padding: 10px 14px; }
+body[data-app-page] .ffield:focus-within { border-color: var(--h-violet); box-shadow: var(--ring); }
+body[data-app-page] .ffield__label { color: var(--h-ink-3); font-size: 11.5px; }
+body[data-app-page] .ffield__input { color: var(--h-ink); }
+body[data-app-page] .level-pick__opt, body[data-app-page] .role-pick__opt, body[data-app-page] .lvl {
+  background: var(--fill-bg); border: 1px solid var(--fill-border); border-radius: 12px;
+}
+body[data-app-page] .level-pick__opt[aria-checked="true"], body[data-app-page] .role-pick__opt[aria-checked="true"],
+body[data-app-page] .level-pick__opt.is-on, body[data-app-page] .role-pick__opt.is-on {
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+}
+
+/* profile hero (account), usage ring, client rows (office) */
+body[data-app-page] .phero { padding: 22px 24px; }
+body[data-app-page] .phero__name { font-family: var(--h-mono); color: var(--h-ink); }
+body[data-app-page] .phero__mail, body[data-app-page] .phero__since, body[data-app-page] .phero__id { color: var(--h-ink-3); }
+body[data-app-page] .usage__ring-track { stroke: var(--fill-border); }
+body[data-app-page] .usage__ring-val { stroke: var(--h-violet); }
+body[data-app-page] .client-row { padding: 12px 14px; border-radius: 12px; }
+body[data-app-page] .client-row:hover { background: var(--pill-hover); }
+
+/* moments page: the moment list + viewer chrome */
+body[data-app-page] .moment-item { padding: 12px 14px; border-radius: 12px; }
+body[data-app-page] .moment-item__time { font-family: var(--h-mono); color: var(--h-violet-2); }
+body[data-app-page] .moment-item__note { color: var(--h-ink-2); }
+
+/* chat (locker/office): glass shell, fill bubbles, accent mine */
+body[data-app-page] .chat__head { border-bottom: 1px solid var(--h-line); padding: 14px 18px; }
+body[data-app-page] .chat__composer { border-top: 1px solid var(--h-line); padding: 12px 14px; }
+body[data-app-page] .chat__unread { background: var(--h-violet); color: var(--acc-ink); }
+
+/* empty states + alerts + skeletons: quiet fills */
+body[data-app-page] .empty { padding: 36px 24px; text-align: center; }
+body[data-app-page] .empty__icon { color: var(--h-ink-3); }
+body[data-app-page] .alert--danger { border-color: color-mix(in oklab, var(--bad) 45%, transparent); }
+body[data-app-page] .alert--warn { border-color: color-mix(in oklab, var(--warn) 45%, transparent); }
+body[data-app-page] .skeleton { border: 0; }
+
+/* modal: glass box over a darker backdrop */
+body[data-app-page] .modal__backdrop { background: rgba(4, 10, 22, .55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+body[data-app-page] .modal__box { background: var(--h-surface); border: 1px solid var(--lq-border); border-radius: calc(var(--r) - 6px); box-shadow: var(--lq-shadow); }
+
+/* ==== spacing pass: rows never touch ======================================
+   app.css separated repeated rows with 1px hairlines and 8px stacks. On
+   glass a hairline is invisible, so rows read as one slab. Every list gets a
+   real gap and every row type becomes a spaced fill row. */
+body[data-app-page] .stack-s { gap: 10px; }
+body[data-app-page] .stack { gap: 18px; }
+body[data-app-page] .log, body[data-app-page] .points, body[data-app-page] .kv-list,
+body[data-app-page] .plan, body[data-app-page] .checklist { display: flex; flex-direction: column; gap: 8px; }
+body[data-app-page] .grid { gap: 14px; }
+body[data-app-page] .chip-row, body[data-app-page] .catch-row { gap: 8px; }
+
+/* events / evidence log: fill rows, mono time column */
+body[data-app-page] .log__item {
+  gap: 14px; padding: 10px 14px; border: 1px solid var(--fill-border); border-radius: 10px;
+  background: var(--fill-bg);
+}
+body[data-app-page] .log__item:last-child { border-bottom: 1px solid var(--fill-border); }
+
+/* key/value rows, patterns, steps, checklist items: spaced rows */
+body[data-app-page] .kv { padding: 10px 12px; border: 1px solid var(--fill-border); border-radius: 10px; background: var(--fill-bg); }
+body[data-app-page] .kv + .kv { margin-top: 6px; }
+body[data-app-page] .prio .kv { padding: 10px 12px; }
+body[data-app-page] .pattern { padding: 10px 12px; border: 1px solid var(--fill-border); border-radius: 10px; background: var(--fill-bg); }
+body[data-app-page] .pattern + .pattern { margin-top: 8px; }
+body[data-app-page] .panel .pattern { padding: 10px 12px; }
+body[data-app-page] .step { padding: 10px 12px; border: 1px solid var(--fill-border); border-radius: 10px; background: var(--fill-bg); }
+body[data-app-page] .step + .step { margin-top: 8px; border-top: 1px solid var(--fill-border); }
+body[data-app-page] .checklist__item { margin-bottom: 0; padding: 10px 12px; border: 1px solid var(--fill-border); border-radius: 10px; background: var(--fill-bg); }
+body[data-app-page] .points > li { padding: 10px 12px; border: 1px solid var(--fill-border); border-radius: 10px; background: var(--fill-bg); }
+
+/* row types that may sit in a plain block container: guarantee a gap */
+body[data-app-page] .goal + .goal, body[data-app-page] .ev + .ev,
+body[data-app-page] .match-row + .match-row, body[data-app-page] .moment-item + .moment-item,
+body[data-app-page] .client-row + .client-row, body[data-app-page] .fact + .fact,
+body[data-app-page] .alert + .alert, body[data-app-page] .disclosure + .disclosure { margin-top: 10px; }
+/* ...but not double-spaced inside gap containers */
+body[data-app-page] .stack-s > * + *, body[data-app-page] .stack > * + *, body[data-app-page] .grid > * + *,
+body[data-app-page] .log > * + *, body[data-app-page] .facts > * + * { margin-top: 0; }
+
+/* tables: cells need air on glass too */
+body[data-app-page] .table th, body[data-app-page] .table td { padding: 12px 14px; }
+body[data-app-page] .table tbody tr + tr td { border-top: 1px solid var(--h-line); }
+
+/* cards that follow each other without a stack wrapper */
+body[data-app-page] .section + .section { margin-top: 18px; }
+body[data-app-page] .card + .card, body[data-app-page] .panel + .panel, body[data-app-page] .pcard + .pcard { margin-top: 18px; }
+body[data-app-page] .stack > .card + .card, body[data-app-page] .stack > .panel + .panel,
+body[data-app-page] .stack > .pcard + .pcard { margin-top: 0; }
+
+/* moments page: the list is a flush scroll card with inline 6px padding; the
+   items are buttons in a plain block, so they need their own spacing. */
+body[data-app-page] .card.scroll-y { padding: 10px !important; }
+body[data-app-page] .moment-item { display: flex; width: 100%; text-align: left; cursor: pointer; }
+body[data-app-page] .moment-item + .moment-item { margin-top: 8px; }
+body[data-app-page] .moment-item:hover { background: var(--pill-hover); }
+body[data-app-page] .moment-item.is-active, body[data-app-page] .moment-item[aria-pressed="true"],
+body[data-app-page] .moment-item[aria-current="true"] {
+  background: var(--acc-glass); border-color: var(--acc-border);
+}
+body[data-app-page] .moment-item__kind { color: var(--h-ink); }
+body[data-app-page] .moment-item__time { width: 48px; }
+
+/* ==== calm rows ============================================================
+   Only the SECTION is glass. Rows inside it carry no fill, no border, no
+   shadow - spacing and a faint divider separate them. Overrides the earlier
+   fill-row rules (same specificity, later wins). */
+body[data-app-page] .log__item, body[data-app-page] .kv, body[data-app-page] .prio .kv,
+body[data-app-page] .pattern, body[data-app-page] .panel .pattern, body[data-app-page] .step,
+body[data-app-page] .checklist__item, body[data-app-page] .points > li, body[data-app-page] .goal,
+body[data-app-page] .ev, body[data-app-page] .match-row, body[data-app-page] .moment-item,
+body[data-app-page] .client-row, body[data-app-page] .fact, body[data-app-page] .cmatch,
+body[data-app-page] .idcard, body[data-app-page] .kv-list, body[data-app-page] .log,
+body[data-app-page] .facts, body[data-app-page] .points {
+  background: none; border: 0; box-shadow: none; border-radius: 0;
+}
+/* divider between rows: one faint line, a touch stronger than the hairline so
+   it survives on glass; none after the last row */
+body[data-app-page] .log__item, body[data-app-page] .kv, body[data-app-page] .pattern,
+body[data-app-page] .step, body[data-app-page] .checklist__item, body[data-app-page] .points > li,
+body[data-app-page] .goal, body[data-app-page] .ev, body[data-app-page] .fact {
+  padding: 12px 4px; border-bottom: 1px solid var(--h-line-2);
+}
+body[data-app-page] .log__item:last-child, body[data-app-page] .kv:last-child,
+body[data-app-page] .pattern:last-child, body[data-app-page] .step:last-child,
+body[data-app-page] .checklist__item:last-child, body[data-app-page] .points > li:last-child,
+body[data-app-page] .goal:last-child, body[data-app-page] .ev:last-child,
+body[data-app-page] .fact:last-child { border-bottom: 0; }
+/* lists now separate by dividers, not gaps */
+body[data-app-page] .log, body[data-app-page] .points, body[data-app-page] .kv-list,
+body[data-app-page] .checklist, body[data-app-page] .facts--stack { gap: 0; }
+body[data-app-page] .kv + .kv, body[data-app-page] .pattern + .pattern, body[data-app-page] .step + .step,
+body[data-app-page] .goal + .goal, body[data-app-page] .ev + .ev, body[data-app-page] .fact + .fact,
+body[data-app-page] .stack-s > .goal + .goal, body[data-app-page] .stack-s > .ev + .ev { margin-top: 0; }
+body[data-app-page] .stack-s:has(> .goal), body[data-app-page] .stack-s:has(> .ev) { gap: 0; }
+/* icon tiles on fact rows go quiet too - glyph only */
+body[data-app-page] .fact .material-symbols-outlined { width: auto; height: auto; background: none; border: 0; font-size: 18px; }
+
+/* clickable rows (match list, moments, clients) keep a hover wash only */
+body[data-app-page] .match-row, body[data-app-page] .moment-item, body[data-app-page] .client-row {
+  padding: 10px 10px; border-radius: 10px; margin: 0;
+}
+/* separated rows keep ALL four corners - the earlier square-top variant was
+   for a joined list and read as a rendering fault once the rows had a gap */
+body[data-app-page] .match-row + .match-row, body[data-app-page] .moment-item + .moment-item,
+body[data-app-page] .client-row + .client-row { margin-top: 4px; border-top: 0; border-radius: 10px; }
+body[data-app-page] .match-row:hover, body[data-app-page] .moment-item:hover,
+body[data-app-page] .client-row:hover { background: var(--pill-hover); }
+body[data-app-page] .moment-item.is-active, body[data-app-page] .moment-item[aria-pressed="true"] { background: var(--acc-glass); border-radius: 10px; }
+
+/* the "deep read" inset stays a quiet tint, without a frame */
+body[data-app-page] .well { border: 0; background: rgba(0, 0, 0, .10); }
+body[data-app-page].hub--glass .well { background: rgba(255, 255, 255, .3); }
+
+/* stat tiles live directly in a grid (no section around them): they ARE the
+   sections there, so they get the glass */
+body[data-app-page] .stat {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  border-radius: calc(var(--r) - 6px);
+}
+
+/* ==== symmetry: side-by-side sections share a height ====================== */
+body[data-app-page] .grid, body[data-app-page] .grid-2, body[data-app-page] .grid-3,
+body[data-app-page] .grid-4, body[data-app-page] .grid-fill, body[data-app-page] .split { align-items: stretch; }
+body[data-app-page] .grid > .card, body[data-app-page] .grid > .panel, body[data-app-page] .grid > .pcard,
+body[data-app-page] .split > .card, body[data-app-page] .split > .panel { display: flex; flex-direction: column; height: 100%; }
+
+/* ==== grid siblings never get the stacked-card margin ===================== */
+body[data-app-page] .grid > .card + .card, body[data-app-page] .grid > .panel + .panel,
+body[data-app-page] .grid > .pcard + .pcard, body[data-app-page] .grid > * + * { margin-top: 0; }
+body[data-app-page] .grid > .card { align-self: stretch; }
+
+/* ==== event log entries: each one is glass ================================
+   These are big blocks of text (time + what happened), not list rows - a
+   glass tile each reads well and gives them air. Lighter recipe than a
+   section (no lift shadow, no extra blur - the section already blurs). */
+body[data-app-page] .log { gap: 10px; }
+body[data-app-page] .log__item, body[data-app-page] .goal {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); border-radius: 12px;
+  padding: 14px 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+body[data-app-page] .log__item:last-child, body[data-app-page] .goal:last-child { border-bottom: 1px solid var(--lq-border); }
+body[data-app-page] .stack-s:has(> .goal) { gap: 10px; }
+body[data-app-page] .goal + .goal { margin-top: 0; }
+body[data-app-page] .log__time { min-width: 52px; }
+
+/* ==== "Event log" = the Key moments block: .ev entries are glass tiles too == */
+body[data-app-page] .ev {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); border-radius: 12px;
+  padding: 14px 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+body[data-app-page] .ev:last-child { border-bottom: 1px solid var(--lq-border); }
+body[data-app-page] .ev + .ev { margin-top: 10px; }
+body[data-app-page] .stack-s:has(> .ev), body[data-app-page] .grid:has(> .ev) { gap: 10px; }
+body[data-app-page] .stack-s > .ev + .ev, body[data-app-page] .grid > .ev + .ev { margin-top: 0; }
+body[data-app-page] .ev__head { border-bottom: 1px solid var(--h-line-2); padding-bottom: 10px; margin-bottom: 10px; }
+body[data-app-page] .ev__body { color: var(--h-ink-2); }
+
+/* links coach.js creates on a role swap arrive as bare .nav__link: give them
+   the exact hub-side__link look so they are indistinguishable */
+body[data-app-page] .hub-side__link[aria-current="page"] { color: var(--h-ink); background: var(--pill-on); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+
+/* ==== form rhythm: controls never touch ===================================
+   .pcard is a flex COLUMN with no gap in app.css, so its fields - and the
+   footer holding "Save changes" - stacked flush against each other. Gapping
+   the container fixes the whole card at once instead of patching one edge. */
+body[data-app-page] .pcard { gap: 14px; }
+body[data-app-page] .pcard > .pcard__head { margin-bottom: 0; }
+body[data-app-page] .pcard__foot { padding-top: 4px; margin-top: auto; }
+
+/* Safety net so this cannot come back: adjacent form controls, and anything
+   directly before a footer or a button strip, keep air - but ONLY inside a
+   container that does not already space its own children. Scoping with
+   :not() instead of a later "reset" rule is deliberate: the reset lost the
+   specificity race against `.field + .field` and pushed the second field of
+   a two-column survey 14px down, so the two dropdowns stopped lining up. */
+body[data-app-page]
+  :not(.pcard, .stack, .stack-s, .grid, .grid-2, .grid-3, .grid-4, .grid-fill,
+       .form-strip, .auth__grid, .facts, .split, .row, .chip-row, .catch-row)
+  > :is(.ffield, .field, .input, .select) + :is(.ffield, .field, .btn, .hint, .pcard__foot, .form-strip) {
+  margin-top: 14px;
+}
+/* the footer of a form card always clears the control above it, gap or not */
+body[data-app-page] .pcard__foot { margin-top: auto; }
+
+/* One source of spacing, everywhere: a container with a gap never also gets
+   sibling margins. Highest specificity of the three, so it always wins. */
+body[data-app-page]
+  :is(.pcard, .stack, .stack-s, .grid, .grid-2, .grid-3, .grid-4, .grid-fill,
+      .form-strip, .auth__grid, .facts, .split)
+  > :is(.ffield, .field, .btn, .hint, .card, .panel, .pcard, .stat, .goal, .ev, .fact) + * {
+  margin-top: 0;
+}
+
+/* ==== usage + progress: real padding ====================================== */
+body[data-app-page] .usage {
+  padding: 18px 20px; gap: 20px; border-radius: 14px;
+  background: var(--fill-bg); border: 1px solid var(--fill-border);
+}
+body[data-app-page] .usage__big { color: var(--h-violet-2); }
+body[data-app-page] .usage__rest { display: flex; flex-direction: column; gap: 6px; }
+body[data-app-page] .usage__pct { color: var(--h-ink); }
+body[data-app-page] .usage + * { margin-top: 16px; }
+
+/* progress meters get a track with room around them */
+body[data-app-page] .progress { height: 6px; background: var(--fill-bg); border: 1px solid var(--fill-border); }
+body[data-app-page] .progress__bar { background: var(--h-violet); }
+body[data-app-page] * + .progress { margin-top: 10px; }
+body[data-app-page] .progress + * { margin-top: 10px; }
+
+/* locker progress checklist rows: padded rows, faint divider, no cramping */
+body[data-app-page] .check--row { padding: 12px 4px; border-bottom: 1px solid var(--h-line-2); }
+body[data-app-page] .check--row:last-child { border-bottom: 0; }
+body[data-app-page] .check input { accent-color: var(--h-violet); }
+
+/* Side-by-side form fields line up: equal label line-box so a one-line and a
+   two-line label cannot leave their controls at different heights. */
+body[data-app-page] .grid > .field, body[data-app-page] .auth__grid > .field { display: flex; flex-direction: column; gap: 6px; }
+body[data-app-page] .field__label { min-height: 17px; display: block; }
+body[data-app-page] .grid > .field > .select, body[data-app-page] .grid > .field > .input { margin-top: 0; }
+
+/* ==== Find a coach / your coaches list ====================================
+   A row is: avatar · name + one line about them · status or price · chevron.
+   The row is the target, so it needs a real hit area and a clear hover; the
+   badge must not drift into the chevron, and the note under the list is a
+   footnote, not body copy. */
+body[data-app-page] .client-row {
+  gap: 14px; padding: 12px 14px; border-radius: 12px;
+  transition: background-color .2s ease, transform .25s var(--spring);
+}
+body[data-app-page] .client-row:hover { background: var(--pill-hover); }
+@media (pointer: fine) { body[data-app-page] .client-row:hover { transform: translateX(2px); } }
+body[data-app-page] .client-row__main { gap: 3px; }
+body[data-app-page] .client-row__main strong { font-family: var(--h-mono); font-size: 14.5px; color: var(--h-ink); }
+body[data-app-page] .client-row__main .faint { color: var(--h-ink-3); }
+body[data-app-page] .client-row .badge { flex: none; margin-left: auto; }
+body[data-app-page] .client-row .badge + .material-symbols-outlined { margin-left: 0; }
+body[data-app-page] .client-row > .material-symbols-outlined:last-child { color: var(--h-ink-3); flex: none; margin-left: auto; }
+body[data-app-page] .client-row .badge ~ .material-symbols-outlined:last-child { margin-left: 0; }
+
+/* avatars: circular, quiet ring, never squashed by a long name */
+body[data-app-page] .avatar { flex: none; background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink-2); }
+body[data-app-page] .avatar--img { background: var(--fill-bg); border-color: var(--fill-border); }
+
+/* status badges in this list */
+body[data-app-page] .badge--neutral { background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink-2); }
+
+/* the "they have to accept" footnote */
+body[data-app-page] .client-row + .faint, body[data-app-page] .stack-s + .faint { display: block; margin-top: 14px; color: var(--h-ink-3); line-height: 1.6; max-width: 68ch; }
+
+/* empty state: dashed fill with room, icon in a soft tile */
+body[data-app-page] .empty { border: 1px dashed var(--h-line-2); border-radius: calc(var(--r) - 10px); padding: 40px 28px; gap: 8px; }
+body[data-app-page] .empty__icon {
+  width: 44px; height: 44px; border-radius: 14px; margin-bottom: 10px;
+  background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--h-violet-2);
+}
+body[data-app-page] .empty__icon .material-symbols-outlined { font-size: 22px; }
+body[data-app-page] .empty__title { font-family: var(--h-mono); font-size: 15px; color: var(--h-ink); }
+body[data-app-page] .empty__text { color: var(--h-ink-2); }
+body[data-app-page] .empty__actions { margin-top: 16px; }
+
+/* ==== upload page: step cards, split rhythm ===============================
+   .stepcard was never in the glass container list, so the two steps rendered
+   as flat solid boxes next to glass panels on the same screen. */
+body[data-app-page] .stepcard {
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  border-radius: calc(var(--r) - 6px); padding: 22px 24px 24px;
+}
+body[data-app-page] .stepcard + .stepcard { margin-top: 0; }   /* .stack gaps them */
+body[data-app-page] .stepcard__head {
+  gap: 14px; padding-bottom: 16px; margin-bottom: 18px; border-bottom: 1px solid var(--h-line-2);
+}
+body[data-app-page] .stepcard__title { font-family: var(--h-mono); font-size: 15.5px; font-weight: 700; }
+body[data-app-page] .stepcard__n {
+  width: 30px; height: 30px; font-family: var(--h-mono);
+  background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--acc-ink);
+}
+body[data-app-page] .stepcard__note { font-family: var(--h-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--h-ink-3); }
+
+/* the two columns sit on the shell's 18px grid, not app.css's 32px */
+body[data-app-page] .split { gap: 18px; }
+body[data-app-page] .split--panel, body[data-app-page] .split--even { gap: 18px; }
+
+/* separators between question groups need room on both sides */
+body[data-app-page] hr.divider { margin: 6px 0; background: var(--h-line-2); }
+body[data-app-page] .stack-s > hr.divider { margin: 2px 0; }
+
+/* dropzone internals: title, hint and the browse button breathe */
+body[data-app-page] .dropzone__title { margin-bottom: 2px; }
+body[data-app-page] .dropzone .progress { max-width: 340px; }
+
+/* error slot only takes space once it has something to say */
+body[data-app-page] [data-cx-error]:not([hidden]) { margin-top: 16px; display: block; }
+
+/* right column cards: the head row and the list below it are gapped by .pcard */
+body[data-app-page] .pcard > .row-between { margin-bottom: 0; }
+body[data-app-page] .pcard .link { flex: none; }
+
+/* recent-match skeletons match the row height they stand in for */
+body[data-app-page] .skeleton { border-radius: 10px; }
+
+/* ==== dropdowns (app-shell.js upgrades every <select>) ====================
+   The native element stays for state and forms; this is the visible control.
+   It says "I open" before you touch it, and its list is drawn by the page, so
+   it matches the theme instead of the operating system. */
+body[data-app-page] .cx-sel { position: relative; display: block; }
+body[data-app-page] .cx-sel > select {
+  position: absolute; opacity: 0; pointer-events: none; width: 100%; height: 100%; inset: 0; margin: 0;
+}
+body[data-app-page] .cx-sel__btn {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px;
+  padding: 11px 12px 11px 14px; border-radius: 12px; cursor: pointer;
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink);
+  font: inherit; font-size: 14px; text-align: left;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+body[data-app-page] .cx-sel__btn:hover { border-color: var(--h-line-2); background: var(--pill-hover); }
+body[data-app-page] .cx-sel__btn:focus-visible { outline: none; border-color: var(--h-violet); box-shadow: var(--ring); }
+body[data-app-page] .cx-sel__val { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* the affordance: a chevron that turns when the list is open */
+body[data-app-page] .cx-sel__btn .material-symbols-outlined {
+  font-size: 20px; color: var(--h-ink-3); flex: none; transition: transform .25s var(--spring), color .2s ease;
+}
+body[data-app-page] .cx-sel__btn[aria-expanded="true"] { border-color: var(--h-violet); }
+body[data-app-page] .cx-sel__btn[aria-expanded="true"] .material-symbols-outlined { transform: rotate(180deg); color: var(--h-violet-2); }
+/* inside a filled field the frame already exists - only the chevron and value show */
+body[data-app-page] .cx-sel--bare .cx-sel__btn { background: none; border: 0; padding: 0; min-height: 0; font-size: 15px; }
+body[data-app-page] .cx-sel--bare .cx-sel__btn:hover { background: none; }
+body[data-app-page] .ffield .cx-sel__btn .material-symbols-outlined { margin-right: -2px; }
+body[data-app-page] .ffield__chev { display: none; }   /* the control brings its own */
+
+/* the list: the page's own material, never the OS popup */
+/* parked on <body> and positioned in viewport coordinates by the script, so no
+   card's stacking context can trap it. Same liquid-glass material as the panels
+   it opens over - just denser, because a list you are reading has to stay
+   readable whatever passes behind it. */
+.cx-sel__panel {
+  position: fixed; z-index: 900; overflow-y: auto; padding: 7px; border-radius: 16px;
+  background: color-mix(in oklab, var(--h-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(30px) saturate(190%); backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid var(--lq-border);
+  box-shadow: 0 26px 60px rgba(2, 8, 22, .5), inset 0 1px 0 rgba(220, 235, 255, .3),
+              inset 0 -1px 0 rgba(220, 235, 255, .06),
+              inset 1px 0 0 rgba(220, 235, 255, .09), inset -1px 0 0 rgba(220, 235, 255, .09);
+  animation: cx-sel-in .16s var(--spring) both;
+  scrollbar-width: thin; scrollbar-color: var(--h-line-2) transparent;
+}
+body.hub--glass .cx-sel__panel {
+  background: color-mix(in oklab, var(--h-surface) 82%, transparent);
+  box-shadow: 0 26px 60px rgba(24, 44, 86, .2), inset 0 1px 0 rgba(255, 255, 255, .9),
+              inset 1px 0 0 rgba(255, 255, 255, .5), inset -1px 0 0 rgba(255, 255, 255, .5);
+}
+.cx-sel__panel::-webkit-scrollbar { width: 8px; }
+.cx-sel__panel::-webkit-scrollbar-thumb { background: var(--h-line-2); border-radius: 99px; border: 2px solid transparent; background-clip: content-box; }
+.cx-sel__panel::-webkit-scrollbar-track { background: transparent; }
+@media (prefers-reduced-transparency: reduce) {
+  .cx-sel__panel { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--h-surface); }
+}
+@keyframes cx-sel-in { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+body[data-app-page] .cx-sel__opt {
+  display: flex; align-items: flex-start; gap: 9px; width: 100%; padding: 9px 11px;
+  border: 0; border-radius: 10px; background: none; cursor: pointer; text-align: left;
+  font: inherit; color: var(--h-ink-2); transition: background-color .15s ease, color .15s ease;
+}
+body[data-app-page] .cx-sel__opt:hover, body[data-app-page] .cx-sel__opt:focus-visible {
+  outline: none; background: var(--pill-hover); color: var(--h-ink);
+}
+body[data-app-page] .cx-sel__opt.is-on { background: var(--acc-glass); color: var(--acc-ink); }
+body[data-app-page] .cx-sel__opt[disabled] { opacity: .45; cursor: not-allowed; }
+body[data-app-page] .cx-sel__tick { width: 18px; flex: none; display: grid; place-items: center; padding-top: 1px; }
+body[data-app-page] .cx-sel__tick .material-symbols-outlined { font-size: 17px; opacity: 0; transition: opacity .15s ease; }
+body[data-app-page] .cx-sel__opt.is-on .cx-sel__tick .material-symbols-outlined { opacity: 1; }
+body[data-app-page] .cx-sel__txt { min-width: 0; }
+body[data-app-page] .cx-sel__txt b { display: block; font-size: 13.5px; font-weight: 600; }
+body[data-app-page] .cx-sel__txt span { display: block; font-size: 12px; line-height: 1.45; color: var(--h-ink-3); margin-top: 2px; }
+body[data-app-page] .cx-sel__opt.is-on .cx-sel__txt span { color: inherit; opacity: .75; }
+@media (prefers-reduced-motion: reduce) {
+  body[data-app-page] .cx-sel__panel { animation: none; }
+  body[data-app-page] .cx-sel__btn .material-symbols-outlined { transition: none; }
+}
+
+
+/* the panel sits outside the page's markup now: keep its internals styled
+   whether or not the ancestor selector still matches */
+.cx-sel__opt { display: flex; align-items: flex-start; gap: 9px; width: 100%; padding: 9px 11px;
+  border: 0; border-radius: 10px; background: none; cursor: pointer; text-align: left;
+  font: inherit; font-size: 14px; color: var(--h-ink-2); transition: background-color .15s ease, color .15s ease; }
+.cx-sel__opt:hover, .cx-sel__opt:focus-visible { outline: none; background: var(--pill-hover); color: var(--h-ink); }
+.cx-sel__opt.is-on {
+  background: var(--acc-glass); color: var(--acc-ink);
+  border: 1px solid var(--acc-border); padding: 8px 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+.cx-sel__opt.is-on .cx-sel__tick .material-symbols-outlined { color: var(--acc-ink); }
+.cx-sel__tick { width: 17px; flex: none; display: grid; place-items: center; padding-top: 1px; }
+.cx-sel__tick .material-symbols-outlined { font-size: 16px; opacity: 0; }
+.cx-sel__opt.is-on .cx-sel__tick .material-symbols-outlined { opacity: 1; }
+.cx-sel__txt { min-width: 0; }
+.cx-sel__txt b { display: block; font-size: 13.5px; font-weight: 600; }
+.cx-sel__txt span { display: block; font-size: 12px; line-height: 1.45; color: var(--h-ink-3); margin-top: 2px; }
+.cx-sel__opt.is-on .cx-sel__txt span { color: inherit; opacity: .78; }
+
+/* A filled field IS the frame: the control inside it must stay bare, or the
+   glass renders twice - a box inside a box (the email row showed this). */
+body[data-app-page] .ffield .input,
+body[data-app-page] .ffield .select,
+body[data-app-page] .ffield .ffield__input,
+body[data-app-page] .ffield input,
+body[data-app-page] .ffield select,
+body[data-app-page] .ffield textarea {
+  background: none; border: 0; border-radius: 0; padding: 0; min-height: 0;
+  box-shadow: none; width: 100%; color: var(--h-ink);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+body[data-app-page] .ffield input:focus, body[data-app-page] .ffield select:focus,
+body[data-app-page] .ffield textarea:focus, body[data-app-page] .ffield .input:focus {
+  outline: none; box-shadow: none; border: 0;
+}
+/* the field itself carries the focus ring instead */
+body[data-app-page] .ffield:focus-within { border-color: var(--h-violet); box-shadow: var(--ring); }
+
+/* ==== "Need help?" bar ====================================================
+   Was: a bare glyph jammed against the title, both paragraphs with no rhythm,
+   and the action hanging off the far edge. It is a row of three things - mark,
+   message, action - so give each one its own space and align them properly. */
+body[data-app-page] .helpbar {
+  display: flex; align-items: center; gap: 16px; padding: 18px 20px; margin-top: 18px;
+  border-radius: calc(var(--r) - 6px);
+}
+body[data-app-page] .helpbar__icon {
+  width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px;
+  background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--h-violet-2);
+}
+body[data-app-page] .helpbar__icon .material-symbols-outlined { font-size: 20px; }
+/* the message block (unclassed in the markup) */
+body[data-app-page] .helpbar > div:not(.helpbar__actions) { min-width: 0; flex: 1 1 260px; }
+body[data-app-page] .helpbar > div:not(.helpbar__actions) > p:first-child {
+  font-family: var(--h-mono); font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--h-ink);
+}
+body[data-app-page] .helpbar > div:not(.helpbar__actions) > p + p {
+  margin-top: 4px; font-size: 13px; line-height: 1.55; color: var(--h-ink-2); max-width: 60ch;
+}
+body[data-app-page] .helpbar__actions { margin-left: auto; flex: none; }
+body[data-app-page] .helpbar__actions .btn { white-space: nowrap; }
+@media (max-width: 620px) {
+  body[data-app-page] .helpbar { align-items: flex-start; }
+  body[data-app-page] .helpbar__actions { margin: 4px 0 0 56px; width: 100%; }
+}
+
+/* ==== signed-out pages (game-host sign in) ===============================
+   No shell: the card is the whole page, centred on the animated field. */
+body[data-auth-page] .hub-side, body[data-auth-page] .hub-rail { display: none; }
+body[data-auth-page] .auth {
+  /* max-width, not width: the sign-up card adds .auth--wide to grow, and a
+     fixed width here pinned it to the sign-in size no matter what. */
+  width: 100%; max-width: 460px; margin: 0 auto; padding: clamp(40px,8vh,80px) 20px;
+  background: none; border: 0; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+body[data-auth-page] .hub-logo { display: flex; align-items: center; gap: 10px; font-family: var(--h-mono);
+  font-size: 17px; font-weight: 700; color: var(--h-ink); text-decoration: none; }
+body[data-auth-page] .hub-logo__mark { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; }
+body[data-auth-page] .auth > [data-cx-auth] > .card,
+body[data-auth-page] .auth .card { padding: 26px 26px 28px; border-radius: calc(var(--r) - 4px); }
+body[data-auth-page] .auth__title { font-family: var(--h-mono); font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+body[data-auth-page] .auth__sub { color: var(--h-ink-2); margin-top: 6px; }
+body[data-auth-page] .auth__switch { margin-top: 18px; font-size: 13.5px; color: var(--h-ink-3); text-align: center; }
+body[data-auth-page] .auth__switch a, body[data-auth-page] .auth__switch button { color: var(--h-violet-2); }
+
+/* ==== create account =====================================================
+   The sign-up card carries four different pickers (role, name/email, survey,
+   level) and they were all inheriting the old flat chrome at different sizes.
+   Give them ONE vocabulary: a selectable tile is a fill row that becomes
+   accent glass when chosen, and the column rhythm matches the rest of the app. */
+body[data-auth-page] .auth--wide { max-width: 900px; }
+@media (max-width: 940px) { body[data-auth-page] .auth--wide { max-width: 560px; } }
+body[data-auth-page] .auth--wide .card { padding: 30px 32px 32px; }
+body[data-auth-page] .auth__grid { gap: 26px; }
+body[data-auth-page] .auth__sub { font-size: 14px; line-height: 1.6; max-width: 60ch; }
+
+/* section labels above each picker */
+body[data-auth-page] .field__label {
+  font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--h-ink-3); margin-bottom: 10px; display: block;
+}
+
+/* role + level tiles: one component, two sizes */
+body[data-auth-page] .role-pick { gap: 12px; margin-bottom: 24px; }
+body[data-auth-page] .level-pick--row { gap: 10px; }
+body[data-auth-page] .role-pick__opt,
+body[data-auth-page] .level-pick__opt {
+  display: flex; align-items: flex-start; gap: 12px; padding: 15px 16px; text-align: left;
+  background: var(--fill-bg); border: 1px solid var(--fill-border); border-radius: 14px;
+  color: var(--h-ink); cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease, transform .25s var(--spring);
+}
+body[data-auth-page] .role-pick__opt:hover,
+body[data-auth-page] .level-pick__opt:hover { background: var(--pill-hover); border-color: var(--h-line-2); }
+@media (pointer: fine) {
+  body[data-auth-page] .role-pick__opt:hover, body[data-auth-page] .level-pick__opt:hover { transform: translateY(-2px); }
+}
+body[data-auth-page] .role-pick__opt[aria-pressed="true"],
+body[data-auth-page] .level-pick__opt[aria-pressed="true"] {
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+/* role tile: the icon becomes a tile of its own */
+body[data-auth-page] .role-pick__opt > .material-symbols-outlined {
+  width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center;
+  font-size: 19px; background: var(--acc-glass); border: 1px solid var(--acc-border); color: var(--h-violet-2);
+}
+body[data-auth-page] .role-pick__opt[aria-pressed="true"] > .material-symbols-outlined {
+  background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .3); color: inherit;
+}
+body[data-auth-page] .role-pick__opt strong { font-family: var(--h-mono); font-size: 14px; display: block; margin-bottom: 3px; }
+body[data-auth-page] .level-pick__name { font-family: var(--h-mono); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+body[data-auth-page] .level-pick__blurb { font-size: 12.5px; line-height: 1.5; color: var(--h-ink-3); }
+body[data-auth-page] [aria-pressed="true"] .level-pick__blurb { color: inherit; opacity: .8; }
+/* the radio dot, in the theme */
+body[data-auth-page] .level-pick__dot {
+  width: 17px; height: 17px; margin-top: 2px; border: 1.5px solid var(--h-line-2); background: none;
+}
+body[data-auth-page] .level-pick__opt[aria-pressed="true"] .level-pick__dot {
+  border-color: currentColor; background: currentColor;
+  box-shadow: inset 0 0 0 3.5px var(--h-surface);
+}
+body[data-auth-page] .badge--win { background: color-mix(in oklab, var(--good) 26%, transparent); color: var(--good); border: 0; }
+
+/* submit + switcher */
+body[data-auth-page] .btn--block { justify-content: center; width: 100%; }
+body[data-auth-page] .btn--lg { padding: 15px 24px; font-size: 15px; }
+body[data-auth-page] .auth__switch button.link { background: none; border: 0; cursor: pointer; font: inherit;
+  color: var(--h-violet-2); font-weight: 600; }
+
+/* the sign-up grid pairs its columns row by row; the key note spans both */
+body[data-auth-page] .auth__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 26px; align-items: start; }
+body[data-auth-page] .auth__span { grid-column: 1 / -1; margin: 0; }
+body[data-auth-page] .auth__spacer { display: none; }
+@media (max-width: 940px) {
+  body[data-auth-page] .auth__grid { grid-template-columns: minmax(0, 1fr); }
+}

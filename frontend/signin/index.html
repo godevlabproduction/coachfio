@@ -6,16 +6,32 @@
 <title>Coachfio - Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <link rel="stylesheet" href="/app.css">
+<link rel="stylesheet" href="/hub.css">
+<link rel="stylesheet" href="/hub-dark.css">
+<link rel="stylesheet" href="/palettes.css">
+<link rel="stylesheet" href="/app-glass.css">
 </head>
-<body>
-<!-- No app nav here on purpose: signed out, there is nowhere else to go. -->
+<!-- Signed-out page on a GAME host: same material and palette as the app it
+     leads into, but no shell - there is nowhere else to go until you are in. -->
+<body class="hub hub--glass" data-hub-page="hub" data-app-page data-auth-page>
+<script>
+/* Saved theme (and ?theme=) before first paint, so arriving here from a dark
+   app does not flash white. */
+try {
+  var q = new URLSearchParams(location.search).get("theme");
+  if (q === "dark" || q === "light") localStorage.setItem("coachio.hubTheme", q);
+  if (localStorage.getItem("coachio.hubTheme") === "dark") {
+    document.body.classList.remove("hub--glass"); document.body.classList.add("hub--dark");
+  }
+} catch (e) {}
+</script>
+<div class="hub-sky" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main id="main" class="auth">
-  <a class="brand" href="/" style="justify-content:center;margin-bottom:28px">
-    <span class="brand__mark"><span class="material-symbols-outlined filled">sports_soccer</span></span>
-    Coachfio
+  <a class="hub-logo" href="/" style="justify-content:center;margin-bottom:26px">
+    <span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio
   </a>
   <div data-cx-auth>
     <div class="card">
@@ -24,6 +40,7 @@
     </div>
   </div>
 </main>
+<script src="/cx-select.js"></script>
 <script src="/coach.js"></script>
 </body>
 </html>

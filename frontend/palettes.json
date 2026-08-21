@@ -1,0 +1,106 @@
+{
+  "cs2": [
+    {
+      "key": "cs2:key-art",
+      "name": "Key art",
+      "swatch": [
+        "#75470F",
+        "#E98E21",
+        "#335CFF"
+      ],
+      "accent": "#EA952F"
+    },
+    {
+      "key": "cs2:vivid",
+      "name": "Vivid",
+      "swatch": [
+        "#AD5F00",
+        "#FF9E29",
+        "#D9AE78"
+      ],
+      "accent": "#FFA233"
+    },
+    {
+      "key": "cs2:deep",
+      "name": "Deep",
+      "swatch": [
+        "#482C0A",
+        "#9E5D10",
+        "#001D8F"
+      ],
+      "accent": "#EB850A"
+    },
+    {
+      "key": "cs2:duotone",
+      "name": "Duotone",
+      "swatch": [
+        "#8B520E",
+        "#002FEB",
+        "#F69D32"
+      ],
+      "accent": "#1F4BFF"
+    },
+    {
+      "key": "cs2:muted",
+      "name": "Muted",
+      "swatch": [
+        "#53483C",
+        "#606780",
+        "#A19687"
+      ],
+      "accent": "#BE9360"
+    }
+  ],
+  "ea-fc": [
+    {
+      "key": "ea-fc:key-art",
+      "name": "Key art",
+      "swatch": [
+        "#4E3E37",
+        "#A07A69",
+        "#CCCC66"
+      ],
+      "accent": "#C07859"
+    },
+    {
+      "key": "ea-fc:vivid",
+      "name": "Vivid",
+      "swatch": [
+        "#80472D",
+        "#D27C56",
+        "#E9E967"
+      ],
+      "accent": "#D4825E"
+    },
+    {
+      "key": "ea-fc:deep",
+      "name": "Deep",
+      "swatch": [
+        "#302622",
+        "#6A4F43",
+        "#6B6B24"
+      ],
+      "accent": "#A26B53"
+    },
+    {
+      "key": "ea-fc:duotone",
+      "name": "Duotone",
+      "swatch": [
+        "#5E463B",
+        "#BCBC2F",
+        "#B78671"
+      ],
+      "accent": "#DDDD40"
+    },
+    {
+      "key": "ea-fc:muted",
+      "name": "Muted",
+      "swatch": [
+        "#53433C",
+        "#808060",
+        "#A1A187"
+      ],
+      "accent": "#BE7D60"
+    }
+  ]
+}

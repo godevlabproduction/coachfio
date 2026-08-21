@@ -9,30 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <link rel="stylesheet" href="/app.css">
+<link rel="stylesheet" href="/hub.css">
+<link rel="stylesheet" href="/hub-dark.css">
+<link rel="stylesheet" href="/palettes.css">
+<link rel="stylesheet" href="/app-glass.css">
 </head>
-<body>
+<body class="hub hub--glass" data-hub-page="hub" data-game-id="ea-fc" data-app-page>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="appbar">
-  <div class="appbar__inner">
-    <a class="brand" href="/">
-      <span class="brand__mark"><span class="material-symbols-outlined filled">sports_soccer</span></span>
-      Coachfio
-    </a>
-    <nav class="nav" aria-label="Primary">
-      <a class="nav__link" href="/upload/" data-nav="/upload/"><span class="material-symbols-outlined">upload</span>Upload</a>
-      <a class="nav__link" href="/report/" data-nav="/report/"><span class="material-symbols-outlined">analytics</span>Report</a>
-      <a class="nav__link" href="/moment/" data-nav="/moment/"><span class="material-symbols-outlined">play_circle</span>Moments</a>
-      <a class="nav__link" href="/statistics/" data-nav="/statistics/"><span class="material-symbols-outlined">trending_up</span>Statistics</a>
-    </nav>
-    <div class="appbar__end">
-      <a class="btn btn--primary btn--sm" href="/upload/">
-        <span class="material-symbols-outlined">add</span>New analysis
-      </a>
-      <a class="nav__link" href="/account/" data-nav="/account/"><span class="material-symbols-outlined">person</span>Account</a>
-    </div>
-  </div>
-</header>
 
 <!-- coach.js renders the moment viewer into this element. -->
 <main id="main" class="container page">
@@ -42,14 +26,9 @@
   </div>
 </main>
 
-<nav class="tabbar" aria-label="Primary">
-  <a class="tabbar__item" href="/upload/" data-nav="/upload/"><span class="material-symbols-outlined">upload</span>Upload</a>
-  <a class="tabbar__item" href="/report/" data-nav="/report/"><span class="material-symbols-outlined">analytics</span>Report</a>
-  <a class="tabbar__item" href="/moment/" data-nav="/moment/"><span class="material-symbols-outlined">play_circle</span>Moments</a>
-  <a class="tabbar__item" href="/statistics/" data-nav="/statistics/"><span class="material-symbols-outlined">trending_up</span>Statistics</a>
-  <a class="tabbar__item" href="/account/" data-nav="/account/"><span class="material-symbols-outlined">person</span>Account</a>
-</nav>
 
+<script src="/app-shell.js"></script>
+<script src="/cx-select.js"></script>
 <script src="/coach.js"></script>
 </body>
 </html>

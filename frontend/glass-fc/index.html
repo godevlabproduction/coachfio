@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<title>FC game home - same shell as the hub - mockup</title>
+<style>
+/* FC GAME HOME / LIQUID GLASS MOCKUP - static, fake data.
+   SAME SHELL AS THE HUB: identical sidebar geometry, gap grid, radii, fonts,
+   material. The only things that change when you enter a game are (1) the
+   sky palette crossfades to the game's colours, (2) the sidebar gains a game
+   switcher at the top, (3) the nav is the game's pages. Nothing moves. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --gap: 18px; --r: 26px;
+  --ink: #F1F6F3; --ink-2: rgba(241,246,243,.72); --ink-3: rgba(241,246,243,.5);
+  --lq-bg: rgba(8,20,14,.36); --lq-border: rgba(200,255,220,.14);
+  --fill: rgba(170,255,200,.08); --fill-border: rgba(200,255,220,.12);
+  --pill-on: rgba(170,255,200,.15); --pill-hover: rgba(170,255,200,.1);
+  --sky-o: .55;
+}
+body.day {
+  --ink: #0B1A12; --ink-2: rgba(11,26,18,.72); --ink-3: rgba(11,26,18,.5);
+  --lq-bg: rgba(246,255,249,.46); --lq-border: rgba(255,255,255,.62);
+  --fill: rgba(255,255,255,.52); --fill-border: rgba(255,255,255,.7);
+  --pill-on: rgba(255,255,255,.68); --pill-hover: rgba(255,255,255,.5);
+  --sky-o: .42;
+}
+/* FC-compatible palettes: sky fields + accent poured into glass */
+body[data-p="1"] { --s1:#0F7A3E; --s2:#B9FF47; --s3:#1C9A5A; --s4:#062016; --acc:#B9FF47; --acc-ink:#0B1F10; --bg:#051A10; --bg-day:#E6F3EA; }
+body[data-p="2"] { --s1:#09331F; --s2:#1FD47A; --s3:#C8FF4A; --s4:#03140B; --acc:#1FD47A; --acc-ink:#04200F; --bg:#04130B; --bg-day:#E4F5EB; }
+body[data-p="3"] { --s1:#E61E4D; --s2:#7A1030; --s3:#FF7A9E; --s4:#1A0A10; --acc:#E61E4D; --acc-ink:#FFFFFF; --bg:#140810; --bg-day:#F6E9EE; }
+body[data-p="4"] { --s1:#0E6B3A; --s2:#F2C94C; --s3:#0B3B5E; --s4:#041A10; --acc:#F2C94C; --acc-ink:#1A1404; --bg:#06160F; --bg-day:#EEF1E6; }
+body[data-p="5"] { --s1:#0F5C52; --s2:#35C4A8; --s3:#A8F0E0; --s4:#06211E; --acc:#35C4A8; --acc-ink:#042420; --bg:#051715; --bg-day:#E5F3F1; }
+/* the hub's Arctic, for the "arrive from hub" crossfade demo */
+body[data-p="0"] { --s1:#123A8C; --s2:#2F7DF6; --s3:#67C4E8; --s4:#0B1E3F; --acc:#2F7DF6; --acc-ink:#EAF1FF; --bg:#070D1A; --bg-day:#E9EEF7; }
+
+body { font-family: var(--sans); color: var(--ink); min-height: 100vh; background: var(--bg); overflow-x: hidden; transition: background-color 1.2s ease; }
+body.day { background: var(--bg-day); }
+
+/* sky - colours CROSSFADE (1.2s) so entering a game tints the world, no snap */
+.sky { position: fixed; inset: -20%; z-index: -1; filter: blur(70px); }
+.sky i { position: absolute; border-radius: 50%; opacity: var(--sky-o); transition: background-color 1.2s ease; }
+.sky i:nth-child(1) { width: 46vw; height: 46vw; left: 4%; top: 2%; background: var(--s1); animation: d1 26s ease-in-out infinite alternate; }
+.sky i:nth-child(2) { width: 38vw; height: 38vw; right: 2%; top: 12%; background: var(--s2); animation: d2 32s ease-in-out infinite alternate; opacity: calc(var(--sky-o) - .15); }
+.sky i:nth-child(3) { width: 42vw; height: 42vw; left: 28%; bottom: -6%; background: var(--s3); animation: d3 38s ease-in-out infinite alternate; opacity: calc(var(--sky-o) - .1); }
+.sky i:nth-child(4) { width: 30vw; height: 30vw; right: 24%; bottom: 10%; background: var(--s4); animation: d1 44s ease-in-out infinite alternate-reverse; }
+@keyframes d1 { to { transform: translate(9vw, 7vh) scale(1.15); } }
+@keyframes d2 { to { transform: translate(-8vw, 9vh) scale(.9); } }
+@keyframes d3 { to { transform: translate(6vw, -8vh) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .sky i { animation: none; transition: none; } }
+
+/* material (identical to hub) */
+.lq { border-radius: var(--r); background: var(--lq-bg);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--lq-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), inset 0 -1px 0 rgba(255,255,255,.06), inset 1px 0 0 rgba(255,255,255,.09), inset -1px 0 0 rgba(255,255,255,.09), 0 18px 48px rgba(0,0,0,.28); }
+.day .lq { box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(255,255,255,.3), inset 1px 0 0 rgba(255,255,255,.45), inset -1px 0 0 rgba(255,255,255,.45), 0 18px 48px rgba(20,50,35,.14); }
+.fill { border-radius: calc(var(--r) - 14px); background: var(--fill); border: 1px solid var(--fill-border); }
+.acc { background: color-mix(in oklab, var(--acc) 34%, var(--lq-bg)); color: var(--acc-ink); border: 1px solid rgba(255,255,255,.32); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); transition: background-color 1.2s ease; }
+.day .acc { background: color-mix(in oklab, var(--acc) 55%, rgba(255,255,255,.5)); }
+@media (prefers-reduced-transparency: reduce) { .lq { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(8,20,14,.95); } .day .lq { background: rgba(255,255,255,.97); } .sky { display: none; } }
+
+/* ==== shell: identical to the hub ========================================= */
+.shell { display: flex; gap: var(--gap); padding: var(--gap) var(--gap) 40px 14px; min-height: 100vh; align-items: flex-start; }
+.mono-h { font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+
+.side { flex: 0 0 224px; position: sticky; top: var(--gap); height: calc(100vh - 2 * var(--gap)); display: flex; flex-direction: column; padding: 18px 12px; }
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 16px; font-weight: 700; padding: 0 6px; }
+.logo i { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-style: normal; }
+.logo i .material-symbols-outlined { font-size: 18px; }
+/* THE GAME SWITCHER - the one element the hub does not have. Shows which
+   world you are in; click = back to the hub to pick another game. */
+.game { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 8px; border-radius: calc(var(--r) - 12px); text-decoration: none; color: inherit; transition: background-color .3s var(--spring), transform .3s var(--spring); }
+.game:hover { background: var(--pill-hover); transform: scale(1.02); }
+.game img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; object-position: 50% 20%; }
+.game b { display: block; font-family: var(--mono); font-size: 12.5px; }
+.game span { display: block; font-size: 11px; color: var(--ink-3); }
+.game .material-symbols-outlined { margin-left: auto; color: var(--ink-3); font-size: 18px; }
+.nav { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+.nav a { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: calc(var(--r) - 12px); color: var(--ink-2); text-decoration: none; font-family: var(--mono); font-size: 14px; font-weight: 600; transition: background-color .3s var(--spring), color .2s ease, transform .3s var(--spring); }
+.nav a:hover { color: var(--ink); background: var(--pill-hover); transform: scale(1.02); }
+.nav a.on { color: var(--ink); background: var(--pill-on); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.nav .material-symbols-outlined { font-size: 19px; }
+.side__foot { margin-top: auto; }
+.me-row { display: flex; align-items: center; gap: 8px; padding: 0 2px 10px; }
+.me { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.me i { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; font-style: normal; font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.me b { display: block; font-family: var(--mono); font-size: 13px; }
+.ibtn { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 11px; border: 1px solid var(--fill-border); background: var(--fill); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; transition: transform .35s var(--spring); }
+.ibtn:hover { transform: scale(1.1) rotate(12deg); color: var(--ink); }
+.ibtn .material-symbols-outlined { font-size: 18px; }
+.signout { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: calc(var(--r) - 12px); color: var(--ink-2); text-decoration: none; font-family: var(--mono); font-size: 14px; font-weight: 600; }
+.signout:hover { color: var(--ink); background: var(--pill-hover); }
+
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--gap); }
+
+/* hero: identical anatomy to the hub's */
+.hero { padding: 14px; }
+.hero__art { position: relative; border-radius: calc(var(--r) - 14px); overflow: hidden; min-height: 400px; display: flex; align-items: flex-end; padding: 14px; isolation: isolate; }
+.hero__art > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; z-index: -1; }
+.hero__tags { position: absolute; top: 14px; left: 14px; display: flex; gap: 8px; }
+.tag { padding: 7px 14px; border-radius: 999px; font-family: var(--mono); font-size: 12px; color: #fff; background: rgba(4,14,9,.4); border: 1px solid rgba(255,255,255,.22); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.tag--acc { background: color-mix(in oklab, var(--acc) 40%, rgba(4,14,9,.3)); transition: background-color 1.2s ease; }
+.arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); background: rgba(4,14,9,.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #fff; cursor: pointer; display: grid; place-items: center; transition: transform .3s var(--spring); }
+.arrow:hover { transform: translateY(-50%) scale(1.12); }
+.arrow--l { left: 14px; } .arrow--r { right: 14px; }
+.plate { width: 100%; padding: 18px; color: #fff; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; border-radius: calc(var(--r) - 28px); background: rgba(4,14,9,.36); border: 1px solid rgba(255,255,255,.2); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); box-shadow: inset 0 1px 0 rgba(255,255,255,.28); }
+.plate h1 { font-family: var(--mono); font-size: 25px; letter-spacing: -.02em; }
+.plate h1 span { font-family: var(--sans); font-size: 15px; font-weight: 500; opacity: .65; }
+.plate p { font-size: 14px; opacity: .86; max-width: 46ch; margin-top: 6px; }
+.buy { display: flex; align-items: stretch; border-radius: 999px; overflow: hidden; text-decoration: none; color: #fff; font-family: var(--mono); font-size: 14px; font-weight: 600; background: color-mix(in oklab, var(--acc) 32%, rgba(4,14,9,.3)); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%); border: 1px solid rgba(255,255,255,.32); box-shadow: 0 10px 26px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .3s var(--spring), background-color 1.2s ease; }
+.buy:hover { transform: scale(1.05); }
+.buy b { padding: 13px 20px; border-right: 1px solid rgba(255,255,255,.3); font-weight: 600; }
+.buy span { padding: 13px 18px; background: rgba(255,255,255,.1); display: flex; align-items: center; }
+
+/* sections: identical to hub */
+.sec { padding: 18px; }
+.sec__h { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.pager { margin-left: auto; display: flex; gap: 8px; }
+.pager button { width: 40px; height: 36px; border-radius: 999px; border: 1px solid var(--fill-border); background: var(--fill); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; transition: transform .3s var(--spring); }
+.pager button:hover { transform: scale(1.08); color: var(--ink); }
+.row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; }
+.row::-webkit-scrollbar { display: none; }
+.rcard { flex: 0 0 236px; padding: 8px; text-decoration: none; color: inherit; transition: transform .35s var(--spring); }
+@media (pointer: fine) { .rcard:hover { transform: translateY(-4px) scale(1.02); } }
+.rcard .art { position: relative; aspect-ratio: 1/0.72; border-radius: calc(var(--r) - 22px); overflow: hidden; background: rgba(0,0,0,.25); display: block; }
+.rcard .art img { width: 100%; height: 100%; object-fit: cover; }
+.rcard .score { position: absolute; right: 10px; bottom: 10px; padding: 4px 10px; border-radius: 999px; font-family: var(--mono); font-size: 12px; font-weight: 600; color: #fff; background: rgba(4,14,9,.52); border: 1px solid rgba(255,255,255,.2); }
+.rcard .ts { position: absolute; left: 8px; bottom: 8px; padding: 3px 8px; border-radius: 999px; font-family: var(--mono); font-size: 11px; color: #fff; background: rgba(4,14,9,.55); border: 1px solid rgba(255,255,255,.2); }
+.rcard .play { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; }
+.rcard .play .material-symbols-outlined { font-size: 40px; font-variation-settings: "FILL" 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,.5)); }
+.rcard .in { padding: 10px 6px 4px; display: block; }
+.rcard b { font-family: var(--mono); font-size: 14.5px; display: block; }
+.rcard p { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
+.badge { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; margin-bottom: 6px; }
+
+/* right rail: identical to hub (search, activity, plan) + coach replaces nothing - it is an activity-style panel */
+.rail { flex: 0 0 300px; position: sticky; top: var(--gap); display: flex; flex-direction: column; gap: var(--gap); }
+.search { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 999px; color: var(--ink-3); }
+.search input { flex: 1; border: 0; background: none; outline: none; color: var(--ink); font-family: var(--mono); font-size: 13.5px; }
+.search input::placeholder { color: var(--ink-3); }
+.rp { padding: 16px; }
+.rp h2 { font-family: var(--mono); font-size: 15px; margin-bottom: 14px; }
+.feed { display: flex; flex-direction: column; gap: 12px; }
+.feed > div { display: flex; gap: 12px; align-items: flex-start; }
+.feed .material-symbols-outlined { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px; display: grid; place-items: center; font-size: 19px; background: var(--fill); border: 1px solid var(--fill-border); }
+.feed b { display: block; font-family: var(--mono); font-size: 12.5px; }
+.feed span { font-size: 11.5px; color: var(--ink-3); }
+.ask { display: flex; align-items: center; gap: 8px; padding: 5px 5px 5px 14px; border-radius: 999px; margin-top: 12px; }
+.ask input { flex: 1; border: 0; background: none; outline: none; color: var(--ink); font: inherit; font-size: 13px; }
+.ask input::placeholder { color: var(--ink-3); }
+.ask button { width: 32px; height: 32px; border-radius: 999px; border: 0; cursor: pointer; display: grid; place-items: center; }
+.ask .material-symbols-outlined { font-size: 18px; }
+
+.palbar { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 60; display: flex; gap: 4px; padding: 7px; --r: 999px; }
+.palbar button { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 0; border-radius: 999px; background: none; color: var(--ink-2); cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; transition: background-color .25s var(--spring), color .2s, transform .25s var(--spring); }
+.palbar button:hover { transform: scale(1.05); color: var(--ink); }
+.palbar button.on { background: var(--pill-on); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.palbar i { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 16px; border: 1px solid rgba(255,255,255,.35); }
+.palbar .sep { width: 1px; height: 22px; background: var(--fill-border); margin: 0 4px; }
+.mocknote { position: fixed; right: 14px; bottom: 14px; z-index: 60; padding: 7px 13px; border-radius: 999px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+@media (max-width: 1100px) { .rail { display: none; } }
+@media (max-width: 860px) { .side { display: none; } .mocknote { display: none; } }
+</style>
+</head>
+<body data-p="1">
+<div class="sky" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<div class="shell">
+  <aside class="side lq">
+    <span class="logo"><i class="acc"><span class="material-symbols-outlined">insights</span></i>Coachfio</span>
+    <a class="game fill" href="/hub/" title="Back to all games">
+      <img src="/art/fc27-card.jpg" alt=""><span><b>EA Sports FC 26</b><span>Change game</span></span>
+      <span class="material-symbols-outlined">swap_horiz</span>
+    </a>
+    <nav class="nav">
+      <a class="on" href="#"><span class="material-symbols-outlined">home</span>Home</a>
+      <a href="#"><span class="material-symbols-outlined">upload</span>Upload</a>
+      <a href="#"><span class="material-symbols-outlined">description</span>Reports</a>
+      <a href="#"><span class="material-symbols-outlined">movie</span>Moments</a>
+      <a href="#"><span class="material-symbols-outlined">trending_up</span>Statistics</a>
+      <a href="#"><span class="material-symbols-outlined">settings</span>Account</a>
+    </nav>
+    <div class="side__foot">
+      <div class="me-row">
+        <span class="me"><i class="acc">IL</i><span><b>Ilija</b></span></span>
+        <button class="ibtn" type="button" aria-label="Background"><span class="material-symbols-outlined">palette</span></button>
+        <button class="ibtn" type="button" aria-label="Toggle theme"
+          onclick="document.body.classList.toggle('day');this.firstElementChild.textContent=document.body.classList.contains('day')?'dark_mode':'light_mode'">
+          <span class="material-symbols-outlined">light_mode</span></button>
+      </div>
+      <a class="signout" href="#"><span class="material-symbols-outlined">logout</span>Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- YOUR latest completed FC match: 3-4 loss, UT Champions, 17 Aug -->
+    <section class="hero lq">
+      <div class="hero__art">
+        <img src="/art/fc27-card.jpg" alt="">
+        <div class="hero__tags"><span class="tag">UT Champions</span><span class="tag">Loss</span><span class="tag tag--acc">Latest report</span></div>
+        <button class="arrow arrow--l" aria-label="Previous"><span class="material-symbols-outlined">chevron_left</span></button>
+        <button class="arrow arrow--r" aria-label="Next"><span class="material-symbols-outlined">chevron_right</span></button>
+        <div class="plate">
+          <div>
+            <h1>3&ndash;4 <span>&middot; 4-5-1 vs. 4-4-2 &middot; 4 days ago</span></h1>
+            <p>A narrow 3&ndash;4 defeat in a high-paced match where your attacking combinations generated clinical chances inside the box &mdash; but recurring defensive breakdowns came from dragging your centre-backs out of position.</p>
+          </div>
+          <a class="buy" href="#"><b>Open report</b><span>3&ndash;4</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- YOUR recent FC reports, newest first -->
+    <section class="sec lq">
+      <div class="sec__h"><span class="mono-h">Recent reports</span>
+        <div class="pager"><button aria-label="Back"><span class="material-symbols-outlined">chevron_left</span></button><button aria-label="Forward"><span class="material-symbols-outlined">chevron_right</span></button></div></div>
+      <div class="row">
+        <a class="rcard fill" href="#"><span class="art"><img src="/art/fc27-card.jpg" alt=""><span class="score">3&ndash;4</span></span><span class="in"><span class="badge acc">Champions</span><b>Loss 3&ndash;4</b><p>Centre-backs dragged out of position; four defensive errors.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><img src="/report-preview.jpg" alt=""><span class="score">4&ndash;3</span></span><span class="in"><span class="badge fill">Champions</span><b>Loss 4&ndash;3</b><p>Led twice in the second half; over-commitment undid lethal counters.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><img src="/art/fc27-card.jpg" alt=""><span class="score">11&ndash;3</span></span><span class="in"><span class="badge fill">Match</span><b>Win 11&ndash;3</b><p>Clinical counters and wide cutbacks; cheap goals conceded late.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><span class="score">3&ndash;4</span></span><span class="in"><span class="badge fill">Match</span><b>Loss 3&ndash;4</b><p>Strong cutback creation; stepping out opened cutback corridors.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><span class="score">1&ndash;2</span></span><span class="in"><span class="badge fill">Champions</span><b>Loss 1&ndash;2</b><p>Sharp half-space transitions undone by defensive over-commitment.</p></span></a>
+      </div>
+    </section>
+
+    <!-- YOUR goal-by-goal moments from the 3-4, with the report's fix lines -->
+    <section class="sec lq">
+      <div class="sec__h"><span class="mono-h">Moments</span>
+        <div class="pager"><button aria-label="Back"><span class="material-symbols-outlined">chevron_left</span></button><button aria-label="Forward"><span class="material-symbols-outlined">chevron_right</span></button></div></div>
+      <div class="row">
+        <a class="rcard fill" href="#"><span class="art"><img src="/art/fc27-card.jpg" alt=""><span class="play"><span class="material-symbols-outlined">play_circle</span></span><span class="ts">00:10</span></span><span class="in"><b>Goal &middot; Neto (1&ndash;1)</b><p>Low driven cross finished into the bottom corner.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><span class="play"><span class="material-symbols-outlined">play_circle</span></span><span class="ts">02:22</span></span><span class="in"><b>Conceded &middot; far post (1&ndash;2)</b><p>Fix: hold your CB, track the far-post run with the CDM.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><img src="/report-preview.jpg" alt=""><span class="play"><span class="material-symbols-outlined">play_circle</span></span><span class="ts">07:57</span></span><span class="in"><b>Goal &middot; Paralluelo (2&ndash;2)</b><p>Close-range finish after a swift wide attack.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><span class="play"><span class="material-symbols-outlined">play_circle</span></span><span class="ts">09:30</span></span><span class="in"><b>Conceded &middot; cutback (2&ndash;3)</b><p>Fix: switch to your covering CM early to block the cutback lane.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><img src="/art/fc27-card.jpg" alt=""><span class="play"><span class="material-symbols-outlined">play_circle</span></span><span class="ts">10:02</span></span><span class="in"><b>Goal &middot; Son (3&ndash;3)</b><p>Recycled box rebound finished to level.</p></span></a>
+        <a class="rcard fill" href="#"><span class="art"><span class="play"><span class="material-symbols-outlined">play_circle</span></span><span class="ts">13:03</span></span><span class="in"><b>Conceded &middot; Zaniolo (3&ndash;4)</b><p>Fix: sprint-jockey (L2+R2) to block the inside cut, force him wide.</p></span></a>
+      </div>
+    </section>
+  </main>
+
+  <aside class="rail">
+    <label class="search lq"><span class="material-symbols-outlined">search</span><input placeholder="Search reports and moments..." aria-label="Search"></label>
+    <!-- YOUR report's diagnosis, as the coach -->
+    <div class="rp lq">
+      <h2>Your coach</h2>
+      <div class="feed">
+        <div><span class="material-symbols-outlined acc">sports</span><span><b>Defend with the pivot, let the centre-backs hold the line.</b><span>You stepped out with a CB at 02:18, 09:24 and 13:00 &mdash; each time the space behind you was the goal.</span></span></div>
+      </div>
+      <div class="ask fill"><input placeholder="Ask about the 3-4..." aria-label="Ask your coach"><button class="acc" title="Mockup"><span class="material-symbols-outlined">arrow_upward</span></button></div>
+    </div>
+    <!-- YOUR practice plan from the same report -->
+    <div class="rp lq">
+      <h2>Practice plan</h2>
+      <div class="feed">
+        <div><span class="material-symbols-outlined">sports_soccer</span><span><b>Control only your CDMs/CMs in your third</b><span>3 full matches &middot; zero goals from central cutbacks</span></span></div>
+        <div><span class="material-symbols-outlined">fitness_center</span><span><b>Skill Games &rsaquo; contain + sprint-jockey</b><span>15 reps &middot; no tackle until the ball is exposed</span></span></div>
+      </div>
+    </div>
+    <div class="rp lq">
+      <h2>Activity</h2>
+      <div class="feed">
+        <div><span class="material-symbols-outlined">description</span><span><b>Report ready</b><span>3&ndash;4 &middot; UT Champions &middot; 4 days ago</span></span></div>
+        <div><span class="material-symbols-outlined">movie</span><span><b>7 goals timestamped</b><span>read off the scoreboard &middot; 4 days ago</span></span></div>
+        <div><span class="material-symbols-outlined">trending_up</span><span><b>8 FC matches analysed</b><span>1 win &middot; 7 losses &middot; since 13 Aug</span></span></div>
+      </div>
+    </div>
+    <div class="rp lq">
+      <h2>Plan</h2>
+      <div class="feed"><div><span class="material-symbols-outlined">bolt</span><span><b>Free plan</b><span>9 reports analysed across 2 games</span></span></div></div>
+    </div>
+  </aside>
+</div>
+
+<span class="mocknote lq">Static mockup &middot; your FC data &middot; hub shell</span>
+<div class="palbar lq" role="group" aria-label="Palette">
+  <button data-p="0" title="Where you came from"><i style="background:linear-gradient(135deg,#123A8C,#2F7DF6,#67C4E8)"></i>Hub</button>
+  <span class="sep"></span>
+  <button class="on" data-p="1"><i style="background:linear-gradient(135deg,#0F7A3E,#B9FF47)"></i>Pitch night</button>
+  <button data-p="2"><i style="background:linear-gradient(135deg,#09331F,#1FD47A,#C8FF4A)"></i>Volt</button>
+  <button data-p="3"><i style="background:linear-gradient(135deg,#7A1030,#E61E4D,#FF7A9E)"></i>Kit rose</button>
+  <button data-p="4"><i style="background:linear-gradient(135deg,#0E6B3A,#F2C94C,#0B3B5E)"></i>Broadcast</button>
+  <button data-p="5"><i style="background:linear-gradient(135deg,#0F5C52,#35C4A8,#A8F0E0)"></i>Ice pitch</button>
+</div>
+<script>
+document.querySelectorAll(".palbar button").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.body.setAttribute("data-p", b.getAttribute("data-p"));
+    document.querySelectorAll(".palbar button").forEach(function (x) { x.classList.remove("on"); });
+    b.classList.add("on");
+  });
+});
+</script>
+</body>
+</html>

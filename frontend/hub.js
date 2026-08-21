@@ -116,7 +116,9 @@
     // be FC 26 every time, since it is first in the site config.
     var cards = sites.map(function (s) {
       var m = META[s.game_id] || { genre: "Game", blurb: "", fallback: "" };
-      return '<a class="hub-gcard" href="' + gameUrl(s, d.root) + '"'
+      // Land on the game's HOME - the same dashboard shell as this page, so
+      // entering a game is a tint change, not a different app.
+      return '<a class="hub-gcard" href="' + gameUrl(s, d.root) + 'home/"'
         + ' data-search="' + esc((s.display_name + " " + m.genre).toLowerCase()) + '">'
         + '<span class="hub-gcard__art' + (m.fallback || "") + '">'
         + (m.art
@@ -226,7 +228,28 @@
 
   // Background palette picker in the profile row. The saved value is applied
   // pre-paint by the page's inline snippet; this wires the popover.
-  function wireSky() {
+  // Palette options come from /palettes.json, which tools/extract_palette.py
+  // generates from each game's own key art. Nothing here knows a game id: the
+  // manifest is keyed by one, and a new game appears the moment it has art.
+  function loadPalettes(gameId, pick) {
+    if (!gameId || !pick) return Promise.resolve(false);
+    return api("/palettes.json").then(function (m) {
+      var list = (m || {})[gameId] || [];
+      if (!list.length) return false;
+      pick.innerHTML = "<p>Background</p>" + list.map(function (o) {
+        return '<button type="button" data-sky-opt="' + esc(o.key) + '">'
+          + '<i style="background:linear-gradient(135deg,' + esc(o.swatch.join(",")) + ')"></i>'
+          + esc(o.name) + "</button>";
+      }).join("");
+      // First palette is the game's default when nothing is saved yet.
+      if (!document.body.getAttribute("data-sky")) {
+        document.body.setAttribute("data-sky", list[0].key);
+      }
+      return true;
+    }).catch(function () { return false; });
+  }
+
+  function wireSky(key) {
     var btn = $("[data-dash-sky-btn]");
     var pick = $("[data-dash-skypick]");
     if (!btn || !pick) return;
@@ -250,16 +273,51 @@
       o.addEventListener("click", function () {
         var v = o.getAttribute("data-sky-opt");
         document.body.setAttribute("data-sky", v);
-        try { localStorage.setItem("coachio.hubSky", v); } catch (e) {}
+        try { localStorage.setItem(key, v); } catch (e) {}
         mark();   // stays open so palettes can be compared live
       });
     });
   }
 
-  function initHub() {
+  // The hub and a game's home are the SAME dashboard. The hub shows every
+  // game's matches and hands sessions across origins; a game home shows one
+  // game's matches and links on its own origin. One init, two option sets.
+  // Role-dependent home inside a game (player -> locker, coach -> office),
+  // placed ABOVE Account. Painted from the cached role first so the nav does
+  // not jump when /api/account answers. Same key coach.js uses.
+  var ROLE_NAV = {
+    coach: { href: "/office/", label: "My office", ic: "business_center" },
+    player: { href: "/locker/", label: "My locker", ic: "checklist" },
+  };
+  function roleNav(role) {
+    var nav = $(".hub-side__nav");
+    if (!nav) return;
+    var target = ROLE_NAV[role] || ROLE_NAV.player;
+    var other = ROLE_NAV[role === "coach" ? "player" : "coach"];
+    var stale = nav.querySelector('a[href="' + other.href + '"]');
+    if (stale) stale.remove();
+    if (nav.querySelector('a[href="' + target.href + '"]')) return;
+    var a = document.createElement("a");
+    a.className = "hub-side__link"; a.href = target.href;
+    a.innerHTML = icon(target.ic) + target.label;
+    nav.insertBefore(a, nav.querySelector('a[href="/account/"]') || null);
+  }
+
+  function initHub() { initDash({ skyKey: "coachio.hubSky" }); }
+  function initGame() {
+    // The page's attribute is only the fallback for localhost: the same files
+    // serve every game host, so the REAL game comes from /api/site below.
+    var gameId = document.body.getAttribute("data-game-id");
+    initDash({ game: true, gameId: gameId, sameOrigin: true, skyKey: "coachio.sky." + gameId });
+  }
+  function initDash(opts) {
     if (!identity()) { location.replace("/signin/"); return; }
     wireTheme();
-    wireSky();
+    if (opts.game) {
+      var cached = "";
+      try { cached = localStorage.getItem("coachio.role") || ""; } catch (e) {}
+      roleNav(cached || "player");
+    }
 
     var out = $("[data-hub-signout]");
     if (out) {
@@ -276,18 +334,39 @@
 
     // Sites and matches decide the whole main column, so they load together;
     // account and usage only decorate the rails and arrive when they arrive.
-    Promise.all([
-      loadSites(),
-      api("/api/matches").catch(function () { return []; }),
-    ]).then(function (r) { renderDashboard(r[0], r[1] || []); });
+    loadSites().then(function (d) {
+      if (opts.game && d.game && d.game.game_id) {
+        opts.gameId = d.game.game_id;
+        opts.skyKey = "coachio.sky." + opts.gameId;
+        document.body.setAttribute("data-game-id", opts.gameId);
+      }
+      loadPalettes(opts.gameId, $("[data-dash-skypick]")).then(function () { wireSky(opts.skyKey); });
+      var q = opts.gameId ? "?game_id=" + encodeURIComponent(opts.gameId) : "";
+      return api("/api/matches" + q).catch(function () { return []; })
+        .then(function (ms) { renderDashboard(d, ms || [], opts); });
+    });
 
     api("/api/account").then(function (d) {
       var p = (d && d.profile) || {};
       var name = p.display_name || p.email || "";
+      if (opts.game) {
+        var role = p.role === "coach" ? "coach" : "player";
+        roleNav(role);
+        try { localStorage.setItem("coachio.role", role); } catch (e) {}
+      }
       var box = $("[data-dash-me]");
       if (box && name) {
         box.hidden = false;
-        $("[data-dash-me-av]").textContent = name.replace(/@.*/, "").slice(0, 2).toUpperCase();
+        // A picture if they uploaded one, initials if not - the chip should be
+        // the same identity the account page shows, not a generic monogram.
+        var av = $("[data-dash-me-av]");
+        if (p.avatar_url) {
+          av.classList.add("hub-me__av--img");
+          av.innerHTML = '<img src="' + esc(p.avatar_url) + '" alt="">';
+        } else {
+          av.classList.remove("hub-me__av--img");
+          av.textContent = name.replace(/@.*/, "").slice(0, 2).toUpperCase();
+        }
         $("[data-dash-me-name]").textContent = name;
       }
       if (out) {
@@ -312,7 +391,8 @@
     }).catch(function () {});
   }
 
-  function renderDashboard(d, matches) {
+  function renderDashboard(d, matches, opts) {
+    opts = opts || {};
     var sites = d.sites || [];
     var byGame = {};
     sites.forEach(function (s) { byGame[s.game_id] = s; });
@@ -320,10 +400,11 @@
     // Newest first. The hero is a game-blind rule - "your latest completed
     // report, whatever the game" - never a featured/pinned game, which with a
     // config-ordered site list would just mean game #1 every time.
-    var done = matches.filter(function (m) { return m.status === "complete"; })
+    var done = matches.filter(function (m) { return m.status === "complete" && (!opts.gameId || m.game_id === opts.gameId); })
       .sort(function (a, b) { return (b.created_at || "").localeCompare(a.created_at || ""); });
 
     function reportHref(m) {
+      if (opts.sameOrigin) return "/report/?id=" + encodeURIComponent(m.id);
       var site = byGame[m.game_id];
       return site ? gameUrl(site, d.root) + "report/?id=" + encodeURIComponent(m.id) : null;
     }
@@ -332,12 +413,29 @@
       return site ? site.display_name : m.game_id;
     }
 
-    renderHero($("[data-dash-hero]"), done, reportHref, gameName);
+    // Game home: fill the sidebar's game switcher and point it back at the hub.
+    if (opts.gameId) {
+      var port = location.port ? ":" + location.port : "";
+      var back = $("[data-dash-hub-link]");
+      if (back) back.href = location.protocol + "//" + (d.root || location.hostname) + port + "/hub/";
+      var gsite = byGame[opts.gameId];
+      var nm = $("[data-dash-game-name]");
+      if (nm && gsite) nm.textContent = gsite.display_name;
+      var im = $("[data-dash-game-art]");
+      var gm = gameMeta(opts.gameId);
+      if (im && gm.art) im.src = gm.art;
+    }
+
+    renderHero($("[data-dash-hero]"), done, reportHref, gameName, !opts.sameOrigin, !!opts.gameId);
     renderReports($("[data-dash-reports]"), done, reportHref, gameName);
+    renderTiles($("[data-dash-tiles]"), done);
+    renderMoments($("[data-dash-moments]"), done);
+    renderFocus($("[data-dash-focus]"), done);
+    renderCoach($("[data-dash-coach]"), done);
     renderActivity($("[data-dash-activity]"), done, gameName);
 
     var host = $("[data-hub-games]");
-    if (host) renderGames(host, d, { soon: true });
+    if (host && !opts.sameOrigin) renderGames(host, d, { soon: true });
 
     // Search filters BOTH grids (reports + games) by the data-search text each
     // card carries. renderGames wires the games grid itself; this covers the
@@ -346,7 +444,7 @@
     if (search) {
       search.addEventListener("input", function () {
         var q = search.value.trim().toLowerCase();
-        document.querySelectorAll("[data-dash-reports-grid] > *").forEach(function (el) {
+        document.querySelectorAll("[data-dash-reports-grid] > *, [data-dash-moments-grid] > *").forEach(function (el) {
           var s = el.getAttribute("data-search") || "";
           el.hidden = q.length > 0 && s.indexOf(q) === -1;
         });
@@ -356,14 +454,17 @@
     // Entering a report is entering a game origin: hand the session over the
     // same way the game cards do. Scoped to the reports grid - the hero wires
     // its own links because the carousel re-paints them on every step.
-    document.querySelectorAll("[data-dash-reports-grid] [data-dash-go]").forEach(function (a) {
-      a.addEventListener("click", function (e) { enterGame(e, a); });
-    });
+    if (!opts.sameOrigin) {
+      document.querySelectorAll("[data-dash-reports-grid] [data-dash-go]").forEach(function (a) {
+        a.addEventListener("click", function (e) { enterGame(e, a); });
+      });
+    }
 
-    // The reports pager scrolls the row - a page is most of the visible width.
-    var grid = $("[data-dash-reports-grid]");
+    // Each section's pager scrolls ITS row - a page is most of the visible width.
     document.querySelectorAll("[data-dash-page]").forEach(function (b) {
       b.addEventListener("click", function () {
+        var sec = b.closest(".hub-dsec");
+        var grid = sec && sec.querySelector(".hub-dcards");
         if (grid) grid.scrollBy({ left: grid.clientWidth * 0.8 * Number(b.getAttribute("data-dash-page")), behavior: "smooth" });
       });
     });
@@ -372,22 +473,32 @@
   // Hero carousel over the most recent completed reports (up to 5): the arrows
   // are the reference design's, but they page through YOUR matches - a live
   // control, not chrome. Each step re-paints, so the hero wires its own links.
-  function renderHero(host, done, reportHref, gameName) {
+  function renderHero(host, done, reportHref, gameName, handoff, inGame) {
     if (!host) return;
     host.hidden = false;
     var list = done.slice(0, 5).filter(function (m) { return reportHref(m); });
     if (!list.length) {
-      // Nothing analysed yet: the hero sells the first upload, pointing at the
-      // game grid below - the games ARE the doors to the upload flow.
+      // Nothing analysed yet. On the HUB the next step is picking a game (the
+      // games are the doors to the upload flow); inside a game you are already
+      // through that door, so the ask is the upload itself.
       host.className = "hub-dhero hub-dhero--empty hub-glass";
       host.innerHTML =
         '<div class="hub-dhero__plate hub-dhero__plate--empty">'
-        + '<span class="hub-dhero__ring">' + icon("sports") + "</span>"
-        + '<h1 class="hub-dhero__name">Your coach is ready for the first match</h1>'
-        + '<p class="hub-dhero__ins">Pick a game below and upload a recording - '
-        + "you get a full report with timestamps, moments and coaching points.</p>"
-        + '<div class="hub-dhero__cta"><a class="hub-btn hub-btn--primary" href="#games">'
-        + icon("upload") + "Choose a game</a></div></div>";
+        + '<span class="hub-dhero__ring">' + icon(inGame ? "upload" : "sports") + "</span>"
+        + '<h1 class="hub-dhero__name">'
+        + (inGame ? "Upload your first match" : "Your coach is ready for the first match")
+        + "</h1>"
+        + '<p class="hub-dhero__ins">'
+        + (inGame
+            ? "Record a full match and drop the file in - minutes later you get a report "
+              + "with every mistake timestamped, the correction for each one, and the "
+              + "moments clipped."
+            : "Pick a game below and upload a recording - you get a full report with "
+              + "timestamps, moments and coaching points.")
+        + "</p>"
+        + '<div class="hub-dhero__cta"><a class="hub-btn hub-btn--primary" href="'
+        + (inGame ? "/upload/" : "#games") + '">'
+        + icon("upload") + (inGame ? "Upload a match" : "Choose a game") + "</a></div></div>";
       return;
     }
     var i = 0;
@@ -429,9 +540,11 @@
           paint();
         });
       });
-      host.querySelectorAll("[data-dash-go]").forEach(function (a) {
-        a.addEventListener("click", function (e) { enterGame(e, a); });
-      });
+      if (handoff) {
+        host.querySelectorAll("[data-dash-go]").forEach(function (a) {
+          a.addEventListener("click", function (e) { enterGame(e, a); });
+        });
+      }
     }
     paint();
   }
@@ -459,6 +572,180 @@
         + (ins ? "<p>" + esc(ins.slice(0, 110)) + "</p>" : "")
         + "</span></a>";
     }).join("");
+  }
+
+  // ---- moments: clipped events + the goal-by-goal timeline -----------------
+  // Two sources, both read as core shapes (a time, a label, an optional fix):
+  // events carrying a clip (replay/stats sources), and the goal list a video
+  // report keeps in its payload. The adapter's words are shown as-is.
+  function mmss(ms) {
+    var s = Math.max(0, Math.round((ms || 0) / 1000));
+    var m = Math.floor(s / 60); s = s % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+  function reportGoals(m) {
+    var out = [];
+    (m.insights || []).forEach(function (i) {
+      var goals = i && i.payload && i.payload.goals;
+      if (!Array.isArray(goals)) return;
+      goals.forEach(function (g) {
+        if (!g || !g.time) return;
+        out.push({
+          ts: String(g.time), type: g.type,
+          label: (g.type === "conceded" ? "Conceded" : "Goal") + (g.summary ? " · " + g.summary : ""),
+          sub: g.fix ? "Fix: " + g.fix : "",
+        });
+      });
+    });
+    return out;
+  }
+  function renderMoments(section, done) {
+    if (!section) return;
+    var items = [];
+    done.forEach(function (m) {
+      var meta = gameMeta(m.game_id);
+      (m.events || []).forEach(function (e) {
+        if (!(e && e.payload && e.payload.clip)) return;
+        var ref = (e.frame_refs || [])[0];
+        items.push({
+          m: m, ts: mmss(e.timestamp_ms), sub: "",
+          label: String(e.game_event_type || e.category || "moment").replace(/_/g, " "),
+          thumb: ref ? "/api/matches/" + encodeURIComponent(m.id) + "/frame?key=" + encodeURIComponent(ref) : (meta.art || ""),
+        });
+      });
+      reportGoals(m).forEach(function (g) {
+        items.push({ m: m, ts: g.ts, label: g.label, sub: g.sub, thumb: g.type === "scored" ? (meta.art || "") : "" });
+      });
+    });
+    if (!items.length) return;
+    section.hidden = false;
+    $("[data-dash-moments-grid]", section).innerHTML = items.slice(0, 10).map(function (it) {
+      var score = (it.m.outcome || {}).score || "";
+      var label = it.label.charAt(0).toUpperCase() + it.label.slice(1);
+      if (label.length > 60) label = label.slice(0, 58) + "…";
+      return '<a class="hub-dcard" href="/moment/?id=' + encodeURIComponent(it.m.id) + '"'
+        + ' data-search="' + esc((label + " " + it.sub + " " + score).toLowerCase()) + '">'
+        + '<span class="hub-dcard__art"><span class="hub-dcard__artin">'
+        + (it.thumb ? '<img src="' + esc(it.thumb) + '" alt="" loading="lazy" onerror="this.remove()">' : "")
+        + "</span>"
+        + '<span class="hub-dcard__play">' + icon("play_circle") + "</span>"
+        + '<span class="hub-dcard__ts">' + esc(it.ts) + "</span></span>"
+        + '<span class="hub-dcard__in"><b>' + esc(label) + "</b>"
+        + "<p>" + esc(it.sub || ((score ? score + " · " : "") + relTime(it.m.created_at))) + "</p></span></a>";
+    }).join("");
+  }
+
+  // ---- tiles + focus: the newest report's numbers and its verdicts ---------
+  // All duck-typed on the report payload (stats / recurring_mistakes /
+  // diagnosis / weakness_tags / tactical_changes): an adapter that writes
+  // them gets the sections, one that does not gets nothing - no game branch.
+  function latestReport(done) {
+    var pay = null;
+    ((done[0] && done[0].insights) || []).some(function (i) {
+      if (i && i.payload && (i.payload.stats || i.payload.recurring_mistakes || i.payload.diagnosis)) { pay = i.payload; return true; }
+      return false;
+    });
+    return pay;
+  }
+  function prevReportStats(done) {
+    for (var k = 1; k < done.length; k++) {
+      var p = null;
+      (done[k].insights || []).some(function (i) {
+        if (i && i.payload && i.payload.stats) { p = i.payload.stats; return true; }
+        return false;
+      });
+      if (p) return p;
+    }
+    return null;
+  }
+  function humanKey(k) {
+    return String(k).replace(/_/g, " ").replace(/^./, function (c) { return c.toUpperCase(); });
+  }
+  function renderTiles(host, done) {
+    if (!host || !done.length) return;
+    var form = done.slice(0, 5).map(function (m) {
+      var r = ((m.outcome || {}).result || "").toLowerCase();
+      return r === "win" ? "W" : r === "loss" ? "L" : r === "draw" ? "D" : "·";
+    }).join(" ");
+    var tiles = ['<div class="hub-tile"><small>Form</small><b>' + esc(form) + "</b><span>"
+      + done.length + " match" + (done.length === 1 ? "" : "es") + " analysed</span></div>"];
+    var pay = latestReport(done);
+    var stats = pay && pay.stats;
+    var prev = prevReportStats(done);
+    if (stats) {
+      // Goals are the scoreline already; the rest, in the adapter's order.
+      Object.keys(stats).filter(function (k) { return typeof stats[k] === "number" && !/^goals?_/.test(k); })
+        .slice(0, 3).forEach(function (k) {
+          var d = (prev && typeof prev[k] === "number") ? stats[k] - prev[k] : null;
+          tiles.push('<div class="hub-tile"><small>' + esc(humanKey(k)) + "</small><b>" + esc(String(stats[k])) + "</b><span>"
+            + (d === null ? "latest report" : d === 0 ? "same as last match" : (d > 0 ? "+" : "") + d + " vs last match")
+            + "</span></div>");
+        });
+    }
+    tiles.push('<a class="hub-tile hub-tile--cta" href="/upload/">' + icon("upload")
+      + "<b>Analyse your next match</b><span>Upload a recording</span></a>");
+    host.hidden = false;
+    host.innerHTML = tiles.join("");
+  }
+  function renderFocus(section, done) {
+    var pay = latestReport(done);
+    if (!section || !pay) return;
+    var mistakes = Array.isArray(pay.recurring_mistakes) ? pay.recurring_mistakes.slice(0, 3) : [];
+    var diag = pay.diagnosis || {};
+    var tags = Array.isArray(pay.weakness_tags) ? pay.weakness_tags : [];
+    var tc = Array.isArray(pay.tactical_changes) ? pay.tactical_changes[0] : null;
+    if (!mistakes.length && !diag.biggest_strength && !tc) return;
+    section.hidden = false;
+    $("[data-dash-focus-list]", section).innerHTML = mistakes.map(function (t) {
+      return '<div class="hub-focus__i">' + icon("priority_high") + "<span>" + esc(String(t)) + "</span></div>";
+    }).join("") || '<p class="hub-small">No recurring mistakes flagged in the latest report.</p>';
+    var side = [];
+    if (diag.biggest_strength) {
+      side.push('<div class="hub-focus__i hub-focus__i--good">' + icon("verified")
+        + "<span><b>Keep doing</b>" + esc(diag.biggest_strength) + "</span></div>");
+    }
+    if (tc && tc.new_setting) {
+      side.push('<div class="hub-focus__i">' + icon("tune") + "<span><b>Setting to try</b>"
+        + esc(tc.new_setting) + (tc.problem_it_solves ? " — " + esc(tc.problem_it_solves) : "") + "</span></div>");
+    }
+    if (tags.length) {
+      side.push('<div class="hub-focus__tags">' + tags.slice(0, 6).map(function (t) {
+        return '<span class="hub-gbadge">' + esc(humanKey(t)) + "</span>";
+      }).join("") + "</div>");
+    }
+    $("[data-dash-focus-side]", section).innerHTML = side.join("");
+  }
+
+  // ---- coach + practice plan from the newest report -------------------------
+  // Duck-typed on the payload: a report that carries a practice plan or a
+  // diagnosis feeds the rail; one that does not leaves the static prompt.
+  function renderCoach(card, done) {
+    if (!card || !done.length) return;
+    var pay = null;
+    (done[0].insights || []).some(function (i) {
+      if (i && i.payload && (i.payload.practice_plan || i.payload.diagnosis)) { pay = i.payload; return true; }
+      return false;
+    });
+    if (!pay) return;
+    var plan = Array.isArray(pay.practice_plan) ? pay.practice_plan : [];
+    var diag = pay.diagnosis || {};
+    var head = (plan[0] && plan[0].correction_phrase) || diag.highest_value_habit || diag.main_tactical_problem || "";
+    var mistakes = Array.isArray(pay.recurring_mistakes) ? pay.recurring_mistakes : [];
+    var msg = $("[data-dash-coach-msg]", card);
+    if (msg && head) {
+      msg.innerHTML = '<div class="hub-rp__i">' + icon("sports") + "<span><b>" + esc(head) + "</b>"
+        + (mistakes[0] ? "<span>" + esc(String(mistakes[0]).slice(0, 150)) + "</span>" : "") + "</span></div>";
+    }
+    var pc = $("[data-dash-practice]");
+    var items = $("[data-dash-plan-items]");
+    if (pc && items && plan.length) {
+      pc.hidden = false;
+      items.innerHTML = plan.slice(0, 3).map(function (p) {
+        return '<div class="hub-rp__i">' + icon("fitness_center") + "<span><b>"
+          + esc(String(p.drill || p.problem || "").slice(0, 96)) + "</b><span>"
+          + esc([p.reps, p.success_metric].filter(Boolean).join(" · ").slice(0, 130)) + "</span></span></div>";
+      }).join("");
+    }
   }
 
   function renderActivity(card, done, gameName) {
@@ -597,8 +884,17 @@
   function adoptProviderToken() {
     var frag = new URLSearchParams((location.hash || "").replace(/^#/, ""));
     var token = frag.get("access_token");
-    if (!token) return Promise.resolve();
+    var handoff = frag.get("h");            // from the hub, landing on a game home
+    if (!token && !handoff) return Promise.resolve();
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    if (handoff) {
+      // Same exchange coach.js does on the other game pages: the 60-second
+      // token becomes a cookie on THIS origin. Expired or spent: carry on.
+      return api("/api/auth/handoff/adopt", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: handoff }),
+      }).catch(function () {});
+    }
     return api("/api/auth/provider-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -623,7 +919,9 @@
     // then decide what to render - each page branches on identity() immediately.
     adoptProviderToken().then(bootSession).then(function () {
       var page = document.body.getAttribute("data-hub-page");
-      if (page === "hub") initHub();
+      // A game home carries data-hub-page="hub" (same dashboard styles) plus
+      // data-game-id (scope the data to one game, link on this origin).
+      if (page === "hub") (document.body.hasAttribute("data-game-id") ? initGame : initHub)();
       else if (page === "auth") initAuth();
       else initLanding();
     });

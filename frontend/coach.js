@@ -348,7 +348,10 @@
     listMatches().then(function (ms) {
       var done = (ms || []).filter(function (m) { return m.status === "complete"; });
       done.sort(function (a, b) { return (b.created_at || "").localeCompare(a.created_at || ""); });
-      done = done.slice(0, 6);
+      // Five: it is a sidebar glance, not the archive. "View all" goes to the
+      // full list, so a sixth row only makes the column taller than the form
+      // it sits beside.
+      done = done.slice(0, 5);
       if (!done.length) {
         host.innerHTML = emptyState("video_library", "No matches yet",
           "Upload your first match and the coach will break it down for you.",
@@ -2169,22 +2172,20 @@
           }).join("")
         + "</div>";
 
-      var fields =
-        '<div class="stack-s">'
-        + (up
-            ? '<div class="field"><label class="field__label" for="cx-name">Display name</label>'
-              + '<input class="input" id="cx-name" placeholder="Your name" autocomplete="name"'
-              + ' value="' + esc(form.name) + '"></div>'
-            : "")
-        + '<div class="field"><label class="field__label" for="cx-email">Email</label>'
+      var nameField = up
+        ? '<div class="field"><label class="field__label" for="cx-name">Display name</label>'
+          + '<input class="input" id="cx-name" placeholder="Your name" autocomplete="name"'
+          + ' value="' + esc(form.name) + '"></div>'
+        : "";
+      var emailField =
+        '<div class="field"><label class="field__label" for="cx-email">Email</label>'
         + '<input class="input" id="cx-email" type="email" placeholder="you@example.com"'
-        + ' autocomplete="email" inputmode="email" value="' + esc(form.email) + '"></div>'
-        // Sits under the fields in the two-column layout: it balances the column
-        // AND lands right next to the email box it is actually about.
-        + (up ? '<p class="faint t-xs" style="margin-top:4px">'
-            + "No password yet - your account is found by email until the hosted "
-            + "sign-in provider is connected. Your matches stay private to it.</p>" : "")
-        + "</div>";
+        + ' autocomplete="email" inputmode="email" value="' + esc(form.email) + '"></div>';
+      var keyNote = '<p class="faint t-xs">'
+        + "No password yet - your account is found by email until the hosted "
+        + "sign-in provider is connected. Your matches stay private to it.</p>";
+      var fields = '<div class="stack-s">' + nameField + emailField
+        + (up ? keyNote : "") + "</div>";
 
       var levels =
         '<div style="margin-top:24px"><p class="field__label" style="margin-bottom:8px">Your level</p>'
@@ -2206,12 +2207,20 @@
             : '<p class="faint t-xs" style="margin-top:8px">You can change this any time.</p>')
         + "</div>";
 
-      // Right-hand column: the questions that produce the suggestion.
-      var surveyHtml = survey.length
-        ? '<div class="stack-s">'
-          + survey.map(function (q) { return surveyField(q, answers); }).join("")
-          + "</div>"
-        : '<div class="faint t-xs">Loading…</div>';
+      // Two columns that PAIR: display name sits beside the first question,
+      // email beside the second. Two independent stacks could not do that -
+      // each column set its own row heights, so the fields never lined up.
+      // One grid, filled left-right, keeps every row level whatever the
+      // adapter's questions turn out to be.
+      var left = [nameField, emailField].filter(Boolean);
+      var right = survey.map(function (q) { return surveyField(q, answers); });
+      var rows = Math.max(left.length, right.length);
+      var paired = "";
+      for (var r = 0; r < rows; r++) {
+        paired += (left[r] || '<div class="auth__spacer"></div>')
+          + (right[r] || '<div class="auth__spacer"></div>');
+      }
+      var surveyHtml = survey.length ? "" : '<div class="faint t-xs">Loading…</div>';
 
       host.innerHTML =
         '<div class="card">'
@@ -2230,7 +2239,9 @@
         + (up
             ? (role === "coach"
                 ? fields
-                : '<div class="auth__grid">' + fields + surveyHtml + "</div>" + levels)
+                : '<div class="auth__grid">' + paired
+                  + '<p class="faint t-xs auth__span">' + keyNote.replace(/<\/?p[^>]*>/g, "")
+                  + "</p>" + surveyHtml + "</div>" + levels)
             : fields)
         + "</div>"
 

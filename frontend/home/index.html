@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/hub.css">
+<link rel="stylesheet" href="/hub-dark.css">
+<link rel="stylesheet" href="/palettes.css">
+<title>Home - Coachfio</title>
+</head>
+<!-- GAME HOME (a game site's landing, e.g. fifa.coachfio.com/home/).
+     The hub's dashboard shell scoped to one game: data-hub-page="hub" keeps
+     every dashboard style; data-game-id makes hub.js load only this game's
+     matches and link reports/moments on THIS origin. Arriving from the hub
+     changes only the sky palette and the sidebar's game switcher - nothing
+     moves, so the transition is a tint, not a page change. -->
+<body class="hub hub--glass" data-hub-page="hub" data-game-id="ea-fc">
+<script>
+/* Light + Pitch-night are the defaults; saved preferences apply pre-paint. */
+try { if (localStorage.getItem("coachio.hubTheme") === "dark") {
+  document.body.classList.remove("hub--glass"); document.body.classList.add("hub--dark");
+} } catch (e) {}
+try { var _s = localStorage.getItem("coachio.sky.ea-fc");
+  /* pre-generator values (fc1..fc5) are dropped: keys are "<game>:<slug>" now */
+  if (_s && _s.indexOf(":") > 0) document.body.setAttribute("data-sky", _s);
+} catch (e) {}
+</script>
+<div class="hub-sky" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<a class="hub-skip" href="#main">Skip to content</a>
+
+<div class="hub-shell">
+  <aside class="hub-side hub-glass">
+    <a class="hub-logo" href="/home/"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
+    <a class="hub-game" href="/hub/" data-dash-hub-link title="Back to all games">
+      <img src="/art/fc27-card.jpg" alt="" data-dash-game-art>
+      <span class="hub-game__t"><b data-dash-game-name>EA Sports FC 26</b><span>Change game</span></span>
+      <span class="material-symbols-outlined">swap_horiz</span>
+    </a>
+    <nav class="hub-side__nav" aria-label="Primary">
+      <a class="hub-side__link is-active" href="/home/"><span class="material-symbols-outlined">home</span>Home</a>
+      <a class="hub-side__link" href="/upload/"><span class="material-symbols-outlined">upload</span>Upload</a>
+      <a class="hub-side__link" href="/report/"><span class="material-symbols-outlined">description</span>Reports</a>
+      <a class="hub-side__link" href="/moment/"><span class="material-symbols-outlined">movie</span>Moments</a>
+      <a class="hub-side__link" href="/statistics/"><span class="material-symbols-outlined">trending_up</span>Statistics</a>
+      <a class="hub-side__link" href="/account/"><span class="material-symbols-outlined">settings</span>Account</a>
+    </nav>
+    <div class="hub-side__foot">
+      <div class="hub-skypick" data-dash-skypick hidden></div>
+      <div class="hub-side__me-row">
+        <div class="hub-me" data-dash-me hidden>
+          <span class="hub-me__av" data-dash-me-av></span>
+          <span class="hub-me__id"><b data-dash-me-name></b></span>
+        </div>
+        <button type="button" class="hub-theme" data-dash-sky-btn aria-expanded="false" aria-label="Choose background style" title="Background">
+          <span class="material-symbols-outlined">palette</span></button>
+        <button type="button" class="hub-theme" data-dash-theme aria-label="Switch to dark theme" title="Switch theme">
+          <span class="material-symbols-outlined">light_mode</span></button>
+      </div>
+      <a class="hub-side__link" href="/signin/" data-hub-signout>
+        <span class="material-symbols-outlined">logout</span>Sign out</a>
+    </div>
+  </aside>
+
+  <div class="hub-content">
+    <main id="main">
+      <section class="hub-dhero" data-dash-hero hidden></section>
+
+      <!-- form + the newest report's numbers (with deltas vs the one before) -->
+      <div class="hub-tiles" data-dash-tiles hidden></div>
+
+      <section class="hub-dsec" data-dash-reports hidden>
+        <div class="hub-dsec__h">
+          <h2>Recent reports</h2>
+          <div class="hub-pager">
+            <button type="button" data-dash-page="-1" aria-label="Scroll reports back"><span class="material-symbols-outlined">chevron_left</span></button>
+            <button type="button" data-dash-page="1" aria-label="Scroll reports forward"><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+        <div class="hub-dcards" data-dash-reports-grid></div>
+      </section>
+
+      <section class="hub-dsec" data-dash-moments hidden>
+        <div class="hub-dsec__h">
+          <h2>Moments</h2>
+          <div class="hub-pager">
+            <button type="button" data-dash-page="-1" aria-label="Scroll moments back"><span class="material-symbols-outlined">chevron_left</span></button>
+            <button type="button" data-dash-page="1" aria-label="Scroll moments forward"><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+        <div class="hub-dcards" data-dash-moments-grid></div>
+      </section>
+
+      <!-- the newest report's verdicts: recurring mistakes, what to keep, a setting to try -->
+      <section class="hub-dsec" data-dash-focus hidden>
+        <div class="hub-dsec__h"><h2>Work on this week</h2></div>
+        <div class="hub-focus">
+          <div class="hub-focus__list" data-dash-focus-list></div>
+          <div class="hub-focus__side" data-dash-focus-side></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="hub-rail">
+    <label class="hub-search">
+      <span class="material-symbols-outlined">search</span>
+      <input type="search" placeholder="Search reports and moments..." data-hub-search aria-label="Search reports and moments">
+    </label>
+    <div class="hub-rp hub-glass" data-dash-coach>
+      <p class="hub-rp__t">Your coach</p>
+      <div class="hub-rp__feed" data-dash-coach-msg>
+        <div class="hub-rp__i"><span class="material-symbols-outlined">sports</span>
+          <span><b>Ask about any match</b><span>Grounded in every report you have uploaded</span></span></div>
+      </div>
+      <form class="hub-ask" action="/coach/" method="get">
+        <input name="q" placeholder="Ask your coach..." aria-label="Ask your coach">
+        <button type="submit" aria-label="Ask"><span class="material-symbols-outlined">arrow_upward</span></button>
+      </form>
+    </div>
+    <div class="hub-rp hub-glass" data-dash-practice hidden>
+      <p class="hub-rp__t">Practice plan</p>
+      <div class="hub-rp__feed" data-dash-plan-items></div>
+    </div>
+    <div class="hub-rp hub-glass" data-dash-activity hidden>
+      <p class="hub-rp__t">Activity</p>
+      <div class="hub-rp__feed" data-dash-activity-feed></div>
+    </div>
+    <div class="hub-rp hub-glass" data-dash-plan hidden>
+      <p class="hub-rp__t">Plan</p>
+      <div class="hub-rp__feed">
+        <div class="hub-rp__i"><span class="material-symbols-outlined">bolt</span>
+          <span><b data-dash-plan-name>Free plan</b><span data-dash-plan-text></span></span></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer class="hub-foot hub-glass hub-foot--hub">
+  <div class="hub-wrap">
+    <div class="hub-foot__grid">
+      <div>
+        <a class="hub-logo" href="/home/"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
+        <p class="hub-foot__tag">AI match analysis and coaching for the games you play.
+          Upload a match, get a report, improve.</p>
+      </div>
+      <nav aria-label="Footer">
+        <p class="hub-foot__h">Product</p>
+        <ul class="hub-foot__links">
+          <li><a href="/home/">Home</a></li>
+          <li><a href="/upload/">Upload a match</a></li>
+        </ul>
+      </nav>
+      <div>
+        <p class="hub-foot__h">Support</p>
+        <ul class="hub-foot__links">
+          <li><a href="mailto:godevlabagency@gmail.com">Contact support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="hub-foot__bar">
+      <span>© 2026 Coachfio. All rights reserved.</span>
+      <span>Built by <strong>GoDevLab Agency</strong></span>
+    </div>
+  </div>
+</footer>
+<script src="/hub.js"></script>
+</body>
+</html>

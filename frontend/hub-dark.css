@@ -47,8 +47,8 @@ body[data-hub-page="hub"] {
   /* ACCENT GLASS - the blue poured into the material, not painted flat.
      Page-context recipe (buttons/badges on panels); ink flips per theme so
      text stays legible on a translucent tint. */
-  --acc-glass: color-mix(in oklab, #2F7DF6 26%, rgba(255, 255, 255, .5));
-  --acc-glass-hover: color-mix(in oklab, #2F7DF6 36%, rgba(255, 255, 255, .5));
+  --acc-glass: color-mix(in oklab, var(--h-violet) 26%, rgba(255, 255, 255, .5));
+  --acc-glass-hover: color-mix(in oklab, var(--h-violet) 36%, rgba(255, 255, 255, .5));
   --acc-border: rgba(255, 255, 255, .65);
   --acc-ink: #143A7A;
 }
@@ -81,8 +81,8 @@ body[data-hub-page="hub"].hub--dark {
   --pill-hover: rgba(160, 200, 255, .1);
   --pill-on: rgba(160, 200, 255, .15);
   --sky-o: .55; --sky-o-warm: .38;
-  --acc-glass: color-mix(in oklab, #2F7DF6 32%, rgba(255, 255, 255, .08));
-  --acc-glass-hover: color-mix(in oklab, #2F7DF6 44%, rgba(255, 255, 255, .1));
+  --acc-glass: color-mix(in oklab, var(--h-violet) 32%, rgba(255, 255, 255, .08));
+  --acc-glass-hover: color-mix(in oklab, var(--h-violet) 44%, rgba(255, 255, 255, .1));
   --acc-border: rgba(255, 255, 255, .3);
   --acc-ink: #EAF1FF;
   background: var(--h-bg);
@@ -101,7 +101,8 @@ body[data-hub-page="hub"] { overflow-x: hidden; }
 .hub-sky i:nth-child(2) { width: 38vw; height: 38vw; right: 2%; top: 12%; background: var(--s2, #2F7DF6); animation: hub-drift2 32s ease-in-out infinite alternate; }
 .hub-sky i:nth-child(3) { width: 42vw; height: 42vw; left: 28%; bottom: -6%; background: var(--s3, #67C4E8); animation: hub-drift3 38s ease-in-out infinite alternate; opacity: var(--sky-o-warm); }
 .hub-sky i:nth-child(4) { width: 30vw; height: 30vw; right: 24%; bottom: 10%; background: var(--s4, #0B1E3F); animation: hub-drift1 44s ease-in-out infinite alternate-reverse; opacity: calc(var(--sky-o) - .13); }
-/* the five palettes - same set the mockup offered */
+/* the hub's own palettes (the hub belongs to no game). Game palettes are
+   GENERATED from each game's key art into palettes.css. */
 body[data-sky="2"] { --s1: #14683E; --s2: #2FBF71; --s3: #D8E24F; --s4: #0E4D3A; }  /* Pitch */
 body[data-sky="3"] { --s1: #B23A1C; --s2: #C21F3A; --s3: #F0A050; --s4: #6E1A0F; }  /* Ember */
 body[data-sky="4"] { --s1: #F2762E; --s2: #1E4FD8; --s3: #E8B04B; --s4: #12355F; }  /* Broadcast */
@@ -213,7 +214,7 @@ body[data-hub-page="hub"] .hub-gcard__tags .hub-gtag {
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
 }
-body[data-hub-page="hub"] .hub-gtag--active { background: color-mix(in oklab, #2F7DF6 32%, rgba(7, 14, 30, .32)); border-color: rgba(255, 255, 255, .32); }
+body[data-hub-page="hub"] .hub-gtag--active { background: color-mix(in oklab, var(--h-violet) 32%, rgba(7, 14, 30, .32)); border-color: rgba(255, 255, 255, .32); }
 body[data-hub-page="hub"] .hub-dhero__plate {
   position: relative; z-index: 2; width: 100%; max-width: none; padding: 18px;
   border-radius: calc(var(--r) - 14px - 12px);
@@ -254,13 +255,13 @@ body[data-hub-page="hub"] .hub-dcard__score {
 .hub-buy {
   display: flex; align-items: stretch; border-radius: 999px; overflow: hidden; text-decoration: none;
   color: #fff; font-size: 14px; font-weight: 600;
-  background: color-mix(in oklab, #2F7DF6 32%, rgba(7, 14, 30, .32));
+  background: color-mix(in oklab, var(--h-violet) 32%, rgba(7, 14, 30, .32));
   -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
   border: 1px solid rgba(255, 255, 255, .32);
   box-shadow: 0 10px 26px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .35);
   transition: transform .3s var(--spring), background-color .25s ease;
 }
-.hub-buy:hover { transform: scale(1.05); background: color-mix(in oklab, #2F7DF6 46%, rgba(7, 14, 30, .32)); }
+.hub-buy:hover { transform: scale(1.05); background: color-mix(in oklab, var(--h-violet) 46%, rgba(7, 14, 30, .32)); }
 .hub-buy:active { transform: scale(.97); }
 .hub-buy__label { padding: 13px 20px; border-right: 1px solid rgba(255, 255, 255, .3); color: #fff; font-size: 14px; }
 .hub-buy__score { display: flex; align-items: center; padding: 13px 18px; background: rgba(255, 255, 255, .10); color: #fff; font-size: 14px; }
@@ -436,3 +437,89 @@ body[data-hub-page="hub"] .hub-rail > :nth-child(3) { animation-delay: .28s; }
     -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(6, 12, 26, .9);
   }
 }
+
+/* ==== GAME HOME: same shell, the game's palette ===========================
+   A game's home page reuses EVERY rule above - it carries data-hub-page="hub"
+   (so the dashboard styles apply) plus data-game-id (so hub.js scopes the
+   data). Entering a game changes only the sky + accent tokens, and the sky
+   colours crossfade so hub -> game TINTS the world instead of snapping. */
+.hub-sky i { transition: background-color 1.2s ease; }
+
+/* game switcher - the one sidebar element the hub does not have */
+.hub-game {
+  display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 8px;
+  border-radius: calc(var(--r) - 12px); text-decoration: none; color: inherit;
+  background: var(--fill-bg); border: 1px solid var(--fill-border);
+  transition: background-color .3s var(--spring), transform .3s var(--spring);
+}
+.hub-game:hover { background: var(--pill-hover); transform: scale(1.02); }
+.hub-game img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; object-position: 50% 20%; display: block; background: #0E1930; }
+.hub-game__t { min-width: 0; }
+.hub-game b { display: block; font-family: var(--h-mono); font-size: 12.5px; color: var(--h-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hub-game span { display: block; font-size: 11px; color: var(--h-ink-3); }
+.hub-game .material-symbols-outlined { margin-left: auto; color: var(--h-ink-3); font-size: 18px; }
+body[data-game-id] .hub-side__nav { margin-top: 14px; }
+
+/* coach quick-ask row in the rail */
+.hub-ask {
+  display: flex; align-items: center; gap: 8px; padding: 5px 5px 5px 14px; margin-top: 12px;
+  border-radius: 999px; background: var(--fill-bg); border: 1px solid var(--fill-border);
+}
+.hub-ask input { flex: 1; min-width: 0; border: 0; background: none; outline: none; color: var(--h-ink); font: inherit; font-size: 13px; }
+.hub-ask input::placeholder { color: var(--h-ink-3); }
+.hub-ask button {
+  width: 32px; height: 32px; flex: 0 0 32px; border-radius: 999px; cursor: pointer; display: grid; place-items: center;
+  border: 1px solid var(--acc-border); background: var(--acc-glass); color: var(--acc-ink);
+}
+.hub-ask .material-symbols-outlined { font-size: 18px; }
+
+/* moment cards: report-card anatomy + play glyph + timestamp */
+.hub-dcard__play { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; pointer-events: none; }
+.hub-dcard__play .material-symbols-outlined { font-size: 40px; font-variation-settings: "FILL" 1; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .5)); }
+.hub-dcard__ts {
+  position: absolute; left: 8px; bottom: 8px; padding: 3px 8px; border-radius: 999px;
+  font-family: var(--h-mono); font-size: 11px; color: #fff;
+  background: rgba(7, 14, 30, .55); border: 1px solid rgba(255, 255, 255, .2);
+}
+
+/* ==== game home extras: stat tiles + "work on this week" ================== */
+.hub-tiles { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+body[data-hub-page="hub"] .hub-tile {
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; min-height: 112px;
+  padding: 16px 18px; border-radius: calc(var(--r) - 6px); text-decoration: none; color: inherit;
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+  animation: hub-rise .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: .06s;
+}
+.hub-tile small { font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--h-ink-3); }
+.hub-tile b { font-family: var(--h-mono); font-size: 26px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; color: var(--h-ink); }
+.hub-tile span { font-size: 12.5px; color: var(--h-ink-2); }
+body[data-hub-page="hub"] .hub-tile--cta {
+  justify-content: center; align-items: flex-start; gap: 6px;
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+  transition: transform .3s var(--spring), background-color .25s ease;
+}
+body[data-hub-page="hub"] .hub-tile--cta:hover { transform: scale(1.03); background: var(--acc-glass-hover); }
+.hub-tile--cta .material-symbols-outlined { font-size: 22px; }
+.hub-tile--cta b { font-size: 15px; color: inherit; }
+.hub-tile--cta span { color: inherit; opacity: .8; }
+
+.hub-focus { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; }
+@media (max-width: 900px) { .hub-focus { grid-template-columns: 1fr; } }
+.hub-focus__list, .hub-focus__side { display: flex; flex-direction: column; gap: 10px; }
+.hub-focus__i {
+  display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px;
+  border-radius: calc(var(--r) - 14px); background: var(--fill-bg); border: 1px solid var(--fill-border);
+  font-size: 13.5px; line-height: 1.5; color: var(--h-ink-2);
+}
+.hub-focus__i .material-symbols-outlined {
+  width: 30px; height: 30px; flex: 0 0 30px; border-radius: 999px; display: grid; place-items: center;
+  font-size: 17px; color: var(--h-violet-2); background: var(--acc-glass); border: 1px solid var(--acc-border);
+}
+.hub-focus__i--good .material-symbols-outlined { color: var(--h-ink); }
+.hub-focus__i b { display: block; font-family: var(--h-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--h-ink-3); margin-bottom: 3px; }
+.hub-focus__tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px; }
+
+/* profile chip with an uploaded picture: the tile becomes the frame */
+body[data-hub-page="hub"] .hub-me__av--img { background: var(--fill-bg); padding: 0; overflow: hidden; }
+body[data-hub-page="hub"] .hub-me__av--img img { width: 100%; height: 100%; object-fit: cover; display: block; }

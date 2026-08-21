@@ -136,7 +136,11 @@ _frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
 # mount so these three paths are host-aware and everything else falls through,
 # which is what keeps this one deployment rather than two.
 _HUB_PAGES = {
-    "/": ("root/index.html", "index.html"),
+    # A game host's front page IS its dashboard - the same shell the hub uses,
+    # scoped to that game - so entering a game is a change of colour, not a
+    # change of application. frontend/index.html is the pre-dashboard landing
+    # and is no longer reachable from a game host.
+    "/": ("root/index.html", "home/index.html"),
     "/signin/": ("root/signin/index.html", "signin/index.html"),
     # /hub/ is hub-only: a game site has no game picker.
     "/hub/": ("root/hub/index.html", None),
