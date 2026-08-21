@@ -1,0 +1,153 @@
+# PRODUCTION stack. Differences from the dev docker-compose.yml, all deliberate:
+#   - No source-code volume mounts and no --reload: the container runs the image
+#     it was built from, nothing else. Deploying = rebuild + up, rollback = run
+#     the previous image.
+#   - Only Caddy touches the host network (80/443). Postgres/Redis/MinIO/API are
+#     reachable ONLY on the internal network - which is also why the API can be
+#     trusted to read X-Forwarded-For (--forwarded-allow-ips="*" is safe purely
+#     because nothing but Caddy can reach port 8000).
+#   - restart: unless-stopped everywhere - a crashed worker restarts itself at
+#     3am instead of waiting for someone to notice the queue is quiet.
+#   - db-backup dumps Postgres nightly into MinIO (see scripts/backup_db.sh and
+#     DEPLOY.md for the restore drill + offsite options).
+#
+# Usage (see DEPLOY.md for the full runbook):
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data          # TLS certificates live here - persist them
+      - caddyconfig:/config
+    depends_on:
+      - api
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env.prod}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env.prod}
+      POSTGRES_DB: ${POSTGRES_DB:-coachio}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Persistence on: Celery's queue and the rate-limit counters survive a
+    # restart instead of silently vanishing mid-deploy.
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:?set in .env.prod}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:?set in .env.prod}
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${S3_ACCESS_KEY} ${S3_SECRET_KEY} &&
+      mc mb --ignore-existing local/${S3_BUCKET:-coachio-frames} &&
+      echo 'bucket ready';
+      "
+
+  api:
+    build:
+      context: .
+      args:
+        INSTALL_OCR: "true"
+    restart: unless-stopped
+    env_file: .env.prod
+    # --proxy-headers so the rate limiter sees the visitor's IP, not Caddy's.
+    # 2 workers: uvicorn's SSE streams are async, so this is plenty until it
+    # measurably is not.
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --workers 2
+      --proxy-headers --forwarded-allow-ips="*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      # /health pings the DB, so this fails when Postgres is unreachable too.
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    build:
+      context: .
+      args:
+        INSTALL_OCR: "true"
+    restart: unless-stopped
+    env_file: .env.prod
+    command: celery -A workers.celery_app worker --loglevel=info --concurrency=2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # Nightly pg_dump into the `backups` volume, 14-day retention. This protects
+  # against bad deploys/deletes/corruption; it does NOT protect against losing
+  # the whole disk - DEPLOY.md has the one-liner to sync the volume offsite.
+  # Restore drill is in DEPLOY.md too - an untested backup is a hope, not a
+  # backup.
+  db-backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env.prod
+    entrypoint: ["/bin/sh", "/backup.sh"]
+    volumes:
+      - ./scripts/backup_db.sh:/backup.sh:ro
+      - backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  caddydata:
+  caddyconfig:
+  backups:

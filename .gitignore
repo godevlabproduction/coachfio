@@ -11,9 +11,10 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
-# Env / secrets
+# Env / secrets (.env.prod.example is the template and IS committed)
 .env
 .env.local
+.env.prod
 
 # Node / web
 web/node_modules/

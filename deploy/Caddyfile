@@ -1,0 +1,47 @@
+# Reverse proxy for coachfio.com + the per-game subdomains.
+#
+# Caddy provisions and renews TLS certificates automatically (HTTP-01, no
+# certbot, no cron). Each hostname below gets its own certificate; adding a
+# game = add its hostname to the list + `docker compose ... exec caddy caddy
+# reload --config /etc/caddy/Caddyfile` + the SITE_HOSTS env line. If you would
+# rather never touch this file again, switch to a wildcard cert (*.coachfio.com)
+# via the DNS-01 challenge - that needs a DNS-provider plugin (e.g. Cloudflare)
+# and an API token; see caddyserver.com/docs/automatic-https#dns-challenge.
+#
+# THE TWO RULES THIS FILE MUST NEVER BREAK (SETUP.md > Deploying):
+#   1. The Host header passes through unchanged - site resolution reads it, and
+#      a proxy that rewrites Host makes every subdomain resolve to the chooser.
+#      (reverse_proxy preserves Host by default in Caddy; do not add a
+#      `header_up Host` line.)
+#   2. X-Forwarded-For carries the real client IP - the auth rate limiter keys
+#      on it. (Also default behaviour; uvicorn runs with --proxy-headers.)
+
+coachfio.com,
+www.coachfio.com,
+fifa.coachfio.com,
+cs.coachfio.com {
+	encode gzip
+
+	# Whole-match uploads are multi-GB and slow; don't buffer them into memory
+	# or time them out at proxy level - the API streams and enforces its own
+	# limits.
+	request_body {
+		max_size 6GB
+	}
+
+	reverse_proxy api:8000 {
+		# SSE progress streams stay open for the length of an analysis.
+		flush_interval -1
+		transport http {
+			read_timeout 30m
+			write_timeout 30m
+		}
+	}
+}
+
+# Anything hitting the bare IP or an unknown hostname gets nothing, not the app:
+# serving the app there would file uploads against whatever site resolution
+# falls back to.
+:80 {
+	respond "not found" 404
+}

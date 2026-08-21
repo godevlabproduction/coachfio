@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -83,6 +83,22 @@ app.include_router(usage.router)
 
 @app.get("/health")
 def health() -> dict:
+    """Liveness for compose healthchecks and uptime monitors. Pings the DB -
+    an API that cannot reach Postgres serves error pages, and a healthcheck
+    that reports that as healthy would keep traffic pointed at it."""
+    from sqlalchemy import text
+
+    from core.storage.db import get_session
+
+    try:
+        session = get_session()
+        try:
+            session.execute(text("SELECT 1"))
+        finally:
+            session.close()
+    except Exception as exc:  # noqa: BLE001 - any DB failure means unhealthy
+        log.warning("health check failed: %s", exc)
+        raise HTTPException(503, "database unreachable")
     return {"ok": True, "adapters": registry.keys()}
 
 
