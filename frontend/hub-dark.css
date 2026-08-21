@@ -1,0 +1,438 @@
+/* HUB THEME SHEET - loaded by /hub/ only, after hub.css.
+   LIQUID GLASS edition, ported from the approved /glass-hub/ mockup:
+   every region (sidebar, hero, each section, each rail panel, footer) is its
+   own rounded glass panel floating over an ANIMATED backdrop - four color
+   fields drifting behind everything, sharp in the gaps, lensed through glass.
+
+   Structure lives at PAGE scope so light and dark are the SAME page; the
+   theme classes flip material + ink values only. Accent is blue; the
+   --h-violet* names survive only because hub.css components read them.
+   Rules: glass never stacks on glass (inner cards are plain fills; only
+   elements over ART get their own blur), tinted glass = actions only. */
+
+/* ==== page tokens (both themes) =========================================== */
+body[data-hub-page="hub"] {
+  --h-violet: #2F7DF6;
+  --h-violet-2: #5C9DFF;
+  --h-violet-deep: #2361C4;
+  --h-violet-soft: rgba(47, 125, 246, .12);
+  --h-violet-line: rgba(47, 125, 246, .42);
+  --h-font: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --gap: 18px;
+  --r: 26px;
+
+  /* LIGHT material (default theme) - ARCTIC: every neutral is pulled toward
+     the same cold-blue family so the glass, the sky, and the accent read as
+     one system. Ice ground, navy inks. */
+  --h-bg: #E9EEF7;
+  --h-surface: #F4F8FE;
+  --h-surface-2: #E7EEF9;
+  --h-ink: #10182A;
+  --h-ink-2: #44536F;
+  --h-ink-3: #6E7E9C;
+  --lq-bg: rgba(247, 251, 255, .44);
+  --lq-border: rgba(255, 255, 255, .6);
+  --lq-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .9),
+    inset 0 -1px 0 rgba(255, 255, 255, .3),
+    inset 1px 0 0 rgba(255, 255, 255, .45),
+    inset -1px 0 0 rgba(255, 255, 255, .45),
+    0 18px 48px rgba(24, 44, 86, .15);
+  --fill-bg: rgba(250, 253, 255, .55);
+  --fill-border: rgba(255, 255, 255, .7);
+  --pill-hover: rgba(250, 253, 255, .5);
+  --pill-on: rgba(255, 255, 255, .68);
+  --sky-o: .4; --sky-o-warm: .45;
+  /* ACCENT GLASS - the blue poured into the material, not painted flat.
+     Page-context recipe (buttons/badges on panels); ink flips per theme so
+     text stays legible on a translucent tint. */
+  --acc-glass: color-mix(in oklab, #2F7DF6 26%, rgba(255, 255, 255, .5));
+  --acc-glass-hover: color-mix(in oklab, #2F7DF6 36%, rgba(255, 255, 255, .5));
+  --acc-border: rgba(255, 255, 255, .65);
+  --acc-ink: #143A7A;
+}
+
+/* ==== DARK theme: material + ink values only ============================== */
+/* Anchored to the page scope: the light tokens above live on
+   body[data-hub-page="hub"] (0-1-1), so a bare .hub--dark (0-1-0) would LOSE
+   every overlapping token and dark would render with light values. */
+body[data-hub-page="hub"].hub--dark {
+  /* ARCTIC night: navy grounds, ice-tinted lines and fills - no flat grays. */
+  --h-bg: #070D1A;
+  --h-bg-2: #0C1526;
+  --h-surface: #121B2E;
+  --h-surface-2: #1A2540;
+  --h-line: rgba(190, 215, 255, .09);
+  --h-line-2: rgba(190, 215, 255, .17);
+  --h-ink: #F0F5FD;
+  --h-ink-2: #9AAAC6;
+  --h-ink-3: #7186A8;
+  --lq-bg: rgba(11, 22, 42, .35);
+  --lq-border: rgba(190, 215, 255, .15);
+  --lq-shadow:
+    inset 0 1px 0 rgba(220, 235, 255, .28),
+    inset 0 -1px 0 rgba(220, 235, 255, .06),
+    inset 1px 0 0 rgba(220, 235, 255, .09),
+    inset -1px 0 0 rgba(220, 235, 255, .09),
+    0 18px 48px rgba(2, 8, 22, .38);
+  --fill-bg: rgba(160, 200, 255, .08);
+  --fill-border: rgba(190, 220, 255, .12);
+  --pill-hover: rgba(160, 200, 255, .1);
+  --pill-on: rgba(160, 200, 255, .15);
+  --sky-o: .55; --sky-o-warm: .38;
+  --acc-glass: color-mix(in oklab, #2F7DF6 32%, rgba(255, 255, 255, .08));
+  --acc-glass-hover: color-mix(in oklab, #2F7DF6 44%, rgba(255, 255, 255, .1));
+  --acc-border: rgba(255, 255, 255, .3);
+  --acc-ink: #EAF1FF;
+  background: var(--h-bg);
+}
+body[data-hub-page="hub"].hub--glass { background: var(--h-bg); }
+body[data-hub-page="hub"].hub--glass::before,
+body[data-hub-page="hub"].hub--glass::after { display: none; }
+body[data-hub-page="hub"] { overflow-x: hidden; }
+
+/* ==== the animated backdrop =============================================== */
+.hub-sky { position: fixed; inset: -20%; z-index: -1; filter: blur(70px); pointer-events: none; }
+.hub-sky i { position: absolute; border-radius: 50%; opacity: var(--sky-o); }
+/* Sky colors come from --s1..--s4 so the palette is a PROFILE SETTING.
+   Default (no attribute / "1") is ARCTIC: tonal blues, brand-aligned. */
+.hub-sky i:nth-child(1) { width: 46vw; height: 46vw; left: 4%; top: 2%; background: var(--s1, #123A8C); animation: hub-drift1 26s ease-in-out infinite alternate; }
+.hub-sky i:nth-child(2) { width: 38vw; height: 38vw; right: 2%; top: 12%; background: var(--s2, #2F7DF6); animation: hub-drift2 32s ease-in-out infinite alternate; }
+.hub-sky i:nth-child(3) { width: 42vw; height: 42vw; left: 28%; bottom: -6%; background: var(--s3, #67C4E8); animation: hub-drift3 38s ease-in-out infinite alternate; opacity: var(--sky-o-warm); }
+.hub-sky i:nth-child(4) { width: 30vw; height: 30vw; right: 24%; bottom: 10%; background: var(--s4, #0B1E3F); animation: hub-drift1 44s ease-in-out infinite alternate-reverse; opacity: calc(var(--sky-o) - .13); }
+/* the five palettes - same set the mockup offered */
+body[data-sky="2"] { --s1: #14683E; --s2: #2FBF71; --s3: #D8E24F; --s4: #0E4D3A; }  /* Pitch */
+body[data-sky="3"] { --s1: #B23A1C; --s2: #C21F3A; --s3: #F0A050; --s4: #6E1A0F; }  /* Ember */
+body[data-sky="4"] { --s1: #F2762E; --s2: #1E4FD8; --s3: #E8B04B; --s4: #12355F; }  /* Broadcast */
+body[data-sky="5"] { --s1: #3A4756; --s2: #59687E; --s3: #7C8DA6; --s4: #232B36; }  /* Graphite */
+
+/* palette picker popover - opens from the profile row */
+.hub-skypick {
+  position: absolute; left: 12px; right: 12px; bottom: 108px; z-index: 5;
+  padding: 12px; border-radius: calc(var(--r) - 8px);
+  background: var(--lq-bg); border: 1px solid var(--lq-border); box-shadow: var(--lq-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
+}
+.hub-skypick p { font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--h-ink-3); margin: 2px 2px 10px; }
+.hub-skypick button {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0;
+  border-radius: 12px; background: none; color: var(--h-ink-2); cursor: pointer;
+  font-family: var(--h-mono); font-size: 12.5px; font-weight: 600; text-align: left;
+  transition: background-color .25s var(--spring), color .2s ease;
+}
+.hub-skypick button:hover { background: var(--pill-hover); color: var(--h-ink); }
+.hub-skypick button.is-on { background: var(--pill-on); color: var(--h-ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+.hub-skypick i { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 16px; border: 1px solid rgba(255, 255, 255, .35); }
+@keyframes hub-drift1 { to { transform: translate(9vw, 7vh) scale(1.15); } }
+@keyframes hub-drift2 { to { transform: translate(-8vw, 9vh) scale(.9); } }
+@keyframes hub-drift3 { to { transform: translate(6vw, -8vh) scale(1.12); } }
+
+/* ==== the material - every region is its own glass panel ================== */
+body[data-hub-page="hub"] .hub-side.hub-glass,
+body[data-hub-page="hub"] .hub-dhero,
+body[data-hub-page="hub"] .hub-dsec,
+body[data-hub-page="hub"] .hub-search,
+body[data-hub-page="hub"] .hub-rp.hub-glass,
+body[data-hub-page="hub"] .hub-foot.hub-glass {
+  border-radius: var(--r);
+  background: var(--lq-bg);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--lq-border);
+  box-shadow: var(--lq-shadow);
+}
+
+/* ==== typography: mono is the display voice, both themes ================== */
+body[data-hub-page="hub"] .hub-dsec__h h2, body[data-hub-page="hub"] .hub-dhero__name,
+body[data-hub-page="hub"] .hub-side__link, body[data-hub-page="hub"] .hub-btn,
+body[data-hub-page="hub"] .hub-dcard b, body[data-hub-page="hub"] .hub-me__id b,
+body[data-hub-page="hub"] .hub-search input, body[data-hub-page="hub"] .hub-rp__t,
+body[data-hub-page="hub"] .hub-rp__i b, body[data-hub-page="hub"] .hub-logo,
+body[data-hub-page="hub"] .hub-buy, body[data-hub-page="hub"] .hub-gcard__name {
+  font-family: var(--h-mono);
+}
+
+/* ==== shell ================================================================ */
+body[data-hub-page="hub"] .hub-shell { max-width: none; padding: var(--gap) var(--gap) 40px 14px; gap: var(--gap); }
+/* main is a bare flex column - the PANELS carry the surfaces, so no inner
+   padding: every region sits on the same gap grid as the side rails. */
+body[data-hub-page="hub"] .hub-content > main { padding: 0; gap: var(--gap); }
+
+/* ==== sidebar: its own glass column ======================================= */
+body[data-hub-page="hub"] .hub-side.hub-glass {
+  flex-basis: 224px; padding: 18px 12px; gap: 0;
+  top: var(--gap); height: calc(100dvh - 2 * var(--gap)); max-height: calc(100dvh - 2 * var(--gap));
+}
+body[data-hub-page="hub"] .hub-logo { padding: 0 6px; font-size: 16px; }
+body[data-hub-page="hub"] .hub-logo__mark {
+  background: var(--acc-glass); border: 1px solid var(--acc-border); border-radius: 10px;
+  color: var(--acc-ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
+}
+body[data-hub-page="hub"] .hub-side__nav { margin-top: 26px; gap: 6px; }
+body[data-hub-page="hub"] .hub-side__link {
+  padding: 12px; font-size: 14px; font-weight: 600; color: var(--h-ink-2);
+  border: 0; border-radius: calc(var(--r) - 12px); background: none;
+  transition: background-color .3s var(--spring), color .2s ease, transform .3s var(--spring);
+}
+body[data-hub-page="hub"] .hub-side__link:hover { color: var(--h-ink); background: var(--pill-hover); transform: scale(1.02); }
+body[data-hub-page="hub"] .hub-side__link.is-active {
+  color: var(--h-ink); background: var(--pill-on);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+body[data-hub-page="hub"] .hub-side__foot { border-top: 0; padding-top: 0; margin-top: auto; }
+.hub-side__me-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+body[data-hub-page="hub"] .hub-me { padding: 0 2px 10px; }
+body[data-hub-page="hub"] .hub-me__av {
+  border-radius: 11px; background: var(--acc-glass); border: 1px solid var(--acc-border);
+  color: var(--acc-ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
+}
+body[data-hub-page="hub"] .hub-me__id > span { color: var(--h-ink-3); }
+.hub-theme {
+  width: 36px; height: 36px; flex: 0 0 36px; border-radius: 11px; cursor: pointer;
+  display: grid; place-items: center; margin-bottom: 10px;
+  background: var(--fill-bg); border: 1px solid var(--lq-border); color: var(--h-ink-2);
+  transition: transform .35s var(--spring), color .2s ease;
+}
+.hub-theme:hover { transform: scale(1.1) rotate(12deg); color: var(--h-ink); }
+.hub-theme .material-symbols-outlined { font-size: 18px; }
+
+/* ==== hero: glass frame around the art; clear glass ON the art ============ */
+body[data-hub-page="hub"] .hub-dhero { min-height: 462px; padding: 28px; border-color: var(--lq-border); }
+body[data-hub-page="hub"] .hub-dhero__art { position: absolute; inset: 14px; border-radius: calc(var(--r) - 14px); overflow: hidden; }
+body[data-hub-page="hub"] .hub-dhero__scrim {
+  inset: 14px; border-radius: calc(var(--r) - 14px);
+  background: linear-gradient(to bottom, rgba(5, 11, 24, .18) 0%, transparent 30%, transparent 55%, rgba(5, 11, 24, .55) 100%);
+}
+body[data-hub-page="hub"] .hub-dhero__tags { position: absolute; top: 28px; left: 28px; z-index: 3; margin: 0; }
+body[data-hub-page="hub"] .hub-dhero .hub-gtag,
+body[data-hub-page="hub"] .hub-gcard__tags .hub-gtag {
+  padding: 7px 14px; border-radius: 999px; font-size: 12px; letter-spacing: 0; text-transform: none;
+  font-family: var(--h-mono); color: #fff;
+  background: rgba(7, 14, 30, .40); border: 1px solid rgba(255, 255, 255, .22);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+body[data-hub-page="hub"] .hub-gtag--active { background: color-mix(in oklab, #2F7DF6 32%, rgba(7, 14, 30, .32)); border-color: rgba(255, 255, 255, .32); }
+body[data-hub-page="hub"] .hub-dhero__plate {
+  position: relative; z-index: 2; width: 100%; max-width: none; padding: 18px;
+  border-radius: calc(var(--r) - 14px - 12px);
+  background: rgba(7, 14, 30, .36); border: 1px solid rgba(255, 255, 255, .2);
+  -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+.hub-dhero__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+body[data-hub-page="hub"] .hub-dhero__name { font-size: 25px; color: #fff; }
+body[data-hub-page="hub"] .hub-dhero__when { font-family: var(--h-font); font-size: 15px; color: rgba(255, 255, 255, .65); }
+body[data-hub-page="hub"] .hub-dhero__ins { font-family: var(--h-font); font-size: 14px; color: rgba(255, 255, 255, .85); max-width: 46ch; margin-bottom: 0; }
+/* neutral art fallback (no purple) */
+body[data-hub-page="hub"] .hub-dhero__art, body[data-hub-page="hub"] .hub-dcard__artin,
+body[data-hub-page="hub"] .hub-gcard__art, body[data-hub-page="hub"] .hub-gcard__art--b { background: #0E1930; }
+/* score chip on card art: navy glass, not the old charcoal */
+body[data-hub-page="hub"] .hub-dcard__score {
+  background: rgba(7, 14, 30, .52); border-color: rgba(190, 215, 255, .2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+/* carousel arrows: round glass buttons on the art */
+.hub-dhero__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  width: 42px; height: 42px; border-radius: 999px; cursor: pointer; padding: 0;
+  border: 1px solid rgba(255, 255, 255, .25); background: rgba(7, 14, 30, .38); color: #fff;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  display: grid; place-items: center;
+  transition: transform .3s var(--spring), background-color .2s ease;
+}
+.hub-dhero__arrow:hover { transform: translateY(-50%) scale(1.12); background: rgba(7, 14, 30, .58); }
+.hub-dhero__arrow .material-symbols-outlined { font-size: 24px; }
+.hub-dhero__arrow--l { left: 28px; }
+.hub-dhero__arrow--r { right: 28px; }
+
+/* split CTA: ACCENT GLASS on the art - the tint is in the material, the match
+   footage lenses through it. On-art recipe is theme-independent (the backdrop
+   is the art, not the page), so text stays white in both themes. */
+.hub-buy {
+  display: flex; align-items: stretch; border-radius: 999px; overflow: hidden; text-decoration: none;
+  color: #fff; font-size: 14px; font-weight: 600;
+  background: color-mix(in oklab, #2F7DF6 32%, rgba(7, 14, 30, .32));
+  -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, .32);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .35);
+  transition: transform .3s var(--spring), background-color .25s ease;
+}
+.hub-buy:hover { transform: scale(1.05); background: color-mix(in oklab, #2F7DF6 46%, rgba(7, 14, 30, .32)); }
+.hub-buy:active { transform: scale(.97); }
+.hub-buy__label { padding: 13px 20px; border-right: 1px solid rgba(255, 255, 255, .3); color: #fff; font-size: 14px; }
+.hub-buy__score { display: flex; align-items: center; padding: 13px 18px; background: rgba(255, 255, 255, .10); color: #fff; font-size: 14px; }
+.hub-ico {
+  width: 48px; height: 48px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .25);
+  background: rgba(7, 14, 30, .38); color: #fff; display: grid; place-items: center; text-decoration: none;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+  transition: transform .3s var(--spring), background-color .2s ease;
+}
+.hub-ico:hover { transform: scale(1.1); background: rgba(7, 14, 30, .58); }
+
+/* empty state: the glass panel itself carries it */
+body[data-hub-page="hub"] .hub-dhero--empty.hub-glass { background: var(--lq-bg); border: 1px solid var(--lq-border); }
+body[data-hub-page="hub"] .hub-dhero--empty::before { display: none; }
+body[data-hub-page="hub"] .hub-dhero--empty .hub-dhero__plate {
+  background: none; border: 0; box-shadow: none; padding: 0; width: auto;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  display: flex; flex-direction: column; align-items: center;
+}
+body[data-hub-page="hub"] .hub-dhero--empty .hub-dhero__name { color: var(--h-ink); }
+body[data-hub-page="hub"] .hub-dhero--empty .hub-dhero__ins { color: var(--h-ink-2); }
+body[data-hub-page="hub"] .hub-dhero__ring { background: var(--fill-bg); border-color: var(--fill-border); color: var(--h-violet-2); }
+
+/* ==== sections: their own glass panels ==================================== */
+body[data-hub-page="hub"] .hub-dsec { padding: 18px; }
+body[data-hub-page="hub"] .hub-dsec__h { margin-bottom: 16px; }
+body[data-hub-page="hub"] .hub-dsec__h h2 { font-size: 17px; font-weight: 700; }
+.hub-pager { margin-left: auto; display: flex; gap: 8px; }
+.hub-pager button {
+  width: 40px; height: 36px; border-radius: 999px; border: 1px solid var(--lq-border);
+  background: var(--fill-bg); color: var(--h-ink-2); cursor: pointer; display: grid; place-items: center;
+  transition: transform .3s var(--spring), color .2s ease;
+}
+.hub-pager button:hover { transform: scale(1.08); color: var(--h-ink); }
+
+/* reports: snap row of FILL cards (no glass-on-glass) */
+body[data-hub-page="hub"] .hub-dcards {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; padding-bottom: 2px; grid-template-columns: none;
+}
+body[data-hub-page="hub"] .hub-dcards::-webkit-scrollbar { display: none; }
+body[data-hub-page="hub"] .hub-dcards > * { flex: 0 0 236px; scroll-snap-align: start; }
+body[data-hub-page="hub"] .hub-dcard {
+  background: var(--fill-bg); border: 1px solid var(--fill-border);
+  padding: 8px; border-radius: calc(var(--r) - 14px);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  transition: transform .35s var(--spring);
+}
+@media (pointer: fine) { body[data-hub-page="hub"] .hub-dcard:hover { transform: translateY(-4px) scale(1.02); border-color: var(--fill-border); background: var(--fill-bg); } }
+body[data-hub-page="hub"] .hub-dcard--hi { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+body[data-hub-page="hub"] .hub-dcard__art { height: auto; aspect-ratio: 1 / 0.72; border-radius: calc(var(--r) - 14px - 8px); }
+body[data-hub-page="hub"] .hub-dcard__in { padding: 10px 6px 4px; }
+body[data-hub-page="hub"] .hub-dcard b { font-size: 14.5px; }
+body[data-hub-page="hub"] .hub-dcard p { font-size: 12px; color: var(--h-ink-3); }
+body[data-hub-page="hub"] .hub-dcard__meta time { color: var(--h-ink-3); }
+body[data-hub-page="hub"] .hub-gbadge {
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink);
+  font-size: 9.5px; padding: 3px 8px; border-radius: 999px;
+}
+body[data-hub-page="hub"] .hub-dcard--hi .hub-gbadge {
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+
+/* games: art cards with a clear-glass plate; soon-card is a dashed fill */
+body[data-hub-page="hub"] .hub-dsec .hub-games { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+body[data-hub-page="hub"] .hub-gcard, body[data-hub-page="hub"] .hub-gsoon {
+  height: 280px; border-radius: calc(var(--r) - 14px); border: 0; padding: 10px;
+  transition: transform .35s var(--spring), border-color .2s ease;
+}
+@media (pointer: fine) { body[data-hub-page="hub"] .hub-gcard:hover { transform: scale(1.02); border-color: transparent; } }
+body[data-hub-page="hub"] .hub-gcard:hover .hub-gcard__img { transform: none; }
+body[data-hub-page="hub"] .hub-gcard__scrim,
+body[data-hub-page="hub"] .hub-gcard__scrim--art { background: linear-gradient(to bottom, transparent 55%, rgba(7, 14, 30, .38)); }
+body[data-hub-page="hub"] .hub-gcard__in {
+  padding: 12px 14px; border-radius: calc(var(--r) - 14px - 10px);
+  background: rgba(7, 14, 30, .40); border: 1px solid rgba(255, 255, 255, .2);
+  -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+body[data-hub-page="hub"] .hub-gcard__name { font-size: 16px; }
+body[data-hub-page="hub"] .hub-gcard__desc { font-size: 12px; }
+body[data-hub-page="hub"] .hub-gsoon {
+  background: var(--fill-bg); border: 1px dashed var(--lq-border);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+body[data-hub-page="hub"] .hub-gsoon__ring { background: var(--fill-bg); border-color: var(--fill-border); color: var(--h-ink-3); }
+body[data-hub-page="hub"] .hub-gsoon .hub-h3 { color: var(--h-ink) !important; }
+body[data-hub-page="hub"] .hub-gsoon .hub-small { color: var(--h-ink-3); }
+
+/* ==== right rail: separate glass panels =================================== */
+body[data-hub-page="hub"] .hub-rail { flex-basis: 300px; top: var(--gap); gap: var(--gap); }
+body[data-hub-page="hub"] .hub-search { border-radius: 999px; }
+body[data-hub-page="hub"] .hub-search input {
+  padding: 14px 18px 14px 46px; border-radius: 999px; font-size: 13.5px;
+  background: none; border: 0; color: var(--h-ink);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+body[data-hub-page="hub"] .hub-search input:focus { background: none; }
+body[data-hub-page="hub"] .hub-search:focus-within { border-color: var(--h-violet); }
+body[data-hub-page="hub"] .hub-search .material-symbols-outlined { left: 16px; color: var(--h-ink-3); }
+body[data-hub-page="hub"] .hub-rp.hub-glass { padding: 16px; }
+body[data-hub-page="hub"] .hub-rp__t { font-size: 15px; font-weight: 700; text-transform: none; letter-spacing: -.01em; color: var(--h-ink); margin: 0 0 14px; }
+body[data-hub-page="hub"] .hub-rp__feed { gap: 12px; }
+body[data-hub-page="hub"] .hub-rp__i { gap: 12px; }
+body[data-hub-page="hub"] .hub-rp__i .material-symbols-outlined {
+  width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-violet-2);
+  font-size: 19px; margin-top: 0;
+}
+body[data-hub-page="hub"] .hub-rp__i b { font-size: 12.5px; }
+body[data-hub-page="hub"] .hub-rp__i > span > span { font-size: 11.5px; color: var(--h-ink-3); }
+
+/* ==== buttons ============================================================== */
+body[data-hub-page="hub"] .hub-btn { transition: transform .3s var(--spring), background-color .2s ease; }
+body[data-hub-page="hub"] .hub-btn:hover { transform: scale(1.04); }
+body[data-hub-page="hub"] .hub-btn:active { transform: scale(.97); }
+body[data-hub-page="hub"] .hub-btn--primary {
+  border-radius: 999px; background: var(--acc-glass); color: var(--acc-ink);
+  border: 1px solid var(--acc-border);
+  -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .18), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+body[data-hub-page="hub"] .hub-btn--primary:hover { background: var(--acc-glass-hover); }
+body[data-hub-page="hub"] .hub-btn--ghost { border-radius: 999px; background: var(--fill-bg); border-color: var(--fill-border); color: var(--h-ink); }
+
+/* ==== footer: a glass band ================================================ */
+body[data-hub-page="hub"] .hub-foot.hub-glass { border-radius: 0; border-width: 1px 0 0; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25); }
+body[data-hub-page="hub"] .hub-foot__tag, body[data-hub-page="hub"] .hub-foot__links a { color: var(--h-ink-2); }
+body[data-hub-page="hub"] .hub-foot__links a:hover { color: var(--h-ink); }
+body[data-hub-page="hub"] .hub-foot__h, body[data-hub-page="hub"] .hub-foot__bar { color: var(--h-ink-3); }
+body[data-hub-page="hub"] .hub-foot__bar { border-top-color: var(--lq-border); }
+body[data-hub-page="hub"] .hub-foot__bar strong { color: var(--h-ink-2); }
+
+/* ==== motion: one staggered load ========================================== */
+@keyframes hub-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+body[data-hub-page="hub"] .hub-dhero, body[data-hub-page="hub"] .hub-dsec,
+body[data-hub-page="hub"] .hub-rail > * {
+  animation: hub-rise .5s cubic-bezier(.2, .7, .2, 1) both;
+}
+body[data-hub-page="hub"] .hub-dsec:nth-of-type(2) { animation-delay: .08s; }
+body[data-hub-page="hub"] .hub-dsec:nth-of-type(3) { animation-delay: .16s; }
+body[data-hub-page="hub"] .hub-rail > :nth-child(1) { animation-delay: .12s; }
+body[data-hub-page="hub"] .hub-rail > :nth-child(2) { animation-delay: .2s; }
+body[data-hub-page="hub"] .hub-rail > :nth-child(3) { animation-delay: .28s; }
+
+/* ==== fallbacks ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  body[data-hub-page="hub"] .hub-dhero, body[data-hub-page="hub"] .hub-dsec,
+  body[data-hub-page="hub"] .hub-rail > * { animation: none; }
+  .hub-sky i { animation: none; }
+  .hub-buy, .hub-ico, .hub-theme, .hub-dhero__arrow,
+  body[data-hub-page="hub"] .hub-dcard, body[data-hub-page="hub"] .hub-gcard,
+  body[data-hub-page="hub"] .hub-btn, body[data-hub-page="hub"] .hub-side__link { transition: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .hub-sky { display: none; }
+  body[data-hub-page="hub"] .hub-side.hub-glass, body[data-hub-page="hub"] .hub-dhero,
+  body[data-hub-page="hub"] .hub-dsec, body[data-hub-page="hub"] .hub-search,
+  body[data-hub-page="hub"] .hub-rp.hub-glass, body[data-hub-page="hub"] .hub-foot.hub-glass {
+    -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, .97);
+  }
+  body[data-hub-page="hub"].hub--dark .hub-side.hub-glass,
+  body[data-hub-page="hub"].hub--dark .hub-dhero,
+  body[data-hub-page="hub"].hub--dark .hub-dsec,
+  body[data-hub-page="hub"].hub--dark .hub-search,
+  body[data-hub-page="hub"].hub--dark .hub-rp.hub-glass,
+  body[data-hub-page="hub"].hub--dark .hub-foot.hub-glass {
+    background: rgba(9, 16, 32, .96);
+  }
+  body[data-hub-page="hub"] .hub-dhero__plate, body[data-hub-page="hub"] .hub-gcard__in {
+    -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(6, 12, 26, .9);
+  }
+}

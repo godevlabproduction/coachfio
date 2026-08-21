@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<title>Liquid Glass spec - Coachfio</title>
+<style>
+/* LIQUID GLASS SPEC PAGE - a living proposal, not production code.
+   Recreates the character of Apple's Liquid Glass material (iOS 26 era) in
+   plain CSS: refractive edges via layered inset speculars, backdrop blur +
+   saturation pull, concentric corner geometry, springy morphing controls.
+   Accent is Coachfio hub blue. No purple anywhere. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #2F7DF6; --blue-2: #5C9DFF;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --r: 26px;                     /* outer radius; children go concentric */
+}
+body {
+  font-family: var(--sans); color: #fff; min-height: 100vh;
+  background:
+    radial-gradient(900px 600px at 15% -5%, rgba(47, 125, 246, .55), transparent 60%),
+    radial-gradient(800px 600px at 95% 20%, rgba(61, 214, 140, .30), transparent 60%),
+    radial-gradient(900px 700px at 50% 110%, rgba(240, 160, 60, .25), transparent 60%),
+    linear-gradient(170deg, #0A1220, #0B0F16 55%, #101017);
+  background-attachment: fixed;
+  padding: 108px 24px 80px;
+}
+body.day {
+  color: #10131A;
+  background:
+    radial-gradient(900px 600px at 15% -5%, rgba(47, 125, 246, .35), transparent 60%),
+    radial-gradient(800px 600px at 95% 20%, rgba(61, 214, 140, .28), transparent 60%),
+    radial-gradient(900px 700px at 50% 110%, rgba(240, 160, 60, .30), transparent 60%),
+    linear-gradient(170deg, #E8EDF6, #EDEFF3 55%, #F2EFEA);
+}
+.wrap { max-width: 1080px; margin: 0 auto; }
+.mono { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .65; }
+h1 { font-family: var(--mono); font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -.03em; line-height: 1.05; margin: 10px 0 14px; }
+h2 { font-family: var(--mono); font-size: 20px; letter-spacing: -.01em; margin: 0 0 6px; }
+.sec { margin-top: 64px; }
+.sec > p { max-width: 62ch; opacity: .78; font-size: 14.5px; line-height: 1.65; margin-top: 6px; }
+.lede { max-width: 60ch; opacity: .85; font-size: 16px; line-height: 1.65; }
+
+/* ==== THE MATERIAL ========================================================
+   Liquid Glass = blur + saturation pull from the backdrop, a bright specular
+   at the top edge (the "light hits the rim" read), faint side lensing, and a
+   soft lift shadow. Radius is large and children stay concentric. */
+.lq {
+  position: relative; border-radius: var(--r);
+  background: rgba(255, 255, 255, .10);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .38),   /* top specular rim */
+    inset 0 -1px 0 rgba(255, 255, 255, .07),  /* bottom lip */
+    inset 1px 0 0 rgba(255, 255, 255, .10),   /* side lensing */
+    inset -1px 0 0 rgba(255, 255, 255, .10),
+    0 16px 44px rgba(0, 0, 0, .28);           /* lift off the backdrop */
+}
+.day .lq {
+  background: rgba(255, 255, 255, .42);
+  border-color: rgba(255, 255, 255, .55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .85),
+    inset 0 -1px 0 rgba(255, 255, 255, .25),
+    inset 1px 0 0 rgba(255, 255, 255, .4),
+    inset -1px 0 0 rgba(255, 255, 255, .4),
+    0 16px 44px rgba(20, 30, 50, .16);
+}
+/* Clear variant - for surfaces over media where the content must dominate. */
+.lq--clear { background: rgba(10, 14, 22, .28); }
+.day .lq--clear { background: rgba(255, 255, 255, .22); }
+/* Tinted variant - the accent poured INTO the material, not painted on top. */
+.lq--tint { background: color-mix(in oklab, var(--blue) 55%, rgba(255, 255, 255, .08)); border-color: rgba(255, 255, 255, .3); }
+.day .lq--tint { background: color-mix(in oklab, var(--blue) 70%, #fff); color: #fff; }
+
+/* ==== floating pill nav (the material in use, immediately) ================ */
+.nav {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 50;
+  display: flex; align-items: center; gap: 4px; padding: 8px; --r: 999px;
+  width: min(680px, calc(100vw - 32px));
+}
+.nav b { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; padding: 0 14px 0 8px; }
+.nav b i {
+  width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--blue); color: #fff; font-style: normal;
+}
+.nav b i .material-symbols-outlined { font-size: 16px; }
+.nav a {
+  padding: 9px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
+  color: inherit; text-decoration: none; opacity: .75;
+  transition: background-color .25s var(--spring), opacity .2s ease, transform .25s var(--spring);
+}
+.nav a:hover { opacity: 1; background: rgba(255, 255, 255, .14); transform: scale(1.04); }
+.day .nav a:hover { background: rgba(255, 255, 255, .5); }
+.nav .spacer { flex: 1; }
+.theme {
+  width: 38px; height: 38px; border-radius: 999px; border: 0; cursor: pointer;
+  display: grid; place-items: center; color: inherit; background: rgba(255, 255, 255, .12);
+  transition: transform .35s var(--spring), background-color .2s ease;
+}
+.theme:hover { transform: scale(1.1) rotate(12deg); }
+.day .theme { background: rgba(255, 255, 255, .5); }
+.theme .material-symbols-outlined { font-size: 19px; }
+
+/* ==== swatches ============================================================= */
+.grid3 { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 22px; }
+.sw { padding: 22px; min-height: 168px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+.sw b { font-family: var(--mono); font-size: 14px; }
+.sw span { font-family: var(--mono); font-size: 11px; opacity: .65; line-height: 1.7; }
+
+/* ==== concentric geometry demo ============================================ */
+.conc { margin-top: 22px; padding: 20px; }
+.conc .inner { --pad: 20px; border-radius: calc(var(--r) - var(--pad)); padding: 18px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); }
+.day .conc .inner { background: rgba(255, 255, 255, .4); }
+.conc .inner .chip { display: inline-block; border-radius: calc(var(--r) - var(--pad) - 18px); background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .16); padding: 6px 12px; font-family: var(--mono); font-size: 11.5px; }
+.day .conc .inner .chip { background: rgba(255, 255, 255, .55); }
+.conc p { font-size: 13px; opacity: .7; margin-top: 12px; }
+
+/* ==== controls ============================================================= */
+.controls { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; --r: 999px;
+  font-family: var(--mono); font-size: 13.5px; font-weight: 600; color: inherit;
+  text-decoration: none; cursor: pointer;
+  transition: transform .3s var(--spring), box-shadow .2s ease;
+}
+.btn:hover { transform: scale(1.05); }
+.btn:active { transform: scale(.97); }
+.btn--tint { color: #fff; }
+.btn .material-symbols-outlined { font-size: 17px; }
+/* segmented control: the thumb morphs between options */
+.seg { display: flex; position: relative; padding: 4px; --r: 999px; }
+.seg label { position: relative; z-index: 1; padding: 9px 18px; border-radius: 999px; font-family: var(--mono); font-size: 12.5px; font-weight: 600; cursor: pointer; opacity: .7; transition: opacity .2s; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg .thumb {
+  position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: 92px;
+  border-radius: 999px; background: rgba(255, 255, 255, .22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 4px 14px rgba(0, 0, 0, .2);
+  transition: transform .4s var(--spring);
+}
+.day .seg .thumb { background: rgba(255, 255, 255, .75); }
+.seg input:nth-of-type(1):checked ~ .thumb { transform: translateX(0); }
+.seg input:nth-of-type(2):checked ~ .thumb { transform: translateX(92px); }
+.seg input:nth-of-type(3):checked ~ .thumb { transform: translateX(184px); }
+.seg input:nth-of-type(1):checked ~ label:nth-of-type(1),
+.seg input:nth-of-type(2):checked ~ label:nth-of-type(2),
+.seg input:nth-of-type(3):checked ~ label:nth-of-type(3) { opacity: 1; }
+
+/* ==== applied: the hub hero in liquid glass =============================== */
+.hero { position: relative; margin-top: 22px; border-radius: var(--r); overflow: hidden; min-height: 420px; display: flex; align-items: flex-end; padding: 20px; isolation: isolate; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+.hero img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; z-index: -1; }
+.hero__tags { position: absolute; top: 18px; left: 18px; display: flex; gap: 8px; }
+.tag { --r: 999px; padding: 8px 15px; font-family: var(--mono); font-size: 12px; color: #fff; }
+.hero__plate { --r: 20px; width: 100%; padding: 20px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: #fff; }
+.hero__plate h3 { font-family: var(--mono); font-size: 24px; letter-spacing: -.02em; }
+.hero__plate p { font-size: 14px; opacity: .85; max-width: 46ch; margin-top: 6px; }
+.hero__cta { display: flex; gap: 10px; }
+.day .hero__plate { color: #fff; }   /* plate sits on art: stays light-on-dark */
+
+.cards { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 22px; }
+.card { overflow: hidden; padding: 10px; transition: transform .35s var(--spring); }
+@media (pointer: fine) { .card:hover { transform: translateY(-4px) scale(1.01); } }
+.card img { width: 100%; aspect-ratio: 1/0.72; object-fit: cover; border-radius: calc(var(--r) - 10px); display: block; }
+.card .in { padding: 12px 8px 6px; }
+.card .in b { font-family: var(--mono); font-size: 15px; }
+.card .in p { font-size: 12.5px; opacity: .7; margin-top: 4px; }
+
+/* ==== fallback ============================================================= */
+@media (prefers-reduced-transparency: reduce) {
+  .lq, .day .lq { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(16, 20, 28, .92); }
+  .day .lq { background: rgba(255, 255, 255, .95); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn, .card, .theme, .nav a, .seg .thumb { transition: none; }
+}
+.note { margin-top: 14px; font-family: var(--mono); font-size: 11.5px; opacity: .55; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<nav class="nav lq" aria-label="Spec sections">
+  <b><i><span class="material-symbols-outlined">insights</span></i>Liquid Glass</b>
+  <a href="#material">Material</a>
+  <a href="#geometry">Geometry</a>
+  <a href="#controls">Controls</a>
+  <a href="#applied">Applied</a>
+  <span class="spacer"></span>
+  <button class="theme" type="button" aria-label="Toggle light and dark"
+    onclick="document.body.classList.toggle('day');this.firstElementChild.textContent=document.body.classList.contains('day')?'dark_mode':'light_mode'">
+    <span class="material-symbols-outlined">light_mode</span></button>
+</nav>
+
+<div class="wrap">
+  <p class="mono">Design proposal &middot; Coachfio hub</p>
+  <h1>Liquid Glass,<br>the Coachfio cut.</h1>
+  <p class="lede">Apple's current material design (iOS 26 era): surfaces behave like
+    lensed glass - they blur and <em>saturate</em> what's behind them, catch light on the top
+    rim, keep concentric corner geometry, and respond with springy, morphing motion.
+    This page is the material itself, live. Toggle the sun to see it adapt.</p>
+
+  <section class="sec" id="material">
+    <h2>1 &middot; The material</h2>
+    <p>Three finishes, one recipe. The specular rim (inset top highlight) + backdrop
+      saturation pull are what separate this from the flat frosted glass we had before.</p>
+    <div class="grid3">
+      <div class="sw lq"><b>Regular</b><span>blur 26px &middot; saturate 180%<br>rim .38 &middot; lift 16/44<br>panels, rails, nav</span></div>
+      <div class="sw lq lq--clear"><b>Clear</b><span>darker fill, same rim<br>over art &amp; media<br>hero plates, on-image chips</span></div>
+      <div class="sw lq lq--tint"><b>Tinted</b><span>accent poured into the glass<br>color-mix + rim<br>primary actions only</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="geometry">
+    <h2>2 &middot; Concentric geometry</h2>
+    <div class="conc lq">
+      <div class="inner">
+        <span class="chip">radius = parent &minus; padding</span>
+        <p>Every nested radius is the parent's radius minus the gap between them. Corners
+          stay parallel at every level - this is what makes glass read as machined, not drawn.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="controls">
+    <h2>3 &middot; Controls</h2>
+    <p>Interaction is springy and physical: controls scale up on hover, compress on press,
+      and the segmented thumb morphs between options.</p>
+    <div class="controls">
+      <a class="btn lq lq--tint btn--tint" href="#"><span class="material-symbols-outlined">description</span>Open report</a>
+      <a class="btn lq" href="#"><span class="material-symbols-outlined">movie</span>4 moments</a>
+      <div class="seg lq">
+        <input type="radio" name="seg" id="s1" checked><input type="radio" name="seg" id="s2"><input type="radio" name="seg" id="s3">
+        <label for="s1">Reports</label><label for="s2">Moments</label><label for="s3">Games</label>
+        <span class="thumb"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="applied">
+    <h2>4 &middot; Applied: the hub</h2>
+    <p>The dashboard we built, wearing the material - clear glass on art, regular glass
+      for cards, tinted glass only where you act.</p>
+    <div class="hero">
+      <img class="bg" src="/art/fc27-card.jpg" alt="">
+      <div class="hero__tags">
+        <span class="tag lq lq--clear">EA Sports FC 26</span>
+        <span class="tag lq lq--clear">Win</span>
+        <span class="tag lq lq--tint">Latest report</span>
+      </div>
+      <div class="hero__plate lq lq--clear">
+        <div>
+          <h3>2&ndash;1 &middot; yesterday</h3>
+          <p>You created 9 chances but 7 came from the same left overlap &mdash; when it
+            was cut off after 60&prime;, the attack went quiet.</p>
+        </div>
+        <div class="hero__cta">
+          <a class="btn lq lq--tint btn--tint" href="#">Open report</a>
+        </div>
+      </div>
+    </div>
+    <div class="cards">
+      <a class="card lq" href="#"><img src="/art/fc27-card.jpg" alt=""><span class="in"><b>Win 2&ndash;1</b><p>FC 26 &middot; yesterday</p></span></a>
+      <a class="card lq" href="#"><img src="/cs2-preview.jpg" alt=""><span class="in"><b>Loss 11&ndash;13</b><p>CS2 &middot; Tuesday</p></span></a>
+      <a class="card lq" href="#"><img src="/report-preview.jpg" alt=""><span class="in"><b>Draw 1&ndash;1</b><p>FC 26 &middot; Sunday</p></span></a>
+    </div>
+    <p class="note">Fallbacks: prefers-reduced-transparency &rarr; solid surfaces &middot;
+      prefers-reduced-motion &rarr; springs off &middot; no backdrop-filter support &rarr;
+      the fill opacities are chosen to stay legible without blur.</p>
+  </section>
+</div>
+</body>
+</html>

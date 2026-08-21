@@ -50,11 +50,22 @@
   --h-dk-ink-2: #A9A6BE;
   --h-dk-accent: #9B84FF;
 
+  /* Glass scale (glassmorphism system): one blur/opacity vocabulary so every
+     frosted surface on the page is one of three intensities, not improvised.
+     Light glass sits on the light page; dark glass sits on key art. Borders are
+     the low-opacity white "edge light" that makes a pane read as glass. */
+  --h-glass-blur-sm: 8px; --h-glass-blur-md: 16px; --h-glass-blur-lg: 24px;
+  --h-glass-light: rgba(255, 255, 255, .55);
+  --h-glass-light-2: rgba(255, 255, 255, .40);
+  --h-glass-dark: rgba(10, 8, 20, .32);
+  --h-glass-edge: rgba(255, 255, 255, .60);
+  --h-glass-edge-dark: rgba(255, 255, 255, .18);
+
   --h-r: 10px;
   --h-r-lg: 16px;
   --h-s1: 8px; --h-s2: 16px; --h-s3: 24px; --h-s4: 40px; --h-s5: 72px;
 
-  --h-font: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --h-font: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --h-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -92,6 +103,12 @@
   display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
   border: 1px solid var(--h-line); background: var(--h-surface);
   font-family: var(--h-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--h-ink-2);
+}
+/* Inside a glass header the chip goes glass too - an opaque white pill on a
+   frosted bar reads as a sticker on the pane. */
+.hub-glass .hub-chip {
+  background: var(--h-glass-light-2); border-color: var(--h-glass-edge);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-sm)); backdrop-filter: blur(var(--h-glass-blur-sm));
 }
 .hub-chip__dot { width: 6px; height: 6px; border-radius: 999px; background: var(--h-violet); box-shadow: 0 0 8px var(--h-violet); }
 
@@ -201,7 +218,7 @@
 .hub-games { display: grid; gap: var(--h-s3); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 .hub-gcard {
   position: relative; display: flex; flex-direction: column; justify-content: flex-end;
-  height: 320px; padding: 24px; border-radius: var(--h-r-lg); overflow: hidden;
+  height: 340px; padding: 14px; border-radius: var(--h-r-lg); overflow: hidden;
   border: 1px solid var(--h-line); text-decoration: none; isolation: isolate;
   transition: border-color .18s ease;
 }
@@ -213,20 +230,42 @@
    than as two competing box shots. */
 .hub-gcard__img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); transition: transform .35s ease; }
 .hub-gcard:hover .hub-gcard__img { transform: scale(1.03); }
-.hub-gcard__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, .55)); }
-/* Photography needs a deeper, earlier scrim than a flat gradient does: the FC
-   art is bright sky where the card's white title sits. */
-.hub-gcard__scrim--art { background: linear-gradient(to bottom, rgba(10, 8, 20, .15) 0%, rgba(10, 8, 20, .55) 45%, rgba(10, 8, 20, .88) 100%); }
-.hub-gcard__in { position: relative; z-index: 2; }
+/* The scrim only supplies depth now - readability is the glass plate's job
+   (below), so it no longer needs to crush the art to near-black. */
+.hub-gcard__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, transparent 45%, rgba(10, 8, 20, .40)); }
+.hub-gcard__scrim--art { background: linear-gradient(to bottom, rgba(10, 8, 20, .08) 0%, rgba(10, 8, 20, .45) 100%); }
+/* The card's text sits on a dark glass plate: blur guarantees the white text a
+   readable ground on ANY art (the FC sheet is bright sky exactly where the
+   title sits), where a translucent fill alone inherits whatever is behind it. */
+.hub-gcard__in {
+  position: relative; z-index: 2; padding: 14px; border-radius: 14px;
+  background: var(--h-glass-dark);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-md)) saturate(140%);
+  backdrop-filter: blur(var(--h-glass-blur-md)) saturate(140%);
+  border: 1px solid var(--h-glass-edge-dark);
+}
 .hub-gcard__tags { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-/* A game card is key art with a scrim, so it is dark whatever the page is. Its
-   internals are written light-on-dark here rather than via the page tokens. */
-.hub-gtag { padding: 4px 9px; border-radius: 6px; font-family: var(--h-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .8); background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .16); }
-.hub-gtag--active { background: rgba(124, 92, 255, .85); border-color: transparent; color: #fff; }
-.hub-gcard__name { font-size: 28px; font-weight: 700; letter-spacing: -.025em; margin: 0 0 5px; color: #fff; }
-.hub-gcard__desc { font-size: 13.5px; color: rgba(255, 255, 255, .72); margin: 0; }
-.hub-gsoon { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 320px; padding: 24px; border-radius: var(--h-r-lg); background: var(--h-surface-2); border: 1px dashed var(--h-line-2); }
-.hub-gsoon__ring { width: 46px; height: 46px; border-radius: 999px; background: var(--h-bg-2); border: 1px solid var(--h-line); display: grid; place-items: center; margin-bottom: 16px; color: var(--h-ink-3); }
+/* Tags are small glass chips. The dark fill + blur is what keeps the pair
+   looking IDENTICAL on both cards - a white/10 fill with no blur reads white
+   over the FC art's bright sky and near-black over the CS2 art. */
+.hub-gtag {
+  padding: 4px 9px; border-radius: 999px; font-family: var(--h-mono); font-size: 10.5px;
+  letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .9);
+  background: rgba(10, 8, 20, .35);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-sm)); backdrop-filter: blur(var(--h-glass-blur-sm));
+  border: 1px solid var(--h-glass-edge-dark);
+}
+.hub-gtag--active { background: rgba(124, 92, 255, .60); border-color: rgba(255, 255, 255, .28); color: #fff; }
+.hub-gcard__name { font-size: 24px; font-weight: 700; letter-spacing: -.025em; margin: 0 0 4px; color: #fff; }
+.hub-gcard__desc { font-size: 13.5px; color: rgba(255, 255, 255, .78); margin: 0; }
+.hub-gsoon {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  height: 340px; padding: 24px; border-radius: var(--h-r-lg);
+  background: rgba(255, 255, 255, .35); border: 1px dashed var(--h-line-2);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-md)) saturate(140%);
+  backdrop-filter: blur(var(--h-glass-blur-md)) saturate(140%);
+}
+.hub-gsoon__ring { width: 46px; height: 46px; border-radius: 999px; background: rgba(255, 255, 255, .6); border: 1px solid var(--h-glass-edge); display: grid; place-items: center; margin-bottom: 16px; color: var(--h-ink-3); }
 .hub-game__mark { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--h-violet-soft); border: 1px solid var(--h-violet-line); color: var(--h-violet-2); }
 
 /* ---- game hub picker: featured hero + "your games" list ----------------- */
@@ -314,10 +353,13 @@
 /* Search box in the top bar, functional filter over "Your games". */
 .hub-search { position: relative; flex: 1; max-width: 380px; }
 .hub-search input {
-  width: 100%; padding: 9px 14px 9px 38px; border-radius: 999px; border: 1px solid var(--h-line);
-  background: var(--h-surface-2); color: var(--h-ink); font: inherit; font-size: 13.5px;
+  width: 100%; padding: 9px 14px 9px 38px; border-radius: 999px; border: 1px solid var(--h-glass-edge);
+  background: var(--h-glass-light-2); color: var(--h-ink); font: inherit; font-size: 13.5px;
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-sm)); backdrop-filter: blur(var(--h-glass-blur-sm));
 }
-.hub-search input:focus { outline: none; border-color: var(--h-violet-line); background: var(--h-surface); }
+/* Focus is a SOLID border, not a translucent one - it has to stay visible over
+   whatever the glass lets through. */
+.hub-search input:focus { outline: none; border-color: var(--h-violet); background: rgba(255, 255, 255, .8); }
 .hub-search .material-symbols-outlined { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--h-ink-3); font-size: 18px; pointer-events: none; }
 
 /* ---- forms -------------------------------------------------------------- */
@@ -343,45 +385,218 @@
 .hub-foot__nav a:hover { color: var(--h-ink); }
 .hub-foot__copy { font-size: 13px; color: var(--h-ink-3); }
 .hub-foot__copy strong { color: var(--h-ink-2); font-weight: 600; }
-/* Signed-in variant: a credit line, not a nav. Transparent so it reads as the
-   bottom of the page rather than as another band. */
-.hub-foot--slim { background: none; }
-.hub-foot--slim .hub-foot__in { padding: 20px 0; }
-.hub-foot__support { font-size: 13px; color: var(--h-ink-3); text-decoration: none; }
-.hub-foot__support:hover { color: var(--h-ink-2); }
+/* Signed-in (hub) variant: a full-width band BELOW the shell, running under
+   the sidebar and the content alike. Glass like the panels above it, but
+   squared off and bordered only on top - a footer is a band, not a card. */
+/* Doubled class: .hub-glass is defined later in the file, and its border /
+   box-shadow shorthands would win on equal specificity. */
+.hub-foot--hub.hub-glass, .hub-foot--hub { border-width: 1px 0 0; border-radius: 0; box-shadow: none; }
+.hub-foot__grid {
+  display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: var(--h-s4);
+  padding: var(--h-s4) 0 var(--h-s3);
+}
+@media (max-width: 720px) { .hub-foot__grid { grid-template-columns: 1fr; gap: var(--h-s3); } }
+.hub-foot__tag { max-width: 34ch; font-size: 13.5px; line-height: 1.6; color: var(--h-ink-2); margin: 12px 0 0; }
+.hub-foot__h {
+  font-family: var(--h-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--h-ink-3); margin: 4px 0 12px;
+}
+.hub-foot__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.hub-foot__links a { font-size: 13.5px; color: var(--h-ink-2); text-decoration: none; }
+.hub-foot__links a:hover { color: var(--h-ink); }
+.hub-foot__bar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--h-s2);
+  flex-wrap: wrap; padding: 18px 0 22px; border-top: 1px solid var(--h-line);
+  font-size: 13px; color: var(--h-ink-3);
+}
+.hub-foot__bar strong { color: var(--h-ink-2); font-weight: 600; }
 
 /* ---- signed-in page layout --------------------------------------------- */
 /* One row of cards does not fill a screen, so the document used to end partway
    up the viewport and leave bare background below the footer. Pin the footer to
    the bottom and let main absorb the slack instead. */
 body[data-hub-page="hub"] { min-height: 100dvh; }
-.hub-content { flex: 1 0 auto; display: flex; flex-direction: column; min-height: 100dvh; }
-.hub-content > main { flex: 1 0 auto; max-width: 1180px; width: 100%; margin: 0 auto; }
+.hub-content { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+/* Main absorbs the slack AND centres its content in it - inert once the
+   dashboard has enough content to fill the height (flex slack is simply zero
+   then), but a sparse first-day page still sits composed, not top-hugging. */
+.hub-content > main {
+  flex: 1 0 auto; width: 100%;
+  display: flex; flex-direction: column; justify-content: center; gap: 28px;
+}
+
+/* ---- signed-in dashboard ------------------------------------------------- */
+.hub-dsec__h { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.hub-dsec__h h2 { font-size: 20px; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+
+/* Hero: the newest report, any game. Same anatomy as a game card - art, soft
+   scrim, dark glass plate - just bigger and with the report's own words. */
+.hub-dhero {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+  min-height: 380px; padding: 14px; border-radius: var(--h-r-lg); overflow: hidden;
+  border: 1px solid var(--h-line); isolation: isolate;
+}
+.hub-dhero__art { position: absolute; inset: 0; z-index: 0; background: linear-gradient(160deg, #29244A, #17142A); }
+.hub-dhero__art img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); }
+.hub-dhero__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to bottom, rgba(10, 8, 20, .05) 40%, rgba(10, 8, 20, .45)); }
+.hub-dhero__plate {
+  position: relative; z-index: 2; padding: 18px; border-radius: 14px; max-width: 640px;
+  background: var(--h-glass-dark);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-md)) saturate(140%);
+  backdrop-filter: blur(var(--h-glass-blur-md)) saturate(140%);
+  border: 1px solid var(--h-glass-edge-dark);
+}
+.hub-dhero__name { font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: #fff; margin: 0 0 6px; }
+.hub-dhero__when { font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, .65); letter-spacing: 0; }
+.hub-dhero__ins { font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, .82); margin: 0 0 14px; max-width: 56ch; }
+.hub-dhero__cta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+/* First-run variant: no art to sit on, so the panel is light glass with its
+   own violet glow, and everything centres - a left-aligned paragraph floating
+   in a huge white box reads as a rendering accident, not a welcome. */
+.hub-dhero--empty { min-height: 280px; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; }
+.hub-dhero--empty::before {
+  content: ""; position: absolute; left: 50%; top: -160px; width: 640px; height: 400px;
+  transform: translateX(-50%); pointer-events: none; z-index: 0;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(124, 92, 255, .18), transparent 70%);
+}
+.hub-dhero--empty .hub-dhero__plate {
+  display: flex; flex-direction: column; align-items: center;
+  background: none; border: 0; padding: 0; max-width: 560px;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.hub-dhero__ring {
+  width: 52px; height: 52px; border-radius: 999px; display: grid; place-items: center;
+  margin-bottom: 16px; background: var(--h-violet-soft); border: 1px solid var(--h-violet-line);
+  color: var(--h-violet-2);
+}
+.hub-dhero__ring .material-symbols-outlined { font-size: 26px; }
+.hub-dhero--empty .hub-dhero__name { color: var(--h-ink); font-size: clamp(22px, 2.4vw, 30px); }
+.hub-dhero--empty .hub-dhero__ins { color: var(--h-ink-2); margin-bottom: 18px; }
+.hub-dhero--empty .hub-dhero__cta { justify-content: center; }
+
+/* Inside the dashboard the main column is ~880px, not the landing's 1180: at
+   280px minimum the game grid snaps to two oversized cards and orphans the
+   "coming soon" card onto its own row. Tighter minimum -> three balanced
+   columns; the cards shrink with it. */
+.hub-dsec .hub-games { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.hub-dsec .hub-gcard, .hub-dsec .hub-gsoon { height: 300px; }
+.hub-dsec .hub-gcard__name { font-size: 20px; }
+.hub-dsec .hub-gcard__desc { font-size: 12.5px; }
+
+/* Report cards: mixed-game by design - the game is the badge, not the section. */
+.hub-dcards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.hub-dcard {
+  display: flex; flex-direction: column; border-radius: var(--h-r-lg); overflow: hidden;
+  border: 1px solid var(--h-line); text-decoration: none; color: var(--h-ink);
+  background: var(--h-glass-light-2);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-md)); backdrop-filter: blur(var(--h-glass-blur-md));
+  transition: border-color .18s ease;
+}
+.hub-dcard:hover { border-color: var(--h-violet-line); }
+.hub-dcard__art { position: relative; height: 120px; overflow: hidden; }
+.hub-dcard__artin { position: absolute; inset: 0; display: block; background: linear-gradient(160deg, #29244A, #17142A); }
+.hub-dcard__artin img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9); }
+.hub-dcard__score {
+  position: absolute; right: 10px; bottom: 10px; padding: 4px 10px; border-radius: 999px;
+  font-family: var(--h-mono); font-size: 12px; font-weight: 600; color: #fff;
+  background: rgba(10, 8, 20, .5); border: 1px solid var(--h-glass-edge-dark);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-sm)); backdrop-filter: blur(var(--h-glass-blur-sm));
+}
+.hub-dcard__in { display: flex; flex-direction: column; gap: 6px; padding: 14px; }
+.hub-dcard__meta { display: flex; align-items: center; gap: 8px; }
+.hub-dcard__meta time { font-size: 11.5px; color: var(--h-ink-3); }
+.hub-dcard b { font-size: 14.5px; }
+.hub-dcard p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--h-ink-2); }
+.hub-gbadge {
+  font-family: var(--h-mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px;
+  background: var(--h-violet-soft); border: 1px solid var(--h-violet-line); color: var(--h-violet-2);
+}
+
+/* Right rail panels */
+.hub-rp { border-radius: var(--h-r-lg); padding: 16px; }
+.hub-rp__t { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--h-ink-3); margin: 0 0 12px; }
+.hub-rp__feed { display: flex; flex-direction: column; gap: 12px; }
+.hub-rp__i { display: flex; gap: 10px; align-items: flex-start; }
+.hub-rp__i .material-symbols-outlined { font-size: 18px; color: var(--h-violet-2); margin-top: 1px; }
+.hub-rp__i b { display: block; font-size: 13px; font-weight: 600; }
+.hub-rp__i > span > span { font-size: 11.5px; color: var(--h-ink-3); }
+
+/* Sidebar identity chip */
+.hub-me { display: flex; align-items: center; gap: 10px; padding: 0 8px 14px; }
+.hub-me__av {
+  width: 34px; height: 34px; flex: 0 0 34px; border-radius: 999px; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--h-violet), var(--h-violet-deep)); color: #fff;
+  font-size: 12px; font-weight: 700;
+}
+.hub-me__id { min-width: 0; }
+.hub-me__id b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hub-me__id > span { font-size: 11px; color: var(--h-ink-3); }
 
 /* ---- glass variant: sidebar + frosted panels ---------------------------- */
 /* A blurred colour field behind everything is what glassmorphism needs to
    show through - without it "backdrop-filter: blur" has nothing to blur. */
-.hub--glass { position: relative; overflow-x: hidden; }
+.hub--glass {
+  position: relative; overflow-x: hidden;
+  /* A tinted field, not flat white: without colour under them the frosted
+     panels read as plain boxes and the whole page goes paper-flat. */
+  background:
+    radial-gradient(900px 600px at 85% 8%, rgba(124, 92, 255, .12), transparent 70%),
+    radial-gradient(700px 700px at 12% 90%, rgba(124, 92, 255, .10), transparent 70%),
+    linear-gradient(160deg, #F3F1FE 0%, #F7F7FB 45%, #EFECFC 100%);
+}
 .hub--glass::before, .hub--glass::after {
   content: ""; position: fixed; z-index: -1; border-radius: 50%; filter: blur(90px); pointer-events: none;
 }
-.hub--glass::before { width: 620px; height: 620px; top: -220px; left: -160px; background: rgba(124, 92, 255, .30); }
-.hub--glass::after { width: 520px; height: 520px; bottom: -220px; right: -140px; background: rgba(124, 92, 255, .22); }
+.hub--glass::before { width: 680px; height: 680px; top: -220px; left: -160px; background: rgba(124, 92, 255, .38); }
+.hub--glass::after { width: 560px; height: 560px; bottom: -220px; right: -140px; background: rgba(124, 92, 255, .30); }
 
 .hub-glass {
-  background: rgba(255, 255, 255, .55);
-  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, .6);
+  background: var(--h-glass-light);
+  -webkit-backdrop-filter: blur(var(--h-glass-blur-lg)) saturate(160%);
+  backdrop-filter: blur(var(--h-glass-blur-lg)) saturate(160%);
+  border: 1px solid var(--h-glass-edge);
   box-shadow: 0 8px 30px rgba(20, 18, 31, .06);
 }
 
-.hub-shell { display: flex; min-height: 100dvh; align-items: flex-start; }
+/* Glass is a preference, not a requirement: anyone who asked their OS for less
+   transparency gets solid surfaces with the same layout, and text plates go
+   opaque so contrast stops depending on what is underneath. */
+@media (prefers-reduced-transparency: reduce) {
+  .hub-glass, .hub-search input, .hub-glass .hub-chip, .hub-gsoon, .hub-dcard {
+    background: var(--h-surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-color: var(--h-line);
+  }
+  .hub-gcard__in, .hub-gtag, .hub-dhero__plate, .hub-dcard__score {
+    background: rgba(10, 8, 20, .85); -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .hub--glass::before, .hub--glass::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-gcard__img, .hub-hero-slide__img { transition: none; }
+  .hub-gcard:hover .hub-gcard__img, .hub-hero-slide:hover .hub-hero-slide__img { transform: none; }
+}
+
+/* Dashboard shell: sidebar | main | rail as floating glass panels in a padded,
+   centred field - not full-bleed columns. Rails go sticky; main scrolls. */
+.hub-shell {
+  display: flex; gap: 20px; align-items: flex-start;
+  max-width: 1460px; margin: 0 auto; padding: 20px 24px 48px; min-height: 100dvh;
+}
 
 .hub-side {
-  flex: 0 0 240px; position: sticky; top: 0; height: 100dvh;
-  display: flex; flex-direction: column; gap: 28px; padding: 24px 16px;
-  border-radius: 0; border-width: 0 1px 0 0;
+  flex: 0 0 216px; position: sticky; top: 20px;
+  /* Full column height, not content height - the foot (user info + sign out)
+     pins to the BOTTOM of the viewport, like a real app rail. */
+  height: calc(100dvh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 28px; padding: 18px 12px;
 }
+.hub-rail {
+  flex: 0 0 280px; position: sticky; top: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+@media (max-width: 1100px) { .hub-rail { display: none; } }
+@media (max-width: 860px) { .hub-side { display: none; } }
 .hub-side__nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .hub-side__link {
   display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--h-r);
@@ -393,10 +608,6 @@ body[data-hub-page="hub"] { min-height: 100dvh; }
 .hub-side__link.is-active { background: var(--h-violet); color: #fff; }
 .hub-side__foot { border-top: 1px solid var(--h-line); padding-top: 16px; }
 
-.hub-content__top {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--h-s2);
-  margin: 20px 24px 0; padding: 12px 20px; border-radius: var(--h-r-lg); position: sticky; top: 20px; z-index: 40;
-}
 
 /* ---- OAuth buttons ------------------------------------------------------ */
 /* Neutral rather than each provider's brand colour: two saturated buttons

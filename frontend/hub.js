@@ -78,28 +78,38 @@
 
   function icon(name) { return '<span class="material-symbols-outlined">' + name + "</span>"; }
 
+  // Genre and blurb are presentation, and the adapter does not declare them
+  // yet, so they are keyed off the game id here. This is exactly what the
+  // adapter UI manifest is for; until that lands it is one lookup in one file
+  // rather than a branch scattered through the app. Everything that RENDERS
+  // (cards, hero, feed) works off core entities and reads this table only for
+  // decoration - an unknown game id still renders, on the gradient fallback.
+  // `art` is key art dropped into frontend/art/. `focus` is the object-position
+  // used to crop it: the source images are 16:9 and the card is nearly square,
+  // so the default centre crop would cut the subject. When the file is absent
+  // the card falls back to its gradient rather than showing a broken image.
+  var GAME_META = {
+    "ea-fc": {
+      genre: "Sports", blurb: "Tactical analysis, decision-making and player positioning.",
+      // fc27-card.jpg is a pre-cropped cut of the key art: the full 16:9 sheet
+      // has the "STANDARD EDITION / FC27" lockup mid-frame, so any near-square
+      // object-fit crop slices the lettering (and the edition text contradicts
+      // the card's own title). Cropping the file once beats fighting
+      // object-position per breakpoint.
+      art: "/art/fc27-card.jpg", focus: "50% 30%", fallback: "",
+    },
+    cs2: {
+      genre: "FPS", blurb: "Crosshair placement, utility usage and round economy.",
+      art: "/art/cs2.png", focus: "38% 50%", fallback: " hub-gcard__art--b",
+    },
+  };
+  function gameMeta(gameId) { return GAME_META[gameId] || { genre: "Game", blurb: "", fallback: " hub-gcard__art--b" }; }
+
   function renderGames(host, d, opts) {
     opts = opts || {};
     var sites = d.sites || [];
     if (!sites.length) { host.innerHTML = ""; return; }
-    // Genre and blurb are presentation, and the adapter does not declare them
-    // yet, so they are keyed off the game id here. This is exactly what the
-    // adapter UI manifest is for; until that lands it is one lookup in one file
-    // rather than a branch scattered through the app.
-    // `art` is key art dropped into frontend/art/. `focus` is the object-position
-    // used to crop it: the source images are 16:9 and the card is nearly square,
-    // so the default centre crop would cut the subject. When the file is absent
-    // the card falls back to its gradient rather than showing a broken image.
-    var META = {
-      "ea-fc": {
-        genre: "Sports", blurb: "Tactical analysis, decision-making and player positioning.",
-        art: "/art/fc27.jpg", focus: "62% 42%", fallback: "",
-      },
-      cs2: {
-        genre: "FPS", blurb: "Crosshair placement, utility usage and round economy.",
-        art: "/art/cs2.png", focus: "38% 50%", fallback: " hub-gcard__art--b",
-      },
-    };
+    var META = GAME_META;
     // No hero, no featured slot: every game gets the same card, same size,
     // same treatment. The hub is game-agnostic on purpose (core rule: FC 26
     // is a plugin, not the product) - picking one as "featured" would just
@@ -158,19 +168,99 @@
     if (host) loadSites().then(function (d) { renderGames(host, d); });
   }
 
+  // ---- dashboard helpers ---------------------------------------------------
+  function relTime(iso) {
+    var t = Date.parse(iso || "");
+    if (!t) return "";
+    var s = (Date.now() - t) / 1000;
+    if (s < 90) return "just now";
+    if (s < 5400) return Math.round(s / 60) + " min ago";
+    if (s < 129600) return Math.round(s / 3600) + "h ago";
+    return Math.round(s / 86400) + "d ago";
+  }
+  function firstInsight(m) {
+    var list = m.insights || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].summary) return list[i].summary;
+    }
+    return "";
+  }
+  function clipCount(m) {
+    return (m.events || []).filter(function (e) { return e && e.payload && e.payload.clip; }).length;
+  }
+  function resultWord(m) {
+    var r = ((m.outcome || {}).result || "").toLowerCase();
+    return r ? r.charAt(0).toUpperCase() + r.slice(1) : "";
+  }
+  // The art slot shared by hero and report cards - same fallback rule as the
+  // game cards: no art file, no broken image, just the gradient.
+  function artHtml(meta, cls) {
+    return '<span class="' + cls + (meta.art ? "" : " hub-gcard__art--b") + '">'
+      + (meta.art
+        ? '<img src="' + esc(meta.art) + '" alt="" loading="lazy"'
+          + ' style="object-position:' + esc(meta.focus || "center") + '" onerror="this.remove()">'
+        : "")
+      + "</span>";
+  }
+
+  // Light/dark toggle for the hub. The saved value is applied pre-paint by an
+  // inline snippet in the page; this just flips classes and keeps the icon and
+  // label describing the switch's DESTINATION, not its current state.
+  function wireTheme() {
+    var btn = $("[data-dash-theme]");
+    if (!btn) return;
+    function paint() {
+      var dark = document.body.classList.contains("hub--dark");
+      btn.querySelector(".material-symbols-outlined").textContent = dark ? "light_mode" : "dark_mode";
+      btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    }
+    btn.addEventListener("click", function () {
+      var toLight = document.body.classList.contains("hub--dark");
+      document.body.classList.toggle("hub--dark", !toLight);
+      document.body.classList.toggle("hub--glass", toLight);
+      try { localStorage.setItem("coachio.hubTheme", toLight ? "light" : "dark"); } catch (e) {}
+      paint();
+    });
+    paint();
+  }
+
+  // Background palette picker in the profile row. The saved value is applied
+  // pre-paint by the page's inline snippet; this wires the popover.
+  function wireSky() {
+    var btn = $("[data-dash-sky-btn]");
+    var pick = $("[data-dash-skypick]");
+    if (!btn || !pick) return;
+    function mark() {
+      var cur = document.body.getAttribute("data-sky") || "1";
+      pick.querySelectorAll("[data-sky-opt]").forEach(function (o) {
+        o.classList.toggle("is-on", o.getAttribute("data-sky-opt") === cur);
+      });
+    }
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      pick.hidden = !pick.hidden;
+      btn.setAttribute("aria-expanded", String(!pick.hidden));
+      if (!pick.hidden) mark();
+    });
+    pick.addEventListener("click", function (e) { e.stopPropagation(); });
+    document.addEventListener("click", function () {
+      if (!pick.hidden) { pick.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+    });
+    pick.querySelectorAll("[data-sky-opt]").forEach(function (o) {
+      o.addEventListener("click", function () {
+        var v = o.getAttribute("data-sky-opt");
+        document.body.setAttribute("data-sky", v);
+        try { localStorage.setItem("coachio.hubSky", v); } catch (e) {}
+        mark();   // stays open so palettes can be compared live
+      });
+    });
+  }
+
   function initHub() {
-    var host = $("[data-hub-games]");
     if (!identity()) { location.replace("/signin/"); return; }
-    loadSites().then(function (d) { if (host) renderGames(host, d, { soon: true }); });
-    api("/api/account").then(function (d) {
-      var p = (d && d.profile) || {};
-      var icon = $("[data-hub-signout]");
-      var name = p.display_name || p.email || "";
-      if (icon) {
-        icon.title = name ? "Signed in as " + name + " - sign out" : "Sign out";
-        icon.setAttribute("aria-label", icon.title);
-      }
-    }).catch(function () {});
+    wireTheme();
+    wireSky();
+
     var out = $("[data-hub-signout]");
     if (out) {
       out.addEventListener("click", function (e) {
@@ -183,20 +273,211 @@
           .then(function () { location.href = "/signin/"; });
       });
     }
+
+    // Sites and matches decide the whole main column, so they load together;
+    // account and usage only decorate the rails and arrive when they arrive.
+    Promise.all([
+      loadSites(),
+      api("/api/matches").catch(function () { return []; }),
+    ]).then(function (r) { renderDashboard(r[0], r[1] || []); });
+
+    api("/api/account").then(function (d) {
+      var p = (d && d.profile) || {};
+      var name = p.display_name || p.email || "";
+      var box = $("[data-dash-me]");
+      if (box && name) {
+        box.hidden = false;
+        $("[data-dash-me-av]").textContent = name.replace(/@.*/, "").slice(0, 2).toUpperCase();
+        $("[data-dash-me-name]").textContent = name;
+      }
+      if (out) {
+        out.title = name ? "Signed in as " + name + " - sign out" : "Sign out";
+        out.setAttribute("aria-label", out.title);
+      }
+    }).catch(function () {});
+
     api("/api/usage").then(function (u) {
-      var chip = $("[data-hub-usage]");
-      if (!chip || !u) return;
+      var card = $("[data-dash-plan]");
+      if (!card || !u) return;
+      var left = (typeof u.remaining === "number") ? u.remaining : null;
+      var limit = (typeof u.limit === "number") ? u.limit : 0;
+      card.hidden = false;
       // A countdown only means something when the quota actually constrains. The
       // dev limit is 100000, and "99988 reports left" reads as a broken number
       // rather than as reassurance, so a large allowance just says Free plan.
-      var left = (typeof u.remaining === "number") ? u.remaining : null;
-      var limit = (typeof u.limit === "number") ? u.limit : 0;
-      chip.hidden = false;
-      chip.querySelector("[data-hub-usage-text]").textContent =
+      $("[data-dash-plan-text]").textContent =
         (left === null || limit >= 1000)
-          ? "Free plan"
-          : left + " report" + (left === 1 ? "" : "s") + " left";
+          ? "Analyse matches across all your games"
+          : left + " of " + limit + " report" + (limit === 1 ? "" : "s") + " left";
     }).catch(function () {});
+  }
+
+  function renderDashboard(d, matches) {
+    var sites = d.sites || [];
+    var byGame = {};
+    sites.forEach(function (s) { byGame[s.game_id] = s; });
+
+    // Newest first. The hero is a game-blind rule - "your latest completed
+    // report, whatever the game" - never a featured/pinned game, which with a
+    // config-ordered site list would just mean game #1 every time.
+    var done = matches.filter(function (m) { return m.status === "complete"; })
+      .sort(function (a, b) { return (b.created_at || "").localeCompare(a.created_at || ""); });
+
+    function reportHref(m) {
+      var site = byGame[m.game_id];
+      return site ? gameUrl(site, d.root) + "report/?id=" + encodeURIComponent(m.id) : null;
+    }
+    function gameName(m) {
+      var site = byGame[m.game_id];
+      return site ? site.display_name : m.game_id;
+    }
+
+    renderHero($("[data-dash-hero]"), done, reportHref, gameName);
+    renderReports($("[data-dash-reports]"), done, reportHref, gameName);
+    renderActivity($("[data-dash-activity]"), done, gameName);
+
+    var host = $("[data-hub-games]");
+    if (host) renderGames(host, d, { soon: true });
+
+    // Search filters BOTH grids (reports + games) by the data-search text each
+    // card carries. renderGames wires the games grid itself; this covers the
+    // report cards with the same contract.
+    var search = $("[data-hub-search]");
+    if (search) {
+      search.addEventListener("input", function () {
+        var q = search.value.trim().toLowerCase();
+        document.querySelectorAll("[data-dash-reports-grid] > *").forEach(function (el) {
+          var s = el.getAttribute("data-search") || "";
+          el.hidden = q.length > 0 && s.indexOf(q) === -1;
+        });
+      });
+    }
+
+    // Entering a report is entering a game origin: hand the session over the
+    // same way the game cards do. Scoped to the reports grid - the hero wires
+    // its own links because the carousel re-paints them on every step.
+    document.querySelectorAll("[data-dash-reports-grid] [data-dash-go]").forEach(function (a) {
+      a.addEventListener("click", function (e) { enterGame(e, a); });
+    });
+
+    // The reports pager scrolls the row - a page is most of the visible width.
+    var grid = $("[data-dash-reports-grid]");
+    document.querySelectorAll("[data-dash-page]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (grid) grid.scrollBy({ left: grid.clientWidth * 0.8 * Number(b.getAttribute("data-dash-page")), behavior: "smooth" });
+      });
+    });
+  }
+
+  // Hero carousel over the most recent completed reports (up to 5): the arrows
+  // are the reference design's, but they page through YOUR matches - a live
+  // control, not chrome. Each step re-paints, so the hero wires its own links.
+  function renderHero(host, done, reportHref, gameName) {
+    if (!host) return;
+    host.hidden = false;
+    var list = done.slice(0, 5).filter(function (m) { return reportHref(m); });
+    if (!list.length) {
+      // Nothing analysed yet: the hero sells the first upload, pointing at the
+      // game grid below - the games ARE the doors to the upload flow.
+      host.className = "hub-dhero hub-dhero--empty hub-glass";
+      host.innerHTML =
+        '<div class="hub-dhero__plate hub-dhero__plate--empty">'
+        + '<span class="hub-dhero__ring">' + icon("sports") + "</span>"
+        + '<h1 class="hub-dhero__name">Your coach is ready for the first match</h1>'
+        + '<p class="hub-dhero__ins">Pick a game below and upload a recording - '
+        + "you get a full report with timestamps, moments and coaching points.</p>"
+        + '<div class="hub-dhero__cta"><a class="hub-btn hub-btn--primary" href="#games">'
+        + icon("upload") + "Choose a game</a></div></div>";
+      return;
+    }
+    var i = 0;
+    function paint() {
+      var m = list[i];
+      var meta = gameMeta(m.game_id);
+      var score = (m.outcome || {}).score || "";
+      var result = resultWord(m);
+      var ins = firstInsight(m);
+      var clips = clipCount(m);
+      var href = reportHref(m);
+      host.className = "hub-dhero";
+      host.innerHTML =
+        artHtml(meta, "hub-dhero__art")
+        + '<span class="hub-dhero__scrim"></span>'
+        + '<div class="hub-gcard__tags hub-dhero__tags">'
+        + '<span class="hub-gtag">' + esc(gameName(m)) + "</span>"
+        + (result ? '<span class="hub-gtag">' + esc(result) + "</span>" : "")
+        + '<span class="hub-gtag hub-gtag--active">' + (i === 0 ? "Latest report" : esc(relTime(m.created_at))) + "</span></div>"
+        + (list.length > 1
+          ? '<button type="button" class="hub-dhero__arrow hub-dhero__arrow--l" data-step="-1" aria-label="Previous report">' + icon("chevron_left") + "</button>"
+            + '<button type="button" class="hub-dhero__arrow hub-dhero__arrow--r" data-step="1" aria-label="Next report">' + icon("chevron_right") + "</button>"
+          : "")
+        + '<div class="hub-dhero__plate"><div class="hub-dhero__bottom">'
+        + '<div><h1 class="hub-dhero__name">' + (score ? esc(score) : "Match report")
+        + ' <span class="hub-dhero__when">&middot; ' + esc(relTime(m.created_at)) + "</span></h1>"
+        + (ins ? '<p class="hub-dhero__ins">' + esc(ins.slice(0, 200)) + "</p>" : "")
+        + "</div>"
+        + '<div class="hub-dhero__cta">'
+        + '<a class="hub-buy" data-dash-go href="' + esc(href) + '">'
+        + '<span class="hub-buy__label">Open report</span>'
+        + '<span class="hub-buy__score">' + (score ? esc(score) : "View") + "</span></a>"
+        + (clips ? '<a class="hub-ico" data-dash-go href="' + esc(href) + '" title="'
+          + clips + " moment" + (clips === 1 ? "" : "s") + ' clipped">' + icon("movie") + "</a>" : "")
+        + "</div></div></div>";
+      host.querySelectorAll("[data-step]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          i = (i + Number(b.getAttribute("data-step")) + list.length) % list.length;
+          paint();
+        });
+      });
+      host.querySelectorAll("[data-dash-go]").forEach(function (a) {
+        a.addEventListener("click", function (e) { enterGame(e, a); });
+      });
+    }
+    paint();
+  }
+
+  function renderReports(section, done, reportHref, gameName) {
+    if (!section || !done.length) return;
+    section.hidden = false;
+    $("[data-dash-reports-grid]", section).innerHTML = done.slice(0, 8).map(function (m, idx) {
+      var meta = gameMeta(m.game_id);
+      var score = (m.outcome || {}).score || "";
+      var result = resultWord(m);
+      var ins = firstInsight(m);
+      var href = reportHref(m);
+      var name = gameName(m);
+      if (!href) return "";
+      return '<a class="hub-dcard' + (idx === 0 ? " hub-dcard--hi" : "") + '" data-dash-go href="' + esc(href) + '"'
+        + ' data-search="' + esc((name + " " + result + " " + score + " " + ins).toLowerCase()) + '">'
+        + '<span class="hub-dcard__art">' + artHtml(meta, "hub-dcard__artin")
+        + (score ? '<span class="hub-dcard__score">' + esc(score) + "</span>" : "")
+        + "</span>"
+        + '<span class="hub-dcard__in">'
+        + '<span class="hub-dcard__meta"><span class="hub-gbadge">' + esc(name) + "</span>"
+        + "<time>" + esc(relTime(m.created_at)) + "</time></span>"
+        + "<b>" + esc(result ? result + (score ? " " + score : "") : "Match report") + "</b>"
+        + (ins ? "<p>" + esc(ins.slice(0, 110)) + "</p>" : "")
+        + "</span></a>";
+    }).join("");
+  }
+
+  function renderActivity(card, done, gameName) {
+    if (!card || !done.length) return;
+    card.hidden = false;
+    var feed = done.slice(0, 4).map(function (m) {
+      var score = (m.outcome || {}).score;
+      return '<div class="hub-rp__i">' + icon("description")
+        + "<span><b>Report ready</b><span>" + esc(gameName(m))
+        + (score ? " &middot; " + esc(score) : "")
+        + " &middot; " + esc(relTime(m.created_at)) + "</span></span></div>";
+    });
+    var clips = clipCount(done[0]);
+    if (clips) {
+      feed.splice(1, 0, '<div class="hub-rp__i">' + icon("movie")
+        + "<span><b>" + clips + " moment" + (clips === 1 ? "" : "s") + " clipped</b><span>"
+        + esc(gameName(done[0])) + " &middot; " + esc(relTime(done[0].created_at)) + "</span></span></div>");
+    }
+    $("[data-dash-activity-feed]", card).innerHTML = feed.slice(0, 5).join("");
   }
 
   // The backend builds the Supabase authorize URL, so the redirect target is

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<title>G:PLATFORM - design recreation</title>
+<style>
+/* 1:1 recreation of the reference dashboard (game store, dark). Standalone on
+   purpose - no hub.css, nothing shared. Art: Steam CDN key art downloaded to
+   ./img; avatars: DiceBear. Static; only hover states move. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0B0C10;            /* frame ground */
+  --panel: #16181F;         /* cards, search, pills */
+  --panel-2: #1D2029;       /* active nav, hover */
+  --line: rgba(255, 255, 255, .07);
+  --ink: #F2F4F8;
+  --ink-2: #9AA1AD;
+  --ink-3: #6A7180;
+  --blue: #2F7DF6;
+  --blue-2: #4E95FF;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+html, body { min-height: 100%; }
+body {
+  font-family: var(--mono); color: var(--ink);
+  background: linear-gradient(155deg, #C3CBD6 0%, #AEB8C6 45%, #9FA9BA 100%);
+  padding: clamp(24px, 4vw, 64px) clamp(24px, 5vw, 96px);
+}
+.material-symbols-outlined { font-size: 20px; font-variation-settings: "wght" 400; }
+
+.frame {
+  display: grid; grid-template-columns: 232px 1fr 330px; gap: 28px;
+  max-width: 1560px; margin: 0 auto; padding: 28px;
+  background: var(--bg); border-radius: 28px;
+  box-shadow: 0 40px 90px rgba(20, 28, 44, .45);
+  min-height: calc(100vh - 2 * clamp(24px, 4vw, 64px));
+}
+
+/* ---- left sidebar ------------------------------------------------------- */
+.side { display: flex; flex-direction: column; padding: 8px 0 4px 4px; }
+.logo { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; letter-spacing: .02em; }
+.logo b { font-weight: 700; }
+.logo b span { font-weight: 500; }
+.logo__mark {
+  width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+  background: linear-gradient(160deg, #2F7DF6, #2361C4); color: #fff;
+}
+.logo__mark .material-symbols-outlined { font-size: 20px; }
+.nav { display: flex; flex-direction: column; gap: 6px; margin-top: 96px; }
+.nav a {
+  display: flex; align-items: center; gap: 14px; padding: 13px 16px; border-radius: 12px;
+  color: var(--ink-2); text-decoration: none; font-size: 14.5px; font-weight: 500;
+  border: 1px solid transparent; transition: color .15s ease, background-color .15s ease;
+}
+.nav a:hover { color: var(--ink); background: rgba(255, 255, 255, .03); }
+.nav a.on { color: var(--ink); background: var(--panel-2); border-color: var(--line); }
+.nav .material-symbols-outlined { font-size: 19px; }
+.nav__badge {
+  margin-left: auto; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+  display: grid; place-items: center; background: var(--blue); color: #fff; font-size: 11.5px; font-weight: 600;
+}
+.me { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 8px 4px 4px; }
+.me img { width: 44px; height: 44px; border-radius: 12px; display: block; background: #C0AEDE; }
+.me b { display: block; font-size: 14.5px; font-weight: 600; }
+.me span { display: block; font-size: 12px; color: var(--ink-3); max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- main column -------------------------------------------------------- */
+.mid { display: flex; flex-direction: column; min-width: 0; }
+
+.hero {
+  position: relative; border-radius: 14px; overflow: hidden; isolation: isolate;
+  min-height: 468px; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 24px 28px 26px;
+}
+.hero__img { position: absolute; inset: 0; z-index: -2; }
+.hero__img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(to bottom, rgba(11, 12, 16, .25) 0%, transparent 30%, transparent 55%, rgba(11, 12, 16, .78) 100%),
+    linear-gradient(to right, rgba(11, 12, 16, .35), transparent 45%);
+}
+.hero__chips { position: absolute; top: 22px; left: 24px; display: flex; gap: 10px; }
+.chip {
+  padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #fff;
+  background: rgba(16, 18, 24, .45); border: 1px solid rgba(255, 255, 255, .12);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.chip--lite { background: rgba(255, 255, 255, .28); border-color: rgba(255, 255, 255, .25); }
+.hero__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 1;
+  width: 44px; height: 44px; border: 0; background: none; color: rgba(255, 255, 255, .55);
+  cursor: pointer; display: grid; place-items: center;
+}
+.hero__arrow:hover { color: #fff; }
+.hero__arrow .material-symbols-outlined { font-size: 34px; font-variation-settings: "wght" 300; }
+.hero__arrow--l { left: 6px; }
+.hero__arrow--r { right: 6px; }
+.hero__logo { width: min(270px, 40%); margin-bottom: 26px; filter: drop-shadow(0 4px 18px rgba(0, 0, 0, .5)); }
+.hero__row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.hero__desc { font-family: var(--sans); font-size: 16px; line-height: 1.55; color: rgba(255, 255, 255, .92); max-width: 46ch; }
+.hero__buy { display: flex; align-items: center; gap: 12px; }
+.buy {
+  display: flex; align-items: stretch; border-radius: 10px; overflow: hidden; text-decoration: none;
+  background: linear-gradient(90deg, #1F6BE8, #4E95FF);
+  box-shadow: 0 8px 24px rgba(47, 125, 246, .35);
+}
+.buy__label { padding: 14px 22px; color: #fff; font-size: 15px; font-weight: 600; border-right: 1px solid rgba(255, 255, 255, .28); }
+.buy__price { display: flex; align-items: center; gap: 10px; padding: 14px 20px; color: #fff; font-size: 15px; font-weight: 600; }
+.buy__price s { color: rgba(255, 255, 255, .55); font-weight: 500; }
+.heart {
+  width: 52px; height: 52px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(16, 18, 24, .45); color: #fff; cursor: pointer; display: grid; place-items: center;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.heart:hover { background: rgba(16, 18, 24, .65); }
+
+/* trending */
+.trend { margin-top: 34px; }
+.trend__head { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 20px; }
+.trend__head h2 { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+.pager { display: flex; gap: 10px; }
+.pager button {
+  width: 44px; height: 40px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink-2); cursor: pointer; display: grid; place-items: center;
+}
+.pager button:last-child { background: var(--panel-2); color: var(--ink); }
+.pager button:hover { color: var(--ink); }
+.pager .material-symbols-outlined { font-size: 20px; }
+
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+@media (max-width: 1500px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+.card { display: flex; flex-direction: column; padding: 10px 10px 14px; border-radius: 12px; text-decoration: none; color: var(--ink); }
+.card--hi { background: #14161C; border: 1px solid var(--line); }
+.card__art { border-radius: 8px; overflow: hidden; aspect-ratio: 1 / 1.02; }
+.card__art img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; display: block; }
+.card h3 { font-size: 19px; font-weight: 600; letter-spacing: -.01em; margin: 16px 2px 8px; }
+.card p { font-family: var(--sans); font-size: 13px; line-height: 1.55; color: var(--ink-2); margin: 0 2px 14px; flex: 1; }
+.price { align-self: flex-start; margin: 0 2px; padding: 9px 15px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; font-weight: 600; }
+.price--hi { background: var(--blue); border-color: transparent; color: #fff; box-shadow: 0 6px 18px rgba(47, 125, 246, .35); }
+
+/* ---- right rail --------------------------------------------------------- */
+.rail { display: flex; flex-direction: column; min-width: 0; }
+.search {
+  display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-radius: 12px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--ink-3); cursor: text;
+}
+.search input { flex: 1; border: 0; background: none; outline: none; color: var(--ink); font: inherit; font-size: 14.5px; }
+.search input::placeholder { color: var(--ink-3); }
+.rail h2 { font-size: 22px; font-weight: 700; margin: 30px 2px 18px; }
+.friends {
+  display: flex; flex-direction: column; gap: 20px; padding-right: 12px;
+  max-height: 520px; overflow-y: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+}
+.friends::-webkit-scrollbar { width: 5px; }
+.friends::-webkit-scrollbar-thumb { background: #3A3F4B; border-radius: 999px; }
+.friends::-webkit-scrollbar-track { background: rgba(255, 255, 255, .04); border-radius: 999px; }
+.fr { display: flex; gap: 14px; }
+.fr__av { width: 52px; height: 52px; border-radius: 12px; flex: 0 0 52px; display: block; background: #B6E3F4; }
+.fr__in { min-width: 0; display: flex; flex-direction: column; gap: 7px; padding-top: 2px; }
+.fr__name { font-size: 15px; font-weight: 600; }
+.fr__row { display: flex; gap: 8px; align-items: center; }
+.tag { padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 500; }
+.tag--join { background: var(--blue); color: #fff; cursor: pointer; border: 0; font-family: inherit; }
+.tag--join:hover { background: var(--blue-2); }
+.tag--dim { background: var(--panel-2); color: var(--ink-2); border: 1px solid var(--line); }
+.tag--game { background: var(--panel); color: var(--ink); border: 1px solid rgba(255, 255, 255, .14); }
+
+@media (max-width: 1280px) { .frame { grid-template-columns: 200px 1fr; } .rail { display: none; } }
+@media (max-width: 860px) { .frame { grid-template-columns: 1fr; } .side { display: none; } }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <aside class="side">
+    <span class="logo"><span class="logo__mark"><span class="material-symbols-outlined">gamepad</span></span><b>G<span>:</span>PLATFORM</b></span>
+    <nav class="nav">
+      <a class="on" href="#"><span class="material-symbols-outlined">home</span>Home</a>
+      <a href="#"><span class="material-symbols-outlined">grid_view</span>Category</a>
+      <a href="#"><span class="material-symbols-outlined">book_2</span>Library</a>
+      <a href="#"><span class="material-symbols-outlined">group</span>Friends<span class="nav__badge">2</span></a>
+      <a href="#"><span class="material-symbols-outlined">download</span>Downloads</a>
+      <a href="#"><span class="material-symbols-outlined">work</span>Buys</a>
+      <a href="#"><span class="material-symbols-outlined">favorite</span>Wishlist</a>
+    </nav>
+    <div class="me">
+      <img src="img/av-me.png" alt="">
+      <span><b>Stiicky25</b><span>stiicky@gmail.&mldr;</span></span>
+    </div>
+  </aside>
+
+  <main class="mid">
+    <section class="hero">
+      <span class="hero__img"><img src="img/hero.jpg" alt=""></span>
+      <div class="hero__chips">
+        <span class="chip">Action</span>
+        <span class="chip">Open World</span>
+        <span class="chip chip--lite">Adventure</span>
+      </div>
+      <button class="hero__arrow hero__arrow--l" aria-label="Previous"><span class="material-symbols-outlined">chevron_left</span></button>
+      <button class="hero__arrow hero__arrow--r" aria-label="Next"><span class="material-symbols-outlined">chevron_right</span></button>
+      <img class="hero__logo" src="img/hero-logo.png" alt="The Witcher 3: Wild Hunt">
+      <div class="hero__row">
+        <p class="hero__desc">The Witcher 3: wild Hunt is a 2015 action role-playing game developed and published by the Polish studio CD Projekt.</p>
+        <div class="hero__buy">
+          <a class="buy" href="#"><span class="buy__label">Buy now</span>
+            <span class="buy__price">$24.00 <s>$35.00</s></span></a>
+          <button class="heart" aria-label="Add to wishlist"><span class="material-symbols-outlined">favorite</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="trend">
+      <div class="trend__head">
+        <h2>Trending now</h2>
+        <div class="pager">
+          <button aria-label="Previous"><span class="material-symbols-outlined">chevron_left</span></button>
+          <button aria-label="Next"><span class="material-symbols-outlined">chevron_right</span></button>
+        </div>
+      </div>
+      <div class="cards">
+        <a class="card" href="#">
+          <span class="card__art"><img src="img/c1.jpg" alt=""></span>
+          <h3>Death Stranding 2</h3>
+          <p>Death Stranding 2: On The Beach is an upcoming 2025 action-adventure game developed by Kojima Productions</p>
+          <span class="price">$79.00</span>
+        </a>
+        <a class="card card--hi" href="#">
+          <span class="card__art"><img src="img/c2.jpg" alt=""></span>
+          <h3>Death Stranding 2</h3>
+          <p>Doom: The Dark Ages is an upcoming first-person shooter game developed by id Software</p>
+          <span class="price price--hi">$62.00</span>
+        </a>
+        <a class="card" href="#">
+          <span class="card__art"><img src="img/c3.jpg" alt=""></span>
+          <h3>Ghost of Y&#333;tei</h3>
+          <p>Ghost of Y&#333;tei is an upcoming action-adventure game developed by Sucker Punch Productions</p>
+          <span class="price">$55.00</span>
+        </a>
+        <a class="card" href="#">
+          <span class="card__art"><img src="img/c4.jpg" alt=""></span>
+          <h3>The Outer Worlds 2</h3>
+          <p>The Outer Worlds 2 is an upcoming action role-playing game developed by Obsidian Entertainment</p>
+          <span class="price">$35.00</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <aside class="rail">
+    <label class="search"><span class="material-symbols-outlined">search</span>
+      <input placeholder="Search" aria-label="Search"></label>
+    <h2>Friends</h2>
+    <div class="friends">
+      <div class="fr"><img class="fr__av" src="img/av-crimson.png" alt="">
+        <span class="fr__in"><span class="fr__name">CrimsonTiger67</span>
+          <span class="fr__row"><button class="tag tag--join">Join</button></span></span></div>
+      <div class="fr"><img class="fr__av" src="img/av-ice.png" alt="">
+        <span class="fr__in"><span class="fr__name">IceDragon</span>
+          <span class="fr__row"><span class="tag tag--dim">Playing</span><span class="tag tag--game">ROBLOX</span></span></span></div>
+      <div class="fr"><img class="fr__av" src="img/av-neon.png" alt="">
+        <span class="fr__in"><span class="fr__name">NeonNovs</span>
+          <span class="fr__row"><button class="tag tag--join">Join</button></span></span></div>
+      <div class="fr"><img class="fr__av" src="img/av-phoenix.png" alt="">
+        <span class="fr__in"><span class="fr__name">phoenix_rising</span>
+          <span class="fr__row"><span class="tag tag--dim">Playing</span><span class="tag tag--game">Rocket League</span></span></span></div>
+      <div class="fr"><img class="fr__av" src="img/av-anny.png" alt="">
+        <span class="fr__in"><span class="fr__name">anny_stage</span>
+          <span class="fr__row"><span class="tag tag--dim">Offline</span></span></span></div>
+      <div class="fr"><img class="fr__av" src="img/av-anton.png" alt="">
+        <span class="fr__in"><span class="fr__name">Anton W</span>
+          <span class="fr__row"><button class="tag tag--join">Join</button></span></span></div>
+    </div>
+  </aside>
+</div>
+</body>
+</html>

@@ -39,6 +39,9 @@
   // (see bootSession), so identity() stays synchronous and its ~20 call sites
   // are unchanged. It is never a source of truth.
   var ID_KEY = "coachio.user";       // legacy; cleared on sign-out
+  // Sign-up answers waiting for the emailed link to be opened. Local to this
+  // browser, applied once, then cleared.
+  var PENDING_PROFILE = "coachio.pendingProfile";
   var _me = "";
   function identity() { return _me; }
   function setIdentity(v) { _me = v || ""; }
@@ -99,8 +102,27 @@
       .then(function () { return j("/api/auth/session"); })
       .then(function (d) {
         _me = (d && d.signed_in && d.profile && d.profile.user_id) || "";
+        return _me ? applyPendingProfile() : null;
       })
       .catch(function () { _me = ""; });
+  }
+
+  // What the sign-up form collected before the account existed. Applied on the
+  // first signed-in load and cleared either way - a failure here must not block
+  // the page or retry forever, the details are all editable in Settings.
+  function applyPendingProfile() {
+    var raw;
+    try { raw = localStorage.getItem(PENDING_PROFILE); } catch (e) { return null; }
+    if (!raw) return null;
+    try { localStorage.removeItem(PENDING_PROFILE); } catch (e) {}
+    var body;
+    try { body = JSON.parse(raw); } catch (e) { return null; }
+    if (!body || typeof body !== "object") return null;
+    delete body.email;                 // the provider owns the address
+    return j("/api/account", {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).catch(function () { return null; });
   }
 
   // ---- API helpers ---------------------------------------------------------
@@ -2288,24 +2310,28 @@
                 skill_level: level, skill_survey: answers, role: "player" })
         : { email: email };
 
-      j("/api/auth/" + (mode === "up" ? "signup" : "signin"), {
+      // The password-less endpoint this used to call is gone: it handed out a
+      // session for any address with nothing to prove you owned it. Sign-in is
+      // the provider's job now, so this posts the email and waits for the link.
+      // A sign-up's answers are held locally and applied on the first signed-in
+      // load - typing them and then losing them to the round-trip is worse than
+      // keeping them in this browser for one hop.
+      if (mode === "up") {
+        try { localStorage.setItem(PENDING_PROFILE, JSON.stringify(body)); } catch (e) {}
+      }
+      j("/api/auth/magic-link", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }).then(function (r) {
-        setIdentity(r.user_id);
-        if (mode !== "up") { location.href = "/"; return; }
-        // New account: the welcome takes the whole screen. Replace the auth shell
-        // rather than rendering inside it, so the card and its width cap go away.
+        body: JSON.stringify({ email: email }),
+      }).then(function () {
         var shell = $("#main");
         shell.className = "welcome-screen";
         shell.innerHTML =
           '<div class="welcome">'
-          + '<img class="welcome__logo" src="/fc27.png" alt="EA Sports FC 27">'
-          + '<span class="material-symbols-outlined welcome__pad">stadia_controller</span>'
-          + '<p class="welcome__title">Welcome to Coachfio</p>'
-          + '<p class="welcome__sub">Be ready to level up your game.</p>'
-          + "</div>";
-        setTimeout(function () { location.href = "/"; }, 2100);
+          + '<span class="material-symbols-outlined welcome__pad">mark_email_read</span>'
+          + '<p class="welcome__title">Check your email</p>'
+          + '<p class="welcome__sub">We sent a sign-in link to ' + esc(email)
+          + ". Open it on this device to " + (mode === "up" ? "finish setting up" : "sign in")
+          + ".</p></div>";
       }).catch(function (e) {
         btn.disabled = false;
         showError(e.detail || e.message);

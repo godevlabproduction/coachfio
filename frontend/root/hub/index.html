@@ -6,61 +6,142 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <link rel="stylesheet" href="/hub.css">
-<title>Your games - Coachfio</title>
+<link rel="stylesheet" href="/hub-dark.css">
+<title>Home - Coachfio</title>
 </head>
-<!-- GAME HUB, glass variant: left sidebar + frosted panels over a soft violet
-     blurred backdrop, matched to a reference dashboard on request. Sidebar
-     currently has only the destinations that are real (My Games, Sign out) -
-     more land here as they exist, not as placeholders. -->
+<!-- SIGNED-IN HOME, dashboard layout: sidebar | main | right rail, all frosted
+     panels over the soft violet backdrop. Everything rendered here is a CORE
+     entity (match, report, insight, clip) decorated by per-game data from
+     hub.js's GAME_META - the game is a badge on a card, never a section. The
+     hero is picked by a game-blind rule (newest completed report, any game).
+     Sidebar has only destinations that are real; more land as they exist. -->
 <body class="hub hub--glass" data-hub-page="hub">
+<script>
+/* Light + Arctic are the defaults; apply saved preferences before first paint. */
+try { if (localStorage.getItem("coachio.hubTheme") === "dark") {
+  document.body.classList.remove("hub--glass"); document.body.classList.add("hub--dark");
+} } catch (e) {}
+try { var _s = localStorage.getItem("coachio.hubSky");
+  if (/^[1-5]$/.test(_s)) document.body.setAttribute("data-sky", _s);
+} catch (e) {}
+</script>
+<!-- The animated backdrop the glass panels lens: four color fields on slow
+     drift loops. Fixed, decorative, hidden from AT and from anyone who asked
+     the OS for reduced transparency. -->
+<div class="hub-sky" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <a class="hub-skip" href="#main">Skip to content</a>
 
 <div class="hub-shell">
   <aside class="hub-side hub-glass">
     <a class="hub-logo" href="/"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
     <nav class="hub-side__nav" aria-label="Primary">
-      <a class="hub-side__link is-active" href="/hub/"><span class="material-symbols-outlined">grid_view</span>My games</a>
+      <a class="hub-side__link is-active" href="/hub/"><span class="material-symbols-outlined">home</span>Home</a>
+      <a class="hub-side__link" href="#games"><span class="material-symbols-outlined">grid_view</span>My games</a>
     </nav>
     <div class="hub-side__foot">
+      <div class="hub-skypick" data-dash-skypick hidden>
+        <p>Background</p>
+        <button type="button" data-sky-opt="1"><i style="background:linear-gradient(135deg,#123A8C,#2F7DF6,#67C4E8)"></i>Arctic</button>
+        <button type="button" data-sky-opt="2"><i style="background:linear-gradient(135deg,#14683E,#2FBF71,#D8E24F)"></i>Pitch</button>
+        <button type="button" data-sky-opt="3"><i style="background:linear-gradient(135deg,#B23A1C,#C21F3A,#F0A050)"></i>Ember</button>
+        <button type="button" data-sky-opt="4"><i style="background:linear-gradient(135deg,#F2762E,#1E4FD8,#E8B04B)"></i>Broadcast</button>
+        <button type="button" data-sky-opt="5"><i style="background:linear-gradient(135deg,#3A4756,#59687E,#7C8DA6)"></i>Graphite</button>
+      </div>
+      <div class="hub-side__me-row">
+        <div class="hub-me" data-dash-me hidden>
+          <span class="hub-me__av" data-dash-me-av></span>
+          <span class="hub-me__id"><b data-dash-me-name></b></span>
+        </div>
+        <button type="button" class="hub-theme" data-dash-sky-btn aria-expanded="false" aria-label="Choose background style" title="Background">
+          <span class="material-symbols-outlined">palette</span></button>
+        <button type="button" class="hub-theme" data-dash-theme aria-label="Switch to light theme" title="Switch theme">
+          <span class="material-symbols-outlined">light_mode</span></button>
+      </div>
       <a class="hub-side__link" href="/signin/" data-hub-signout>
         <span class="material-symbols-outlined">logout</span>Sign out</a>
     </div>
   </aside>
 
   <div class="hub-content">
-    <header class="hub-content__top hub-glass">
-      <label class="hub-search">
-        <span class="material-symbols-outlined">search</span>
-        <input type="search" placeholder="Search your games..." data-hub-search aria-label="Search your games">
-      </label>
-      <div class="hub-top__right">
-        <span class="hub-chip" data-hub-usage hidden><span class="hub-chip__dot"></span><span data-hub-usage-text></span></span>
-        <a class="hub-textlink" href="/signin/" data-hub-signout
-           style="display:inline-flex"><span class="material-symbols-outlined">account_circle</span></a>
-      </div>
-    </header>
+    <main id="main">
+      <!-- Hero: newest completed report, whatever the game - or, with nothing
+           analysed yet, a getting-started panel. Filled by hub.js. -->
+      <section class="hub-dhero" data-dash-hero hidden></section>
 
-    <main id="main" style="padding:24px 24px 40px">
-      <header style="margin-bottom:32px">
-        <h1 class="hub-h1">Select a game to start coaching</h1>
-        <p class="hub-lede" style="max-width:62ch">Upload a match to receive a deep-dive analysis and
-          performance tracking across everything you have analysed.</p>
-      </header>
-      <div data-hub-games></div>
+      <section class="hub-dsec" data-dash-reports hidden>
+        <div class="hub-dsec__h">
+          <h2>Recent reports</h2>
+          <div class="hub-pager">
+            <button type="button" data-dash-page="-1" aria-label="Scroll reports back"><span class="material-symbols-outlined">chevron_left</span></button>
+            <button type="button" data-dash-page="1" aria-label="Scroll reports forward"><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+        <div class="hub-dcards" data-dash-reports-grid></div>
+      </section>
+
+      <section class="hub-dsec" id="games">
+        <div class="hub-dsec__h">
+          <h2>My games</h2>
+        </div>
+        <div data-hub-games></div>
+      </section>
     </main>
-
-    <!-- Signed-in pages get the credit line only, not the landing's marketing
-         footer: "Sign in" and "Home" are meaningless once you are past them,
-         and the logo lockup would repeat the sidebar's. -->
-    <footer class="hub-foot hub-foot--slim"><div class="hub-foot__in" style="padding:0 24px 24px">
-        <span class="hub-foot__copy">Built by <strong>GoDevLab Agency</strong></span>
-        <a class="hub-foot__support" href="mailto:godevlabagency@gmail.com">Support</a>
-      </div></footer>
   </div>
+
+  <aside class="hub-rail">
+    <label class="hub-search">
+      <span class="material-symbols-outlined">search</span>
+      <input type="search" placeholder="Search games and reports..." data-hub-search aria-label="Search games and reports">
+    </label>
+    <div class="hub-rp hub-glass" data-dash-activity hidden>
+      <p class="hub-rp__t">Activity</p>
+      <div class="hub-rp__feed" data-dash-activity-feed></div>
+    </div>
+    <div class="hub-rp hub-glass" data-dash-plan hidden>
+      <p class="hub-rp__t">Plan</p>
+      <div class="hub-rp__feed">
+        <div class="hub-rp__i"><span class="material-symbols-outlined">bolt</span>
+          <span><b data-dash-plan-name>Free plan</b><span data-dash-plan-text></span></span></div>
+      </div>
+    </div>
+  </aside>
 </div>
+
+<!-- Full-width footer BELOW the shell, so it runs under the sidebar and the
+     content alike instead of living in the content column. Structured like a
+     real product footer, but every link is a destination that exists - no
+     placeholder nav, per the rule at the top of hub.css. -->
+<footer class="hub-foot hub-glass hub-foot--hub">
+  <div class="hub-wrap">
+    <div class="hub-foot__grid">
+      <div>
+        <a class="hub-logo" href="/"><span class="hub-logo__mark"><span class="material-symbols-outlined">insights</span></span>Coachfio</a>
+        <p class="hub-foot__tag">AI match analysis and coaching for the games you play.
+          Upload a match, get a report, improve.</p>
+      </div>
+      <nav aria-label="Footer">
+        <p class="hub-foot__h">Product</p>
+        <ul class="hub-foot__links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/hub/">My games</a></li>
+        </ul>
+      </nav>
+      <div>
+        <p class="hub-foot__h">Support</p>
+        <ul class="hub-foot__links">
+          <li><a href="mailto:godevlabagency@gmail.com">Contact support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="hub-foot__bar">
+      <span>© 2026 Coachfio. All rights reserved.</span>
+      <span>Built by <strong>GoDevLab Agency</strong></span>
+    </div>
+  </div>
+</footer>
 <script src="/hub.js"></script>
 </body>
 </html>

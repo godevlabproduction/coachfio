@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<title>Hub in Liquid Glass - mockup</title>
+<style>
+/* HUB / LIQUID GLASS MOCKUP - static, fake data.
+   The layout is the real hub (sidebar | main | rail), but EVERY SECTION is its
+   own rounded liquid-glass panel, floating over a full-viewport ANIMATED
+   background. The animation lives behind the glass: sharp in the gaps between
+   panels, blurred + saturated through them. Accent: hub blue. No purple. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #2F7DF6; --blue-2: #5C9DFF;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --gap: 18px;
+  --r: 26px;
+  --ink: #F2F5FA; --ink-2: rgba(242, 245, 250, .72); --ink-3: rgba(242, 245, 250, .5);
+}
+body.day { --ink: #10131A; --ink-2: rgba(16, 19, 26, .72); --ink-3: rgba(16, 19, 26, .5); }
+body { font-family: var(--sans); color: var(--ink); min-height: 100vh; background: #0A0E15; overflow-x: hidden; }
+body.day { background: #E9ECF2; }
+
+/* ==== the animated backdrop ==============================================
+   Four color fields drifting on slow loops. Fixed, so glass panels lens a
+   LIVING background while scrolling. Paused under reduced-motion. */
+.sky { position: fixed; inset: -20%; z-index: -1; filter: blur(70px); }
+.sky i { position: absolute; border-radius: 50%; opacity: .55; }
+.sky i:nth-child(1) { width: 46vw; height: 46vw; left: 4%; top: 2%; background: var(--s1); animation: drift1 26s ease-in-out infinite alternate; }
+.sky i:nth-child(2) { width: 38vw; height: 38vw; right: 2%; top: 12%; background: var(--s2); animation: drift2 32s ease-in-out infinite alternate; }
+.sky i:nth-child(3) { width: 42vw; height: 42vw; left: 28%; bottom: -6%; background: var(--s3); animation: drift3 38s ease-in-out infinite alternate; opacity: .38; }
+.sky i:nth-child(4) { width: 30vw; height: 30vw; right: 24%; bottom: 10%; background: var(--s4); animation: drift1 44s ease-in-out infinite alternate-reverse; opacity: .42; }
+.day .sky i { opacity: .4; }
+.day .sky i:nth-child(3) { opacity: .45; }
+
+/* ==== 5 SKY PALETTES - pick with the switcher, bottom centre ==============
+   1 Arctic    - tonal blues only: brand-aligned, calm, zero rainbow
+   2 Pitch     - turf greens + floodlight lime: football night match
+   3 Ember     - rust / crimson / amber: intensity, post-loss film session
+   4 Broadcast - orange vs navy duotone: sports-TV energy
+   5 Graphite  - smoked neutrals: premium studio, accent does the talking */
+body[data-sky="1"] { --s1: #123A8C; --s2: #2F7DF6; --s3: #67C4E8; --s4: #0B1E3F; }
+body[data-sky="2"] { --s1: #14683E; --s2: #2FBF71; --s3: #D8E24F; --s4: #0E4D3A; }
+body[data-sky="3"] { --s1: #B23A1C; --s2: #C21F3A; --s3: #F0A050; --s4: #6E1A0F; }
+body[data-sky="4"] { --s1: #F2762E; --s2: #1E4FD8; --s3: #E8B04B; --s4: #12355F; }
+body[data-sky="5"] { --s1: #3A4756; --s2: #59687E; --s3: #7C8DA6; --s4: #232B36; }
+
+.palbar {
+  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 60;
+  display: flex; align-items: center; gap: 6px; padding: 7px; --r: 999px;
+}
+.palbar button {
+  display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 0; border-radius: 999px;
+  background: none; color: var(--ink-2); cursor: pointer;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  transition: background-color .25s var(--spring), color .2s, transform .25s var(--spring);
+}
+.palbar button:hover { transform: scale(1.05); color: var(--ink); }
+.palbar button.on { background: rgba(255, 255, 255, .16); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.day .palbar button.on { background: rgba(255, 255, 255, .6); }
+.palbar i { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 16px; }
+@keyframes drift1 { to { transform: translate(9vw, 7vh) scale(1.15); } }
+@keyframes drift2 { to { transform: translate(-8vw, 9vh) scale(.9); } }
+@keyframes drift3 { to { transform: translate(6vw, -8vh) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .sky i { animation: none; } }
+
+/* ==== the material ======================================================== */
+.lq {
+  border-radius: var(--r);
+  background: rgba(16, 20, 30, .34);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, .14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    inset 0 -1px 0 rgba(255, 255, 255, .06),
+    inset 1px 0 0 rgba(255, 255, 255, .09),
+    inset -1px 0 0 rgba(255, 255, 255, .09),
+    0 18px 48px rgba(0, 0, 0, .30);
+}
+.day .lq {
+  background: rgba(255, 255, 255, .44);
+  border-color: rgba(255, 255, 255, .6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .9),
+    inset 0 -1px 0 rgba(255, 255, 255, .3),
+    inset 1px 0 0 rgba(255, 255, 255, .45),
+    inset -1px 0 0 rgba(255, 255, 255, .45),
+    0 18px 48px rgba(30, 40, 60, .14);
+}
+/* inner surfaces sit ON glass: plain translucent fill, no second blur */
+.fill { border-radius: calc(var(--r) - 14px); background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .1); }
+.day .fill { background: rgba(255, 255, 255, .5); border-color: rgba(255, 255, 255, .65); }
+.tint { background: color-mix(in oklab, var(--blue) 60%, rgba(255, 255, 255, .06)); color: #fff; border: 1px solid rgba(255, 255, 255, .3); }
+.day .tint { background: color-mix(in oklab, var(--blue) 72%, #fff); }
+
+@media (prefers-reduced-transparency: reduce) {
+  .lq { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 18, 26, .95); }
+  .day .lq { background: rgba(255, 255, 255, .97); }
+  .sky { display: none; }
+}
+
+/* ==== shell: every region its own glass panel ============================= */
+.shell { display: flex; gap: var(--gap); padding: var(--gap); min-height: 100vh; align-items: flex-start; }
+.mono-h { font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+
+/* sidebar: a separate rounded glass column */
+.side {
+  flex: 0 0 224px; position: sticky; top: var(--gap);
+  height: calc(100vh - 2 * var(--gap));
+  display: flex; flex-direction: column; padding: 18px 12px;
+}
+.logo { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 16px; font-weight: 700; padding: 0 6px; }
+.logo i { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--blue); color: #fff; font-style: normal; }
+.logo i .material-symbols-outlined { font-size: 18px; }
+.nav { display: flex; flex-direction: column; gap: 6px; margin-top: 26px; }
+.nav a {
+  display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: calc(var(--r) - 12px);
+  color: var(--ink-2); text-decoration: none; font-family: var(--mono); font-size: 14px; font-weight: 600;
+  transition: background-color .3s var(--spring), color .2s ease, transform .3s var(--spring);
+}
+.nav a:hover { color: var(--ink); background: rgba(255, 255, 255, .1); transform: scale(1.02); }
+.day .nav a:hover { background: rgba(255, 255, 255, .5); }
+.nav a.on { color: var(--ink); background: rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+.day .nav a.on { background: rgba(255, 255, 255, .65); }
+.nav .material-symbols-outlined { font-size: 19px; }
+.side__foot { margin-top: auto; }
+.me-row { display: flex; align-items: center; gap: 8px; padding: 0 2px 10px; }
+.me { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.me i { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--blue); color: #fff; font-style: normal; font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.me b { display: block; font-family: var(--mono); font-size: 13px; }
+.me span { display: block; font-size: 11px; color: var(--ink-3); }
+.theme { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 11px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.08); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; transition: transform .35s var(--spring); }
+.theme:hover { transform: scale(1.1) rotate(12deg); color: var(--ink); }
+.day .theme { background: rgba(255, 255, 255, .5); }
+.theme .material-symbols-outlined { font-size: 18px; }
+.signout { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: calc(var(--r) - 12px); color: var(--ink-2); text-decoration: none; font-family: var(--mono); font-size: 14px; font-weight: 600; }
+.signout:hover { color: var(--ink); background: rgba(255, 255, 255, .1); }
+
+/* main column: each section is its own glass panel */
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--gap); }
+
+/* HERO panel: glass shell around the art; plate + tags are inner fills */
+.hero { padding: 14px; }
+.hero__art { position: relative; border-radius: calc(var(--r) - 14px); overflow: hidden; min-height: 400px; display: flex; align-items: flex-end; padding: 14px; isolation: isolate; }
+.hero__art > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; z-index: -1; }
+.hero__tags { position: absolute; top: 14px; left: 14px; display: flex; gap: 8px; }
+.tag { padding: 7px 14px; border-radius: 999px; font-family: var(--mono); font-size: 12px; color: #fff; background: rgba(10, 14, 22, .38); border: 1px solid rgba(255, 255, 255, .22); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+.tag--tint { background: color-mix(in oklab, var(--blue) 60%, transparent); }
+.hero__arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); background: rgba(10,14,22,.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #fff; cursor: pointer; display: grid; place-items: center; transition: transform .3s var(--spring), background-color .2s; }
+.hero__arrow:hover { transform: translateY(-50%) scale(1.12); background: rgba(10, 14, 22, .55); }
+.hero__arrow--l { left: 14px; } .hero__arrow--r { right: 14px; }
+.hero__plate {
+  width: 100%; padding: 18px; color: #fff; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+  border-radius: calc(var(--r) - 14px - 14px);
+  background: rgba(10, 14, 22, .34); border: 1px solid rgba(255, 255, 255, .2);
+  -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+.hero__plate h1 { font-family: var(--mono); font-size: 25px; letter-spacing: -.02em; }
+.hero__plate h1 span { font-size: 15px; opacity: .65; font-weight: 500; }
+.hero__plate p { font-size: 14px; opacity: .85; max-width: 46ch; margin-top: 6px; }
+.buy { display: flex; align-items: stretch; border-radius: 999px; overflow: hidden; text-decoration: none; color: #fff; font-family: var(--mono); font-size: 14px; font-weight: 600; box-shadow: 0 10px 26px rgba(47, 125, 246, .35), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .3s var(--spring); }
+.buy:hover { transform: scale(1.05); }
+.buy b { padding: 13px 20px; background: color-mix(in oklab, var(--blue) 78%, #fff 0%); border-right: 1px solid rgba(255,255,255,.3); font-weight: 600; }
+.buy span { padding: 13px 18px; background: color-mix(in oklab, var(--blue) 62%, rgba(255,255,255,.1)); display: flex; align-items: center; }
+
+/* SECTION panels (Recent reports / My games): glass shells with inner cards */
+.sec { padding: 18px; }
+.sec__h { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.pager { margin-left: auto; display: flex; gap: 8px; }
+.pager button { width: 40px; height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.08); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; transition: transform .3s var(--spring); }
+.day .pager button { background: rgba(255, 255, 255, .5); }
+.pager button:hover { transform: scale(1.08); color: var(--ink); }
+.row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; }
+.row::-webkit-scrollbar { display: none; }
+.rcard { flex: 0 0 236px; padding: 8px; text-decoration: none; color: inherit; transition: transform .35s var(--spring); }
+@media (pointer: fine) { .rcard:hover { transform: translateY(-4px) scale(1.02); } }
+.rcard img, .rcard .ph { width: 100%; aspect-ratio: 1/0.7; object-fit: cover; border-radius: calc(var(--r) - 14px - 8px); display: block; }
+.rcard .ph { background: rgba(255, 255, 255, .06); }
+.rcard .in { padding: 10px 6px 4px; }
+.rcard b { font-family: var(--mono); font-size: 14.5px; }
+.rcard p { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
+.badge { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; margin-bottom: 6px; }
+
+.games { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.gcard { position: relative; height: 280px; border-radius: calc(var(--r) - 14px); overflow: hidden; display: flex; align-items: flex-end; padding: 10px; text-decoration: none; isolation: isolate; transition: transform .35s var(--spring); }
+@media (pointer: fine) { .gcard:hover { transform: scale(1.02); } }
+.gcard > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+.gcard--ph { background: rgba(255, 255, 255, .05); border: 1px dashed rgba(255, 255, 255, .2); align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--ink-3); }
+.gcard__plate { width: 100%; padding: 12px 14px; color: #fff; border-radius: calc(var(--r) - 14px - 10px); background: rgba(10, 14, 22, .38); border: 1px solid rgba(255,255,255,.2); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); box-shadow: inset 0 1px 0 rgba(255,255,255,.25); }
+.gcard__plate b { font-family: var(--mono); font-size: 16px; }
+.gcard__plate span { display: block; font-size: 12px; opacity: .75; margin-top: 2px; }
+
+/* right rail: search, activity, plan - three separate glass panels */
+.rail { flex: 0 0 300px; position: sticky; top: var(--gap); display: flex; flex-direction: column; gap: var(--gap); }
+.search { display: flex; align-items: center; gap: 12px; padding: 14px 18px; --r: 999px; border-radius: 999px; color: var(--ink-3); }
+.search input { flex: 1; border: 0; background: none; outline: none; color: var(--ink); font-family: var(--mono); font-size: 13.5px; }
+.search input::placeholder { color: var(--ink-3); }
+.rp { padding: 16px; }
+.rp h2 { font-family: var(--mono); font-size: 15px; margin-bottom: 14px; }
+.feed { display: flex; flex-direction: column; gap: 12px; }
+.feed div { display: flex; gap: 12px; align-items: flex-start; }
+.feed .material-symbols-outlined { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px; display: grid; place-items: center; font-size: 19px; color: var(--blue-2); background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
+.day .feed .material-symbols-outlined { background: rgba(255, 255, 255, .5); }
+.feed b { display: block; font-family: var(--mono); font-size: 12.5px; }
+.feed span { font-size: 11.5px; color: var(--ink-3); }
+
+.mocknote { position: fixed; right: 14px; bottom: 14px; z-index: 60; padding: 7px 13px; border-radius: 999px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+
+@media (max-width: 1100px) { .rail { display: none; } }
+@media (max-width: 860px) { .side { display: none; } .shell { padding: 10px; gap: 10px; } }
+</style>
+</head>
+<body data-sky="1">
+<div class="sky" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<div class="shell">
+
+  <!-- SIDEBAR: its own rounded glass panel -->
+  <aside class="side lq">
+    <span class="logo"><i><span class="material-symbols-outlined">insights</span></i>Coachfio</span>
+    <nav class="nav">
+      <a class="on" href="#"><span class="material-symbols-outlined">home</span>Home</a>
+      <a href="#"><span class="material-symbols-outlined">grid_view</span>My games</a>
+    </nav>
+    <div class="side__foot">
+      <div class="me-row">
+        <span class="me"><i>IL</i><span><b>ilija10</b><span>Player</span></span></span>
+        <button class="theme" type="button" aria-label="Toggle theme"
+          onclick="document.body.classList.toggle('day');this.firstElementChild.textContent=document.body.classList.contains('day')?'dark_mode':'light_mode'">
+          <span class="material-symbols-outlined">light_mode</span></button>
+      </div>
+      <a class="signout" href="#"><span class="material-symbols-outlined">logout</span>Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- HERO: a glass panel framing the art; plate + tags are clear glass ON the art -->
+    <section class="hero lq">
+      <div class="hero__art">
+        <img src="/art/fc27-card.jpg" alt="">
+        <div class="hero__tags">
+          <span class="tag">EA Sports FC 26</span>
+          <span class="tag">Win</span>
+          <span class="tag tag--tint">Latest report</span>
+        </div>
+        <button class="hero__arrow hero__arrow--l" aria-label="Previous"><span class="material-symbols-outlined">chevron_left</span></button>
+        <button class="hero__arrow hero__arrow--r" aria-label="Next"><span class="material-symbols-outlined">chevron_right</span></button>
+        <div class="hero__plate">
+          <div>
+            <h1>2&ndash;1 <span>&middot; yesterday</span></h1>
+            <p>You created 9 chances but 7 came from the same left overlap &mdash; when it
+              was cut off after 60&prime;, the attack went quiet.</p>
+          </div>
+          <a class="buy" href="#"><b>Open report</b><span>2&ndash;1</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECENT REPORTS: its own glass section -->
+    <section class="sec lq">
+      <div class="sec__h"><span class="mono-h">Recent reports</span>
+        <div class="pager">
+          <button aria-label="Back"><span class="material-symbols-outlined">chevron_left</span></button>
+          <button aria-label="Forward"><span class="material-symbols-outlined">chevron_right</span></button>
+        </div>
+      </div>
+      <div class="row">
+        <a class="rcard fill" href="#"><img src="/art/fc27-card.jpg" alt="">
+          <span class="in"><span class="badge tint">FC 26</span><b>Win 2&ndash;1</b><p>Left-overlap dependency after their 62&prime; sub.</p></span></a>
+        <a class="rcard fill" href="#"><img src="/cs2-preview.jpg" alt="">
+          <span class="in"><span class="badge fill">CS2</span><b>Loss 11&ndash;13</b><p>Utility unused in 6 of 11 T rounds.</p></span></a>
+        <a class="rcard fill" href="#"><img src="/report-preview.jpg" alt="">
+          <span class="in"><span class="badge fill">FC 26</span><b>Draw 1&ndash;1</b><p>Both goals conceded from corner second balls.</p></span></a>
+        <a class="rcard fill" href="#"><span class="ph"></span>
+          <span class="in"><span class="badge fill">Rocket League</span><b>Win 4&ndash;2</b><p>Boost starvation in overtime.</p></span></a>
+      </div>
+    </section>
+
+    <!-- MY GAMES: its own glass section -->
+    <section class="sec lq">
+      <div class="sec__h"><span class="mono-h">My games</span></div>
+      <div class="games">
+        <a class="gcard" href="#"><img src="/art/fc27-card.jpg" alt="">
+          <span class="gcard__plate"><b>EA Sports FC 26</b><span>Last played yesterday</span></span></a>
+        <a class="gcard" href="#"><img src="/art/cs2.png" alt="">
+          <span class="gcard__plate"><b>Counter-Strike 2</b><span>Last played Tuesday</span></span></a>
+        <span class="gcard gcard--ph"><span class="material-symbols-outlined">sports_esports</span>
+          <span style="font-family:var(--mono);font-size:13px">More games coming soon</span></span>
+      </div>
+    </section>
+  </main>
+
+  <!-- RIGHT RAIL: three separate glass panels -->
+  <aside class="rail">
+    <label class="search lq"><span class="material-symbols-outlined">search</span>
+      <input placeholder="Search games and reports..." aria-label="Search"></label>
+    <div class="rp lq">
+      <h2>Activity</h2>
+      <div class="feed">
+        <div><span class="material-symbols-outlined">description</span>
+          <span><b>Report ready</b><span>FC 26 &middot; 2&ndash;1 &middot; 9h ago</span></span></div>
+        <div><span class="material-symbols-outlined">movie</span>
+          <span><b>4 moments clipped</b><span>FC 26 &middot; yesterday</span></span></div>
+        <div><span class="material-symbols-outlined">trending_up</span>
+          <span><b>Finishing +12%</b><span>Last 5 FC matches</span></span></div>
+      </div>
+    </div>
+    <div class="rp lq">
+      <h2>Plan</h2>
+      <div class="feed">
+        <div><span class="material-symbols-outlined">bolt</span>
+          <span><b>Free plan</b><span>2 of 5 reports left</span></span></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<span class="mocknote lq">Static mockup &middot; liquid glass</span>
+
+<div class="palbar lq" role="group" aria-label="Background palette">
+  <button class="on" data-p="1"><i style="background:linear-gradient(135deg,#123A8C,#2F7DF6,#67C4E8)"></i>Arctic</button>
+  <button data-p="2"><i style="background:linear-gradient(135deg,#14683E,#2FBF71,#D8E24F)"></i>Pitch</button>
+  <button data-p="3"><i style="background:linear-gradient(135deg,#B23A1C,#C21F3A,#F0A050)"></i>Ember</button>
+  <button data-p="4"><i style="background:linear-gradient(135deg,#F2762E,#1E4FD8,#E8B04B)"></i>Broadcast</button>
+  <button data-p="5"><i style="background:linear-gradient(135deg,#3A4756,#59687E,#7C8DA6)"></i>Graphite</button>
+</div>
+<script>
+document.querySelectorAll(".palbar button").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.body.setAttribute("data-sky", b.getAttribute("data-p"));
+    document.querySelectorAll(".palbar button").forEach(function (x) { x.classList.remove("on"); });
+    b.classList.add("on");
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+{
+  "skill_name": "no-generic-web",
+  "version": "3.1",
+  "eval_philosophy": "Each eval grades across five dimensions: (1) narrative logic — does the page argue correctly?, (2) identity specificity — could this belong to another brand?, (3) CTA & conversion logic — is the ask correct, specific, well-placed?, (4) UX quality — hierarchy, density, trust sequence, rhythm, (5) mode/submode expression — is the chosen mode felt without becoming cliché? Each eval also has 'sophisticated_failure_traps' — failure modes that look like good design but aren't.",
+  "grading_dimensions": {
+    "narrative_logic": "Does the page structure follow Claim → Evidence → Trust → Resolution? Is each section earning a narrative role?",
+    "identity_specificity": "Could the palette + typographic voice + spatial energy belong to a different brand? If yes, fail.",
+    "cta_conversion": "Is the CTA label specific to what this business does? Is it placed after trust is established? Is it visually weighted correctly?",
+    "ux_quality": "Does the above-fold stack follow the mode's priority order? Is emphasis budget respected (max 1 primary per viewport)? Is density calibrated to the mode? Does the page have rhythm (dense → rest alternation)?",
+    "mode_expression": "Is the base mode and submode actually felt — not just declared? Does intensity modify something observable, or is it just a label?"
+  },
+  "evals": [
+    {
+      "id": 0,
+      "name": "Artisan perfumer — Brand-First + Luxury + Restrained",
+      "prompt": "Build a website for 'Duende', an artisan perfumer based in Seville. They make small-batch fragrances inspired by Andalusian landscape and memory. Sold online and at select stores. Price range: €120–€280.",
+      "mode": "Brand-First",
+      "submode": "Luxury",
+      "intensity": "Restrained",
+      "grading": {
+        "narrative_logic": "Hero creates emotional impression first (Claim). Product or collection shown second (Evidence). Story or craft shown third — trust through specificity, not testimonials. Subtle purchase entry last (Resolution). Fail if CTA appears before the brand feeling has landed.",
+        "identity_specificity": "Palette is earned — not black/gold. Could be ochre + deep wine, faded terracotta + graphite, chalk + bronze. The typographic choice and spatial energy couldn't work for another perfumer without redesign.",
+        "cta_conversion": "CTA serves the act of discovery: 'Explore the collection', 'Find your scent', 'Request a sample'. Never 'Shop Now' or 'Get Started'. The CTA isn't urgent — it's an invitation.",
+        "ux_quality": "Above-fold: emotional impression first, what it is second. Max 2 focal elements per viewport. Density is low. No form above the fold. Space is the luxury signal — sections breathe.",
+        "mode_expression": "Luxury + Restrained means understatement is the statement. Scale contrast is subtle (Restrained row of intensity table). Motion: entrance fades only, ≤300ms. 1 compositional gesture per page. Copy has fewer words with more weight."
+      },
+      "pass_criteria": [
+        "The hero communicates atmosphere and identity before it communicates product",
+        "Palette is specific to Duende — not a luxury default",
+        "Typography serves restraint — whether serif or sans, it's used with discipline not ornamentation",
+        "Space is generous and purposeful — acts as a design element",
+        "CTA is an invitation, not a directive",
+        "One design decision is unmistakably specific to Duende and couldn't belong to another perfumer"
+      ],
+      "fail_criteria": [
+        "Black and gold palette",
+        "Marble or ornate textures used decoratively",
+        "Hero is a centered headline + subtitle + button stack",
+        "CTA says 'Shop Now' or 'Get Started'",
+        "The design could belong to any artisan luxury brand without changes"
+      ],
+      "sophisticated_failure_traps": [
+        "Beautiful visuals but the copy is generic: 'Discover the art of fragrance' could be any perfumer",
+        "Minimalism that's empty instead of restrained — sparse without deliberate intent",
+        "Theatrical slow motion animations that contradict the Restrained intensity setting"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Local moving company — Conversion-First + Balanced",
+      "prompt": "Create a landing page for 'Mudanzas Rápido', a local moving company in Valencia, Spain. They do residential and small office moves. Main goal: get phone calls or quote requests. Audience: people who just decided they need a mover.",
+      "mode": "Conversion-First",
+      "submode": null,
+      "intensity": "Balanced",
+      "grading": {
+        "narrative_logic": "Above-fold stack: (1) who they are + what they do + where, (2) primary trust signal (years, reviews, moves completed), (3) CTA. Trust comes before the ask because this is cold traffic. Fail if the CTA is the first thing users see without any evidence.",
+        "identity_specificity": "The design has personality beyond generic 'moving company blue and van imagery'. Some color or typographic decision feels specific to Rápido.",
+        "cta_conversion": "Phone number prominently visible above the fold (calls convert higher for local service businesses). CTA: 'Get a free quote', 'Call now', 'Request your move date'. Form max 2 fields if used.",
+        "ux_quality": "Above-fold on mobile: headline + trust signal + phone CTA visible without scrolling. No friction before the primary action. Nav minimal.",
+        "mode_expression": "Balanced intensity: 2-3 compositional gestures, moderate scale contrast, one color with personality. Not over-designed, not generic."
+      },
+      "pass_criteria": [
+        "Value prop (what, where, for whom) clear within 5 seconds",
+        "Phone number visible above the fold",
+        "Trust signals appear before the CTA on cold traffic flow",
+        "CTA label is specific and action-oriented",
+        "Design has personality beyond generic moving company category visuals",
+        "Mobile: CTA reachable without scrolling on 375px"
+      ],
+      "fail_criteria": [
+        "CTA says 'Learn More' or 'Get Started'",
+        "No phone number visible above the fold",
+        "Trust signals buried below 3 screens of content",
+        "Design indistinguishable from any other moving company (blue, van photo, generic sans)",
+        "Form asks for more than name + move date + contact before the user has committed"
+      ],
+      "sophisticated_failure_traps": [
+        "Atmospheric hero (warm imagery, nice typography) that delays delivering the value proposition — beauty before function fails cold traffic",
+        "Too many equal-weight CTAs (phone, form, WhatsApp, email) causing paralysis instead of channeling the user toward one primary action"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Developer observability tool — Product/SaaS + Tech + Balanced",
+      "prompt": "Build a landing page for 'Trace', a distributed tracing and observability tool for backend engineers and DevOps teams. Connects to Node, Python, Go. Free tier available. Paid plans from $49/month.",
+      "mode": "Product/SaaS",
+      "submode": "Tech",
+      "intensity": "Balanced",
+      "grading": {
+        "narrative_logic": "Section order must follow: (1) value prop + audience signal, (2) key differentiator + how it connects, (3) product in use (screenshot or code), (4) trust/proof, (5) pricing, (6) CTA. Fail if pricing is missing or product-in-use is absent.",
+        "identity_specificity": "The design doesn't look like 20 other developer tools. Spacing is precise and systematic. Color — even if dark — is specific. The palette and typographic choices are earned.",
+        "cta_conversion": "Developer mental model: 'Start free', 'Connect your stack', 'View the docs'. Not 'Book a demo' — wrong model for self-serve dev tools. Free tier mentioned clearly and early. Pricing visible.",
+        "ux_quality": "Above-fold: value prop + audience signal + low-friction entry. Integration support (Node, Python, Go) visible early — this is a trust signal for this audience. Density: moderate, appropriate for technical scanners.",
+        "mode_expression": "Tech submode: spacing is mathematical, grid-aligned. Accent color = information signal, not decoration. No blue glow. Monospace used intentionally, not globally. Balanced intensity: 2-3 compositional gestures, entrance reveals that aid comprehension."
+      },
+      "pass_criteria": [
+        "Value proposition technical and specific — what Trace does and who it's for, without vague marketing language",
+        "Integration support visible early (Node, Python, Go)",
+        "Product screenshot or code example demonstrates actual use",
+        "Free tier mentioned clearly — reduces 'is this worth trying?' objection",
+        "Pricing visible and honest about what each tier gets",
+        "CTA aligned with developer self-serve mental model"
+      ],
+      "fail_criteria": [
+        "Hero is all marketing language, no technical specifics",
+        "'Book a demo' as the primary CTA with no self-serve option",
+        "No product screenshot or code example anywhere",
+        "Pricing hidden or missing",
+        "Blue glow or neon accents used decoratively",
+        "Generic startup dark mode indistinguishable from other dev tools"
+      ],
+      "sophisticated_failure_traps": [
+        "Dark aesthetic used as Tech submode shorthand — dark mode without functional reason or visual specificity",
+        "Features listed as marketing bullets without showing them in use — developers need demonstration, not description",
+        "Technical copy so dense it loses non-technical decision-makers who may also evaluate the tool"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Creative agency — Brand-First + Bold + Expressive",
+      "prompt": "Build a website for 'Masa Colectivo', a creative agency in Buenos Aires doing brand strategy, identity design, and campaigns. Clients are mid-size companies and funded startups. The agency has a direct, provocative communication style.",
+      "mode": "Brand-First",
+      "submode": "Bold",
+      "intensity": "Expressive",
+      "grading": {
+        "narrative_logic": "The site IS the portfolio. Structure: impression first, capability proof second, contact third. Not a standard agency template (hero → services → case studies → contact). The narrative should feel like the agency's work, not a description of it.",
+        "identity_specificity": "The design demonstrates the kind of work they sell. The communication style (direct, provocative) is reflected in both copy and design decisions — not just stated. The palette and layout make a clear visual argument.",
+        "cta_conversion": "Agency-appropriate: 'Let's talk', 'See the work', 'Start a project'. Not 'Get Started'. Contact comes after capability has been demonstrated.",
+        "ux_quality": "Bold + Expressive intensity: 4+ compositional gestures, 5× or more scale contrast ratio, strong palette tension. Above-fold: emotional impression and 'what this is' resolved in the hero. No clutter — bold requires hierarchy, not volume.",
+        "mode_expression": "Bold = directness as design value. The most important thing is the biggest thing. Headlines are declarations. The layout makes a statement. Expressive intensity means color under pressure, dramatic scale contrast, voice-forward copy. Critical check: hierarchy must survive the boldness — one primary element must dominate per viewport."
+      },
+      "pass_criteria": [
+        "The site itself is proof of capability — the design demonstrates what they sell",
+        "Communication style (direct, provocative) visible in both design and copy",
+        "At least one layout decision is declarative — the layout asserts, not just arranges",
+        "Scale contrast is dramatic (Expressive: 5× or more headline/body ratio)",
+        "Copy is opinionated — says things other agencies wouldn't say",
+        "CTA is agency-appropriate, not generic"
+      ],
+      "fail_criteria": [
+        "Bold = visual noise: overlapping elements without hierarchy, everything competing at the same level",
+        "Generic agency template: centered hero with 'We make brands', project grid, client logos",
+        "Agency's communication style isn't reflected — disconnect between copy tone and visual tone",
+        "Scale contrast is moderate instead of dramatic (Expressive setting ignored)",
+        "Motion is gentle or atmospheric instead of decisive"
+      ],
+      "sophisticated_failure_traps": [
+        "High visual intensity without hierarchy — everything bold means nothing is bold. The dominant element must be worth its dominance.",
+        "Bold styling on generic proposition: dramatic design but the copy says 'We help brands grow' — specific visuals, generic message",
+        "Provocation as aesthetic (sharp angles, collision palette) without conceptual confidence in the copy or structure"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Minimal portfolio / copywriter — Conversion-First + Minimal + Restrained",
+      "prompt": "Build a one-page site for Julio Reyes, a freelance copywriter for tech startups and B2B companies. He wants something minimal and professional. Goal: get project inquiries.",
+      "mode": "Conversion-First",
+      "submode": "Minimal",
+      "intensity": "Restrained",
+      "grading": {
+        "narrative_logic": "Above-fold: who Julio is + what he does + who he does it for. Evidence: work or results (even described concisely). Trust: a client name or quote. Resolution: inquiry CTA. Minimal doesn't mean sparse on information — it means precise with it.",
+        "identity_specificity": "Minimal + Restrained does NOT mean blank. The palette must be specific (2-3 colors, earned, not just 'neutral'). Typography must be exceptional — it carries the visual load. The site must feel like a copywriter who thinks carefully about words thought carefully about design.",
+        "cta_conversion": "Conversion-oriented: 'Send me a brief', 'See my work', 'Start a project'. Not 'Contact' or 'Hire me'. The CTA matches what Julio wants users to do and what they want to do when ready.",
+        "ux_quality": "Restrained intensity: 1 compositional gesture per page. Entrance fades only. 1 primary emphasis zone per viewport. Above-fold stack resolves the Conversion-First priority. Every element earns presence — removing it must cost something.",
+        "mode_expression": "Minimal = argument made with as little as possible. Every element present must be load-bearing. Whitespace is active — creates focus, not just space. Typography is exceptional. Critical check: is there a point of view, or just emptiness?"
+      },
+      "pass_criteria": [
+        "What Julio does and who he does it for is clear above the fold",
+        "Palette is specific — not just 'clean' neutral",
+        "Typography is exceptional within the minimal constraint — it carries the visual identity",
+        "Every element present earns its place — removing it would cost something",
+        "CTA is conversion-specific to what Julio's clients want to do",
+        "The site feels like it was made by someone who thinks carefully — not a template with content swapped in"
+      ],
+      "fail_criteria": [
+        "Blank ≠ minimal: sparse without reason, sections that don't communicate anything",
+        "Palette is generic neutrals with no personality",
+        "Typography is default — Inter or similar with no typographic decision",
+        "Could be any freelancer's site — no specific identity",
+        "CTA is 'Contact' or 'Hire Me'",
+        "Three scale contrast ratio or less (Restrained setting) violated with dramatic scale contrast"
+      ],
+      "sophisticated_failure_traps": [
+        "Minimal used as cover for incompleteness — very sparse page that simply hasn't been designed, not one that's been designed to say the most with the least",
+        "Clean design that passes visual inspection but fails the 5-second test — what Julio does and who he serves isn't readable without reading every word"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "B2B consulting — Conversion-First + Corporate + Balanced",
+      "prompt": "Build a landing page for 'Kappa Partners', a strategy consulting firm helping mid-market companies (50–500 employees) improve operations and margins. Target: CEOs and CFOs. Goal: inbound consultation requests.",
+      "mode": "Conversion-First",
+      "submode": "Corporate",
+      "intensity": "Balanced",
+      "grading": {
+        "narrative_logic": "Section order: (1) who they help + specific problem they solve, (2) how they work (methodology, approach), (3) proof (specific outcomes, client names), (4) CTA. Trust sequence is critical: cold CEO/CFO traffic will not convert without credibility established first. CTA must follow proof.",
+        "identity_specificity": "Corporate does not mean default navy + gray + white. The palette is specific and earned. The typography has authority without being decorative. The design feels like Kappa Partners, not a generic consulting template.",
+        "cta_conversion": "Right ask for this model: 'Schedule a discovery call', 'Request a brief assessment', 'Start the conversation'. Not 'Get Started' or 'Contact Us' — too generic for a high-trust B2B sale.",
+        "ux_quality": "Density appropriate for professional audience: higher density is fine. Information hierarchy is functional — the user always knows where they are. Trust signals before CTA is non-negotiable for high-stakes decisions.",
+        "mode_expression": "Corporate = trustworthy and specific. Structure signals reliability. Predictability is a feature. Balanced intensity: 2-3 compositional gestures, moderate scale contrast, one color with personality. No decoration, but visually strong."
+      },
+      "pass_criteria": [
+        "Value proposition speaks to the specific decision-maker (CEO/CFO) — not generic 'we help businesses grow'",
+        "Specific outcomes visible: numbers, company types, tangible results",
+        "Trust signals (client logos, case data, team credentials) appear before the CTA",
+        "CTA reflects the right conversion model for B2B consulting",
+        "Design is authoritative and specific — not default corporate",
+        "Functional hierarchy: the user always knows what to read next"
+      ],
+      "fail_criteria": [
+        "Generic hero: 'We help companies grow' over handshake stock photo",
+        "Default navy + gray + white palette",
+        "No specific outcomes — only vague claims",
+        "CTA is 'Contact Us' or 'Learn More'",
+        "Credibility signals missing or buried",
+        "Copy written for everyone — no signal this firm understands mid-market operational challenges"
+      ],
+      "sophisticated_failure_traps": [
+        "Corporate mode interpreted as 'boring by default' — serious tone and visual strength are not opposites. A distinctive palette and strong typography are compatible with corporate authority.",
+        "Specific design, generic copy: the site looks professional but says nothing that couldn't belong to a competitor. Design quality raises expectations; copy must deliver on them."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Specialty coffee shop — Conversion-First, no submode, Balanced",
+      "prompt": "Website for 'Turno', a specialty coffee shop in Madrid. Exceptional single-origin coffee, occasional live jazz nights. Goal: make people find them, understand what makes them different, and visit.",
+      "mode": "Conversion-First",
+      "submode": null,
+      "intensity": "Balanced",
+      "grading": {
+        "narrative_logic": "Above-fold: where they are + what makes them different (specialty + jazz). Below: what to expect, when to come. Resolution: location, hours, and how to find them. Jazz nights must earn visual weight — not a footnote. The page's job is to create desire to visit.",
+        "identity_specificity": "Color palette evokes the specific warmth of Turno — not generic coffee warm-brown. Typography and copy make this feel like a place you'd specifically want to go to, not just a café.",
+        "cta_conversion": "The goal is a visit, not a purchase. CTA: 'Find us', 'Check the calendar', 'This week's coffee' — serves the visit goal. Not 'Book Now' if that's not how the business works.",
+        "ux_quality": "Location and hours visible above the fold or one scroll. Mobile: phone number or map link reachable in the thumb zone. Jazz nights section has design weight proportional to their importance as a differentiator.",
+        "mode_expression": "Balanced: one color with personality, 2-3 compositional gestures, entrance reveals + hover states with character."
+      },
+      "pass_criteria": [
+        "Location and what makes Turno different are clear above the fold",
+        "Jazz nights get real visual weight — not mentioned in one line",
+        "Palette feels specific to Turno's warmth — not generic café",
+        "Copy makes someone want to go — sounds like a real place",
+        "CTA serves the actual goal (visit, not purchase)"
+      ],
+      "fail_criteria": [
+        "Generic warm-brown-beige that could be any café",
+        "Jazz nights as a footnote or single-line mention",
+        "No location above the fold",
+        "Stock photo of latte art or coffee beans as hero",
+        "'Order Online' CTA when it's a visit-goal site"
+      ],
+      "sophisticated_failure_traps": [
+        "Beautiful atmospheric design that never answers 'where are you?' or 'when are you open?' — impression without information fails a local business",
+        "Jazz nights section exists but has no visual distinctiveness from the rest — doesn't earn its role as a differentiator"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Consumer recipe app — Conversion-First + Playful + Expressive",
+      "prompt": "Landing page for 'Fogón', a recipe app for young adults (22–35) learning to cook. Makes cooking feel approachable and fun, not intimidating. Freemium with premium at $5/month.",
+      "mode": "Conversion-First",
+      "submode": "Playful",
+      "intensity": "Expressive",
+      "grading": {
+        "narrative_logic": "Above-fold: what it is + who it's for + that it's approachable (not intimidating). Evidence: how it makes cooking accessible (features shown concisely). Trust: light — free tier removes the need for heavy trust-building. Resolution: CTA for free download/signup.",
+        "identity_specificity": "Color is saturated and purposeful — not random. The warmth and energy feel specific to Fogón. Copy sounds like a friend who cooks, not a brand marketing cooking.",
+        "cta_conversion": "Free tier is visible early — primary barrier is irrelevance, not trust. CTA: 'Start cooking', 'Get your first recipe', 'Try it free'. Not 'Get Started' or 'Download Now'.",
+        "ux_quality": "Playful + Expressive: 4+ compositional gestures, strong color pressure, voice-forward copy. BUT: Conversion-First mode means the CTA must still be clear and accessible. Playfulness cannot hide the conversion path.",
+        "mode_expression": "Playful = emotionally open, warm, accessible — not childish. Expressive intensity means color and motion lean fully into the warmth simultaneously. Critical check: sophistication is compatible with playfulness. The site should feel like an adult app that's fun, not a children's product."
+      },
+      "pass_criteria": [
+        "The 'not intimidating' positioning is visible in the design — the page itself feels approachable",
+        "Color has energy and purpose — saturated but not random",
+        "Copy sounds like a friend who cooks, not a brand",
+        "Free tier clearly visible and friction-free to start",
+        "CTA specific to what the user wants to do",
+        "Playfulness is sophisticated — the target is adults, not children"
+      ],
+      "fail_criteria": [
+        "Playful = childish: cartoon illustrations, oversimplification, emoji as design elements",
+        "Generic food photography hero indistinguishable from any recipe app",
+        "Copy is marketing language: 'Discover the joy of cooking'",
+        "CTA is 'Get Started' or 'Download Now'",
+        "Rounded corners everywhere as the primary design language without substance",
+        "No identity specific to Fogón — could be Tasty, Yummly, or any competitor"
+      ],
+      "sophisticated_failure_traps": [
+        "Expressive intensity interpreted as 'more decoration' — Expressive means the chosen character leans fully into itself, not that everything is busier",
+        "Playful submode applied so strongly that the conversion path (free trial, signup) gets buried under the enthusiasm"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Architecture studio — Brand-First + Corporate + Restrained",
+      "prompt": "Website for 'Forma Estudio', a Madrid-based architecture firm specializing in residential and cultural projects. Target: private clients, developers, cultural institutions wanting high-quality architectural commissions.",
+      "mode": "Brand-First",
+      "submode": "Corporate",
+      "intensity": "Restrained",
+      "grading": {
+        "narrative_logic": "Work first, identity second, contact third. The work IS the argument. The firm's approach and philosophy support the work — they don't replace it. Contact comes after capability is fully established.",
+        "identity_specificity": "Not a generic white architecture portfolio. The palette is specific to Forma Estudio. Typography has authority without decoration. The design should feel like it was made by people who think carefully about space and form.",
+        "cta_conversion": "Appropriate ask for institutional commissions: 'Discuss a project', 'Get in touch', 'View all projects'. CTA is not prominent — it comes after the work has done its job.",
+        "ux_quality": "Restrained: 1 compositional gesture per page, subtle scale contrast, no motion beyond entrance fades. Corporate: structure signals reliability, hierarchy is functional. The user always knows where they are.",
+        "mode_expression": "Corporate + Restrained means: serious, specific, disciplined. Not boring — visually strong within professional register. Critical check: is the design interesting enough to attract high-quality clients, while being controlled enough to signal institutional reliability?"
+      },
+      "pass_criteria": [
+        "Portfolio work is prominent — the work is the pitch",
+        "Typography has authority appropriate to institutional commissions",
+        "Palette is specific to Forma Estudio — not default architecture white/gray",
+        "The design feels like people who think carefully about space made it",
+        "Restrained intensity visible: 1 compositional gesture, subtle scale, no decorative motion"
+      ],
+      "fail_criteria": [
+        "Generic portfolio: white background, 3-column image grid, 'Projects / About / Contact' minimal nav",
+        "No visual personality — 'clean' but says nothing specific",
+        "Contact/CTA before work has been shown",
+        "Generic copy: 'We design spaces that inspire'",
+        "Decorative or theatrical elements that contradict Corporate + Restrained"
+      ],
+      "sophisticated_failure_traps": [
+        "Corporate interpreted as visual austerity that lacks identity — bland ≠ trustworthy. A visually strong, specific design is more credible to institutional clients than a generic one.",
+        "Work shown without context — images in a grid without any indication of project type, scale, or quality. Architecture work needs a minimum of editorial framing to demonstrate capability."
+      ]
+    }
+  ]
+}
