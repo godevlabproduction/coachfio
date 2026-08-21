@@ -53,6 +53,24 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 _settings = Settings()
 
 
+def _rate_limited(bucket: str, limit: int, window_s: int = 3600):
+    """Route dependency: at most `limit` hits per IP per window on this bucket.
+
+    Keyed on the direct client IP. Behind the production proxy this must become
+    the client's real address - set `proxy_set_header X-Forwarded-For` AND run
+    uvicorn with --proxy-headers, or every visitor shares the proxy's IP and one
+    abuser rate-limits everyone (the current behaviour is still safer than no
+    limit, which lets one abuser burn the sign-in email quota for everyone).
+    """
+    def dep(request: Request) -> None:
+        ip = request.client.host if request.client else "unknown"
+        from core.auth.ratelimit import get_rate_limiter
+        if not get_rate_limiter(_settings).allow(f"rl:{bucket}:{ip}", limit, window_s):
+            raise HTTPException(
+                429, "too many attempts from this address - wait a while and try again")
+    return dep
+
+
 def _refuse_unverified_signin() -> None:
     """The dev email endpoints prove nothing about who is asking - anyone who
     knows an email can be its account. That was the least-bad option while no
@@ -85,7 +103,7 @@ class SignInRequest(BaseModel):
     email: str
 
 
-@router.post("/signup")
+@router.post("/signup", dependencies=[Depends(_rate_limited("dev-auth", 30))])
 def sign_up(body: SignUpRequest, response: Response,
             session: Session = Depends(db_session)) -> dict:
     _refuse_unverified_signin()
@@ -108,7 +126,7 @@ def sign_up(body: SignUpRequest, response: Response,
             "profile": user_profile(row, survey_key=f"{body.game_id}@{body.edition}")}
 
 
-@router.post("/signin")
+@router.post("/signin", dependencies=[Depends(_rate_limited("dev-auth", 30))])
 def sign_in(body: SignInRequest, response: Response,
             session: Session = Depends(db_session)) -> dict:
     _refuse_unverified_signin()
@@ -186,7 +204,9 @@ def sign_in_methods() -> dict:
     return out
 
 
-@router.post("/magic-link")
+# Tight: every call can send a real email, and the project-wide sender quota is
+# a handful per hour. 5/hour covers "typo, retry, still nothing, one more try".
+@router.post("/magic-link", dependencies=[Depends(_rate_limited("magic-link", 5))])
 def magic_link(body: MagicLinkRequest, request: Request) -> dict:
     """Email a sign-in link. Answers the same way whether or not the address has
     an account, so it cannot be used to find out who is registered."""
@@ -221,7 +241,10 @@ def oauth_redirect(provider: str, request: Request) -> dict:
     return {"url": oauth_url(provider, _safe_redirect(request, None), _settings)}
 
 
-@router.post("/provider-session")
+# Looser: no email behind it, but it is the token-exchange door - a cap turns
+# token guessing from free into pointless.
+@router.post("/provider-session",
+             dependencies=[Depends(_rate_limited("provider-session", 30))])
 def provider_session(body: ProviderSessionRequest, response: Response,
                      session: Session = Depends(db_session)) -> dict:
     """Exchange a verified Supabase token for OUR session cookie.

@@ -124,6 +124,24 @@ def run_match_pipeline(match_id: str) -> dict:
         with session_scope() as session:
             MatchRepository(session).save(match)
 
+    # Storage-cost swap: after a successful whole-video run, the stored original
+    # (hundreds of MB to GBs) is replaced by the 720p re-encode the stage already
+    # produced for its upload. Success only - a failed run keeps the original so
+    # a retry starts from full quality. Never fails the match: worst case we
+    # keep paying for the big file.
+    if (settings.store_compressed_source
+            and match.status == MatchStatus.COMPLETE
+            and match.source_type == SourceType.VIDEO_NATIVE
+            and ctx.compressed_source and source_bytes
+            and len(ctx.compressed_source) < len(source_bytes)):
+        try:
+            get_object_store().put(
+                source_key(match_id), ctx.compressed_source, content_type="video/mp4")
+            log.info("match %s: stored video shrunk %.1f MB -> %.1f MB", match_id,
+                     len(source_bytes) / 1e6, len(ctx.compressed_source) / 1e6)
+        except Exception as exc:  # noqa: BLE001 - keeping the original is a safe outcome
+            log.warning("match %s: could not swap in compressed video: %s", match_id, exc)
+
     reporter.report(
         "pipeline",
         "final",

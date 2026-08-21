@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from api.deps import current_user, db_session
+from api.deps import db_session, require_user
 from core.storage import social
 from core.storage.repository import MatchRepository
 from core.storage.models import UserRow
@@ -45,7 +45,7 @@ def _public(row) -> dict:
 
 @router.get("/coaches")
 def list_coaches(session: Session = Depends(db_session),
-                 user: str = Depends(current_user)) -> dict:
+                 user: str = Depends(require_user)) -> dict:
     me = get_or_create_user(session, user)
     status = social.status_map(session, user)
     return {
@@ -62,7 +62,7 @@ def list_coaches(session: Session = Depends(db_session),
 
 @router.get("/coaches/{coach_id}")
 def coach_detail(coach_id: str, session: Session = Depends(db_session),
-                 user: str = Depends(current_user)) -> dict:
+                 user: str = Depends(require_user)) -> dict:
     """A coach's public page. Readable by any signed-in account - a player has to
     be able to look before asking - but it returns only the profile a coach
     wrote for exactly this purpose, never their account data."""
@@ -83,7 +83,7 @@ def coach_detail(coach_id: str, session: Session = Depends(db_session),
 
 @router.post("/coaches/{coach_id}/connect")
 def request_coach(coach_id: str, session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     """Sends a REQUEST. Nothing is shared and no chat opens until the coach
     accepts - this endpoint deliberately grants nothing on its own."""
     try:
@@ -95,7 +95,7 @@ def request_coach(coach_id: str, session: Session = Depends(db_session),
 
 @router.get("/requests")
 def list_requests(session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     """Players waiting on this coach's decision."""
     me = get_or_create_user(session, user)
     if (getattr(me, "role", "player") or "player") != "coach":
@@ -113,7 +113,7 @@ def list_requests(session: Session = Depends(db_session),
 @router.post("/requests/{player_id}/{decision}")
 def respond_request(player_id: str, decision: str,
                     session: Session = Depends(db_session),
-                    user: str = Depends(current_user)) -> dict:
+                    user: str = Depends(require_user)) -> dict:
     if decision not in ("accept", "decline"):
         raise HTTPException(422, "decision must be accept or decline")
     ok = social.respond_to_request(session, coach_id=user, player_id=player_id,
@@ -125,7 +125,7 @@ def respond_request(player_id: str, decision: str,
 
 @router.post("/coaches/{coach_id}/disconnect")
 def disconnect_coach(coach_id: str, session: Session = Depends(db_session),
-                     user: str = Depends(current_user)) -> dict:
+                     user: str = Depends(require_user)) -> dict:
     return {"connected": False,
             "removed": social.disconnect(session, player_id=user, coach_id=coach_id)}
 
@@ -136,7 +136,7 @@ class SharingIn(BaseModel):
 
 @router.post("/coaches/{coach_id}/sharing")
 def set_sharing(coach_id: str, body: SharingIn, session: Session = Depends(db_session),
-                user: str = Depends(current_user)) -> dict:
+                user: str = Depends(require_user)) -> dict:
     """Player grants or revokes full-report access. `user` is always the player
     side of the link, so a coach calling this can only ever change a link where
     THEY are the player - i.e. their own coach, not their client."""
@@ -192,7 +192,7 @@ def _progress(session: Session, player_id: str) -> dict:
 
 @router.get("/clients")
 def list_clients(session: Session = Depends(db_session),
-                 user: str = Depends(current_user)) -> dict:
+                 user: str = Depends(require_user)) -> dict:
     me = get_or_create_user(session, user)
     if (getattr(me, "role", "player") or "player") != "coach":
         raise HTTPException(403, "only coach accounts have clients")
@@ -212,7 +212,7 @@ def list_clients(session: Session = Depends(db_session),
 
 @router.get("/clients/{player_id}")
 def client_detail(player_id: str, session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     if not social.linked(session, coach_id=user, player_id=player_id):
         # 404, not 403 - a 403 confirms the account exists.
         raise HTTPException(404, "no such client")
@@ -224,7 +224,7 @@ def client_detail(player_id: str, session: Session = Depends(db_session),
 @router.get("/clients/{player_id}/report/{match_id}.pdf")
 async def client_report_pdf(player_id: str, match_id: str,
                             session: Session = Depends(db_session),
-                            user: str = Depends(current_user)) -> Response:
+                            user: str = Depends(require_user)) -> Response:
     """Same three gates as the JSON report. Exists because the report page's
     Download button would otherwise point at the owner-only match route and 404
     for the very coach the player just granted access to."""
@@ -257,7 +257,7 @@ async def client_report_pdf(player_id: str, match_id: str,
 @router.get("/clients/{player_id}/report/{match_id}")
 def client_report(player_id: str, match_id: str,
                   session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     """Full report for a client's match - the ONLY way a coach reaches match
     detail. Three gates, all required: linked, the player granted report sharing,
     and the match actually belongs to that player. `/api/matches/{id}` stays
@@ -281,7 +281,7 @@ class MessageIn(BaseModel):
 
 @router.get("/chat/threads")
 def chat_threads(session: Session = Depends(db_session),
-                 user: str = Depends(current_user)) -> dict:
+                 user: str = Depends(require_user)) -> dict:
     me = get_or_create_user(session, user)
     role = getattr(me, "role", "player") or "player"
     peers = (social.clients_of(session, user) if role == "coach"
@@ -302,7 +302,7 @@ def chat_threads(session: Session = Depends(db_session),
 
 @router.get("/chat/{peer}")
 def chat_thread(peer: str, session: Session = Depends(db_session),
-                user: str = Depends(current_user)) -> dict:
+                user: str = Depends(require_user)) -> dict:
     if not social.can_chat(session, user, peer):
         raise HTTPException(404, "no conversation with that account")
     msgs = social.thread(session, me=user, peer=peer)
@@ -311,7 +311,7 @@ def chat_thread(peer: str, session: Session = Depends(db_session),
 
 @router.post("/chat/{peer}")
 def chat_send(peer: str, body: MessageIn, session: Session = Depends(db_session),
-              user: str = Depends(current_user)) -> dict:
+              user: str = Depends(require_user)) -> dict:
     try:
         m = social.send_message(session, sender=user, recipient=peer, body=body.body)
     except PermissionError:
@@ -330,14 +330,14 @@ class CheckIn(BaseModel):
 
 @router.get("/checklist")
 def get_checklist(session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     row = get_or_create_user(session, user)
     return {"checklist": dict(getattr(row, "checklist", None) or {})}
 
 
 @router.post("/checklist")
 def set_checklist(body: CheckIn, session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     from datetime import datetime, timezone
 
     row = get_or_create_user(session, user)

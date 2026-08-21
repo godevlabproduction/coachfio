@@ -1621,6 +1621,7 @@ class GeminiVideoCoaching(Stage):
         if s.gemini_video_compress:
             ctx.emit(self.name, "compressing", "shrinking the video for a fast upload")
             video_bytes = _compress_video(ctx.source_bytes)
+            ctx.compressed_source = video_bytes  # worker may keep THIS, not the original
         else:
             video_bytes = ctx.source_bytes
 
@@ -2047,6 +2048,7 @@ class GeminiVideoCoaching(Stage):
         if s.gemini_video_compress:
             ctx.emit(self.name, "compressing", "shrinking the video for a fast upload")
             video_bytes = _compress_video(ctx.source_bytes)
+            ctx.compressed_source = video_bytes  # worker may keep THIS, not the original
         else:
             video_bytes = ctx.source_bytes
 

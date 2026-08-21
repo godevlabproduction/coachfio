@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from adapters.base.registry import UnknownGameError, registry
-from api.deps import current_user, db_session
+from api.deps import db_session, require_user
 from core.config import get_settings
 from core.models.enums import SkillLevel
 from core.storage.objectstore import get_object_store
@@ -89,7 +89,7 @@ def _payload(session: Session, user: str,
 
 @router.get("")
 def read_account(session: Session = Depends(db_session),
-                 user: str = Depends(current_user),
+                 user: str = Depends(require_user),
                  game_id: str = "ea-fc", edition: str = "26") -> dict:
     return _payload(session, user, game_id, edition)
 
@@ -97,7 +97,7 @@ def read_account(session: Session = Depends(db_session),
 @router.patch("")
 def patch_account(body: ProfileUpdate,
                   session: Session = Depends(db_session),
-                  user: str = Depends(current_user),
+                  user: str = Depends(require_user),
                   game_id: str = "ea-fc", edition: str = "26") -> dict:
     update_user(session, user, skill_survey_key=f"{game_id}@{edition}",
                 **body.model_dump(exclude_unset=True))
@@ -141,7 +141,7 @@ def _avatar_key(user_id: str) -> str:
 @router.post("/avatar")
 async def upload_avatar(file: UploadFile = File(...),
                         session: Session = Depends(db_session),
-                        user: str = Depends(current_user)) -> dict:
+                        user: str = Depends(require_user)) -> dict:
     """Accept an image, normalise it, store it.
 
     Re-encoding rather than storing the upload verbatim does three useful things
@@ -181,7 +181,7 @@ async def upload_avatar(file: UploadFile = File(...),
 
 @router.delete("/avatar")
 def delete_avatar(session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     row = get_or_create_user(session, user)
     key = getattr(row, "avatar", "") or ""
     if key:

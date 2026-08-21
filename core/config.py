@@ -106,6 +106,13 @@ class Settings(BaseSettings):
     # Gemini - a huge upload-speed + cost win with negligible quality loss (Gemini
     # samples ~1fps at medium res anyway). Plus we upload ONCE and read N times.
     gemini_video_compress: bool = True
+    # After a SUCCESSFUL analysis, replace the stored original video with the
+    # 720p re-encode the pipeline already made for its model upload (~10x
+    # smaller). The original full match video is far and away the largest thing
+    # we store, and its only after-analysis job is timestamp playback in the
+    # moment viewer - which the re-encode serves fine. Failed runs keep the
+    # original untouched so a retry works from full quality.
+    store_compressed_source: bool = True
     # True  = deep mode: watch (dense observations) THEN synthesise a report - best
     #         quality, but several Gemini calls per match.
     # False = SINGLE-CALL mode: one Gemini call over the whole video returns the

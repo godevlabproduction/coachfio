@@ -159,10 +159,21 @@ games.
   `matches/{id}/` object-store prefix; usage NOT refunded, or delete-reupload
   dodges the limit) and `POST /api/matches/{id}/reanalyze` (terminal states
   only, re-queues on stored footage, no new usage charge).
-- **Signed-in gate:** `api/deps.require_user` - match routes 401 anonymous
-  visitors when Supabase is configured (all unsigned visitors share ONE
-  identity; without the gate they'd read each other's reports). Keyless local
-  dev still works.
+- **Signed-in gate:** `api/deps.require_user` - match, social, account and
+  usage routes 401 anonymous visitors when Supabase is configured (all
+  unsigned visitors share ONE identity; without the gate they'd read each
+  other's reports and chat). Keyless local dev still works. Public stays
+  public: `/api/account/skill-survey`, `/suggest-level`, `/api/auth/methods`.
+- **Auth rate limiting:** per-IP Redis fixed-window (`core/auth/ratelimit.py`),
+  fails OPEN on Redis errors. Tightest on `/api/auth/magic-link` (5/hour/IP) -
+  every call sends a real email and the project-wide Supabase sender quota is a
+  handful per hour. At deploy: proxy must pass X-Forwarded-For + uvicorn
+  --proxy-headers, or all visitors share the proxy's IP.
+- **Storage-cost swap** (`STORE_COMPRESSED_SOURCE`, default on): after a
+  SUCCESSFUL whole-video analysis the worker replaces the stored original
+  (hundreds of MB-GBs) with the 720p re-encode the stage already made for its
+  Gemini upload (~10x smaller). Timestamp playback keeps working; failed runs
+  keep the original so retries start from full quality.
 - **CI:** `.github/workflows/ci.yml` runs `ruff check .` + `pytest -q` on every
   push/PR. Ruff's ruleset is PINNED in pyproject (`[tool.ruff.lint] select`) -
   widen it deliberately, never by a linter upgrade re-opining.

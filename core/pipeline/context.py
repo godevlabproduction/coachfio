@@ -41,6 +41,11 @@ class PipelineContext:
     # Raw bytes for a non-video source (replay file / API payload). Video matches
     # use `frames` instead; replay/API matches use this.
     source_bytes: bytes | None = None
+    # The 720p re-encode a video stage produced for its model upload, stashed so
+    # the worker can REPLACE the stored original with it after a successful run
+    # (STORE_COMPRESSED_SOURCE) - original match videos are the largest thing we
+    # would otherwise keep, ~10x this size.
+    compressed_source: bytes | None = None
 
     # Candidate frame indices flagged by Stage 1 (scene changes, stat screens).
     # Stage 2 classifies these with the cheap model; keeps game logic out of core.
