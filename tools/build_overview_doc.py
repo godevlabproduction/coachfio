@@ -27,7 +27,7 @@ from reportlab.platypus import (
 )
 
 from tools._docstyle import (
-    ACCENT, BODY, FULL, MARGIN, MUTED, PAGE_H, PAGE_W, RULE, S,
+    BODY, FULL, MARGIN, MUTED, PAGE_H, PAGE_W, RULE, S,
     P, bullets, callout, code, rule, table,
 )
 

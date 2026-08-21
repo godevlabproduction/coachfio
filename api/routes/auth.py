@@ -32,6 +32,7 @@ from core.auth import (
 from core.auth.supabase import (
     EmailRateLimited,
     SupabaseError,
+    auth_settings,
     oauth_url,
     send_magic_link,
     verify_access_token,
@@ -52,13 +53,30 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 _settings = Settings()
 
 
+def _refuse_unverified_signin() -> None:
+    """The dev email endpoints prove nothing about who is asking - anyone who
+    knows an email can be its account. That was the least-bad option while no
+    provider was connected; the moment Supabase IS connected they are not a
+    fallback, they are a bypass. 410 rather than 403: the resource is gone on
+    purpose, and the message says where sign-in lives now."""
+    if _settings.supabase_enabled:
+        raise HTTPException(
+            410,
+            "Email-only sign-in has been replaced. Use the sign-in page on the "
+            "main site - an emailed sign-in link or Discord.",
+        )
+
+
 class SignUpRequest(BaseModel):
     email: str
     display_name: str | None = None
     skill_level: str | None = None
     # Adapter-defined answers (FC: Division Rivals tier, Champs record) kept so the
-    # suggestion can be recomputed later and shown on the account page.
+    # suggestion can be recomputed later and shown on the account page. Stored
+    # under "<game_id>@<edition>" so a second game's answers cannot collide.
     skill_survey: dict | None = None
+    game_id: str = "ea-fc"
+    edition: str = "26"
     # "player" (default) or "coach" - decides which home the app gives them.
     role: str | None = None
 
@@ -70,6 +88,7 @@ class SignInRequest(BaseModel):
 @router.post("/signup")
 def sign_up(body: SignUpRequest, response: Response,
             session: Session = Depends(db_session)) -> dict:
+    _refuse_unverified_signin()
     email = normalise_email(body.email)
     if not valid_email(email):
         raise HTTPException(422, "Enter a valid email address.")
@@ -77,19 +96,22 @@ def sign_up(body: SignUpRequest, response: Response,
         raise HTTPException(409, "An account with that email already exists - sign in instead.")
     row = create_user(session, email, body.display_name, body.skill_level)
     if body.skill_survey:
-        update_user(session, row.user_id, skill_survey=body.skill_survey)
+        update_user(session, row.user_id, skill_survey=body.skill_survey,
+                    skill_survey_key=f"{body.game_id}@{body.edition}")
     if body.role:
         update_user(session, row.user_id, role=body.role)
         row = find_by_email(session, email) or row
     set_session_cookie(response, row.user_id, _settings)
     # user_id is still returned so existing clients keep working while they move
     # over to the cookie. It stops being needed once nothing reads it.
-    return {"user_id": row.user_id, "profile": user_profile(row)}
+    return {"user_id": row.user_id,
+            "profile": user_profile(row, survey_key=f"{body.game_id}@{body.edition}")}
 
 
 @router.post("/signin")
 def sign_in(body: SignInRequest, response: Response,
             session: Session = Depends(db_session)) -> dict:
+    _refuse_unverified_signin()
     email = normalise_email(body.email)
     if not valid_email(email):
         raise HTTPException(422, "Enter a valid email address.")
@@ -127,6 +149,41 @@ def _safe_redirect(request: Request, wanted: str | None) -> str:
         if (w.scheme, w.netloc) == (b.scheme, b.netloc):
             return wanted
     return f"{base}/auth/callback"
+
+
+# The settings rarely change and every visitor to a sign-in page would ask, so
+# one fetch answers everyone for five minutes.
+_METHODS_TTL_S = 300.0
+_methods_cache: tuple[float, dict] | None = None
+
+
+@router.get("/methods")
+def sign_in_methods() -> dict:
+    """Which sign-in methods are actually live, so the frontend can render only
+    buttons that will work instead of finding out on click.
+
+    `oauth` lists only providers switched ON in Supabase AND supported by our
+    /oauth/{provider} endpoint. If Supabase cannot be reached the answer is the
+    optimistic one - a button that fails on click (the pages already handle
+    that) beats a sign-in page with no buttons because of a blip."""
+    global _methods_cache
+    if not _settings.supabase_enabled:
+        return {"dev_email": True, "magic_link": False, "oauth": []}
+
+    import time
+    if _methods_cache and time.monotonic() - _methods_cache[0] < _METHODS_TTL_S:
+        return _methods_cache[1]
+    try:
+        external = auth_settings(_settings).get("external") or {}
+        out = {
+            "dev_email": False,
+            "magic_link": bool(external.get("email")),
+            "oauth": [p for p in ("google", "discord") if external.get(p)],
+        }
+    except SupabaseError:
+        return {"dev_email": False, "magic_link": True, "oauth": ["google", "discord"]}
+    _methods_cache = (time.monotonic(), out)
+    return out
 
 
 @router.post("/magic-link")

@@ -46,6 +46,17 @@ class Settings(BaseSettings):
     gemini_http_timeout_s: float = 420.0
     gemini_http_deadline_s: float = 720.0
 
+    # --- stuck-match watchdog --------------------------------------------------
+    # The worker stamps a Redis heartbeat on every progress report; a match that
+    # is "processing" with NO live heartbeat is a run whose worker died (kill -9,
+    # redeploy, power loss) - nothing will ever finish it. The TTL must outlive
+    # the longest legitimate silence between reports, which is one whole model
+    # call: gemini_http_deadline_s (720s) + slack.
+    match_heartbeat_ttl_s: int = 900
+    # And matches younger than this are never swept, so a run is not declared
+    # dead in the gap between enqueue and the worker's first report.
+    match_stale_grace_s: int = 300
+
     # --- Supabase (identity only; all app data stays in our own Postgres) -----
     # Empty disables it and the dev email sign-in stays in charge, so the app
     # still runs for anyone who has not set these.

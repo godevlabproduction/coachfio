@@ -159,7 +159,7 @@ def test_implausible_scores_are_rejected_not_stored():
 # MATCH CONTEXT line came from the model's own read while watching. Nothing
 # compared them, so a real report shipped titled 5-2 while its first line said
 # "11-3 Win". The timeline is the authority.
-from core.pipeline.stages import _restate_result
+from core.pipeline.stages import _restate_result  # noqa: E402 - narrative test file, imports sit with their chapter
 
 
 def test_body_result_is_restated_from_the_authoritative_score():

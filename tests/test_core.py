@@ -225,7 +225,6 @@ def test_an_expired_session_is_rejected():
 # knowing its id. They are the reason "connect a provider" was only half the job.
 
 def _req(headers=None, cookies=None):
-    from starlette.datastructures import Headers
     from starlette.requests import Request
 
     raw = [(k.lower().encode(), v.encode()) for k, v in (headers or {}).items()]

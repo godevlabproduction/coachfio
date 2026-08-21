@@ -196,5 +196,5 @@ Still to do when connecting it:
 4. REMOVE the `X-User-Id` dev header and the `?u=` query fallback in
    `api/deps.py` at the same time - once a provider verifies identity, both
    become a way around it.
-5. Per-game profile: nest `users.skill_survey` by `game@edition` before CS2
-   ships, or FC and CS2 answers share one flat dict and collide.
+5. DONE (2026-08-21): `users.skill_survey` nested by `game@edition` via
+   Alembic migration 0002 - see CLAUDE.md for the migration workflow.

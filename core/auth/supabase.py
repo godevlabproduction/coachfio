@@ -19,8 +19,20 @@ If tokens ever need checking on every request, switch to the JWKS at
 from __future__ import annotations
 
 import json
+import ssl
 import urllib.error
 import urllib.request
+
+import certifi
+
+# One SSL context for every Supabase call, backed by certifi's CA bundle.
+# The stdlib default trusts the SYSTEM store, which python.org macOS builds
+# ship empty - every HTTPS request then dies with CERTIFICATE_VERIFY_FAILED.
+_SSL_CTX = ssl.create_default_context(cafile=certifi.where())
+
+
+def _urlopen(req: urllib.request.Request, timeout: float):
+    return urllib.request.urlopen(req, timeout=timeout, context=_SSL_CTX)
 
 
 class SupabaseError(RuntimeError):
@@ -56,7 +68,7 @@ def _post(settings, path: str, body: dict, token: str | None = None,
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        with _urlopen(req, timeout=timeout) as r:
             raw = r.read().decode()
             return json.loads(raw) if raw.strip() else {}
     except urllib.error.HTTPError as e:
@@ -95,7 +107,7 @@ def verify_access_token(token: str, settings) -> dict | None:
                  "Authorization": f"Bearer {token}"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=15) as r:
+        with _urlopen(req, timeout=15) as r:
             user = json.loads(r.read().decode())
     except urllib.error.HTTPError as e:
         if e.code in (401, 403):
@@ -106,6 +118,26 @@ def verify_access_token(token: str, settings) -> dict | None:
     except TimeoutError as e:
         raise SupabaseError("timed out waiting for Supabase") from e
     return user if user.get("id") else None
+
+
+def auth_settings(settings) -> dict:
+    """The project's public auth settings - which providers are switched on.
+
+    This is what the anon key is FOR (the same endpoint every Supabase client
+    hits at boot), so exposing it onward is safe. Lets the frontend show only
+    sign-in buttons that will actually work, instead of finding out on click.
+    """
+    if not settings.supabase_enabled:
+        return {}
+    req = urllib.request.Request(
+        f"{settings.supabase_url.rstrip('/')}/auth/v1/settings",
+        headers={"apikey": settings.supabase_anon_key},
+    )
+    try:
+        with _urlopen(req, timeout=_TIMEOUT_S) as r:
+            return json.loads(r.read().decode())
+    except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        raise SupabaseError(f"could not read auth settings: {e}") from e
 
 
 def send_magic_link(email: str, redirect_to: str, settings) -> None:

@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from sse_starlette.sse import EventSourceResponse
 
 from adapters.base.registry import UnknownGameError, registry
-from api.deps import current_user, db_session
+from api.deps import db_session, require_user
 from api.schemas import (
     CreateMatchRequest,
     CreateMatchResponse,
@@ -24,6 +24,7 @@ from core.config import get_settings
 from core.models.domain import Match
 from core.models.enums import MatchStatus, SkillLevel
 from core.progress.trends import build_trends
+from core.progress.watchdog import fail_if_stale
 from core.report import build_match_report_pdf, report_filename
 from core.models.enums import SourceType
 from core.storage.frame_keys import frame_key, frame_prefix, source_key
@@ -78,7 +79,7 @@ def _owned(repo: MatchRepository, match_id: str, user: str) -> Match:
 def create_match(
     body: CreateMatchRequest,
     session: Session = Depends(db_session),
-    user: str = Depends(current_user),
+    user: str = Depends(require_user),
 ) -> CreateMatchResponse:
     try:
         registry.get(body.game_id, body.edition)  # validate the game exists
@@ -136,7 +137,7 @@ def upload_frame(
     timestamp_ms: int = Form(...),
     file: UploadFile = File(...),
     session: Session = Depends(db_session),
-    user: str = Depends(current_user),
+    user: str = Depends(require_user),
 ) -> FrameUploadResponse:
     # SYNC endpoint on purpose: FastAPI runs it in the threadpool, so the blocking
     # DB + object-store calls here never freeze the event loop (async handlers
@@ -158,7 +159,7 @@ async def upload_source(
     match_id: str,
     file: UploadFile = File(...),
     session: Session = Depends(db_session),
-    user: str = Depends(current_user),
+    user: str = Depends(require_user),
 ) -> dict:
     """Upload a non-video source (replay file / API export) for a replay/API
     match. The counterpart to per-frame upload on the video path."""
@@ -177,7 +178,7 @@ async def upload_source(
 
 @router.post("/{match_id}/complete")
 def complete_upload(match_id: str, session: Session = Depends(db_session),
-                    user: str = Depends(current_user)) -> dict:
+                    user: str = Depends(require_user)) -> dict:
     repo = MatchRepository(session)
     _owned(repo, match_id, user)
     repo.set_status(match_id, MatchStatus.QUEUED)
@@ -218,15 +219,67 @@ def _payload(m) -> dict:
 
 @router.get("/{match_id}")
 def get_match(match_id: str, session: Session = Depends(db_session),
-              user: str = Depends(current_user)) -> JSONResponse:
-    match = _owned(MatchRepository(session), match_id, user)
+              user: str = Depends(require_user)) -> JSONResponse:
+    repo = MatchRepository(session)
+    match = _owned(repo, match_id, user)
+    # A "processing" answer is only true if the worker is actually alive.
+    if match.status == MatchStatus.PROCESSING and \
+            fail_if_stale(session, match_id, get_settings()):
+        match = _owned(repo, match_id, user)
     return JSONResponse(_payload(match))
+
+
+@router.delete("/{match_id}")
+def delete_match(match_id: str, session: Session = Depends(db_session),
+                 user: str = Depends(require_user)) -> dict:
+    """Delete a match and everything stored for it - the row (metrics and
+    events cascade) and the object-store prefix (frames, clips, the uploaded
+    video). Owner-only, same 404-not-403 rule as every other match route.
+
+    Usage is deliberately NOT refunded: the analysis was run and paid for, and
+    a refund would make delete-and-reupload a way around the match limit.
+
+    Storage first, then the row: files without a row are invisible garbage a
+    sweep can reclaim; a row without files is a report page that half-works.
+    """
+    repo = MatchRepository(session)
+    _owned(repo, match_id, user)
+    try:
+        removed = get_object_store().delete_prefix(f"matches/{match_id}/")
+    except Exception as exc:  # noqa: BLE001 - boto raises varied types
+        raise HTTPException(
+            502, "could not remove the match's stored files - nothing was "
+                 "deleted, try again in a moment") from exc
+    repo.delete(match_id)
+    return {"deleted": True, "match_id": match_id, "objects_removed": removed}
+
+
+@router.post("/{match_id}/reanalyze")
+def reanalyze_match(match_id: str, session: Session = Depends(db_session),
+                    user: str = Depends(require_user)) -> dict:
+    """Run the pipeline again on the already-uploaded video/frames - the "try
+    again" behind a failed or interrupted analysis, without re-uploading
+    multi-GB footage. Also works on a complete match (current code + prompts,
+    same footage). No new usage charge: the match was counted at creation.
+    """
+    repo = MatchRepository(session)
+    match = _owned(repo, match_id, user)
+    if match.status.value not in _TERMINAL:
+        raise HTTPException(
+            409, "this match is still being analysed - wait for it to finish "
+                 "(or for the watchdog to declare it stuck)")
+    repo.reset_for_reanalysis(match_id)
+    session.commit()  # the worker must see QUEUED before it starts
+
+    from workers.tasks import run_match_pipeline
+    run_match_pipeline.delay(match_id)
+    return {"match_id": match_id, "status": MatchStatus.QUEUED.value}
 
 
 @router.post("/{match_id}/feedback")
 def submit_feedback(match_id: str, body: ReportFeedbackRequest,
                     session: Session = Depends(db_session),
-                    user: str = Depends(current_user)) -> dict:
+                    user: str = Depends(require_user)) -> dict:
     """Record what the player thought of this report.
 
     Ownership is checked first - a verdict is personal, and one account must not
@@ -243,7 +296,7 @@ def submit_feedback(match_id: str, body: ReportFeedbackRequest,
 
 @router.get("/{match_id}/feedback")
 def read_feedback(match_id: str, session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
+                  user: str = Depends(require_user)) -> dict:
     """What this person already said, so reopening the report shows it back
     rather than asking again."""
     _owned(MatchRepository(session), match_id, user)
@@ -252,7 +305,7 @@ def read_feedback(match_id: str, session: Session = Depends(db_session),
 
 @router.get("/{match_id}/report.pdf")
 async def get_report_pdf(match_id: str, session: Session = Depends(db_session),
-                         user: str = Depends(current_user)) -> Response:
+                         user: str = Depends(require_user)) -> Response:
     """Download the coaching report as a PDF.
 
     A browser downloads this by navigating to the URL, which means no request
@@ -281,7 +334,7 @@ async def get_report_pdf(match_id: str, session: Session = Depends(db_session),
 
 @router.get("/{match_id}/frame")
 def get_frame(match_id: str, key: str, session: Session = Depends(db_session),
-              user: str = Depends(current_user)) -> Response:
+              user: str = Depends(require_user)) -> Response:
     """Serve one stored frame JPEG by object key (referenced from an event/insight
     `frame_refs`). Path-checked so it can only read this match's frames."""
     _owned(MatchRepository(session), match_id, user)
@@ -296,7 +349,7 @@ def get_frame(match_id: str, key: str, session: Session = Depends(db_session),
 
 @router.get("/{match_id}/clip")
 def get_clip(match_id: str, key: str, session: Session = Depends(db_session),
-             user: str = Depends(current_user)) -> Response:
+             user: str = Depends(require_user)) -> Response:
     """Serve an auto-generated highlight clip (mp4) by object key (from an
     event's `payload.clip`). Path-checked to this match's clips."""
     _owned(MatchRepository(session), match_id, user)
@@ -356,7 +409,7 @@ def parse_byte_range(rng: str, total: int) -> tuple[str, int, int]:
 
 @router.get("/{match_id}/video")
 def get_video(match_id: str, request: Request, session: Session = Depends(db_session),
-              user: str = Depends(current_user)) -> Response:
+              user: str = Depends(require_user)) -> Response:
     """Serve the stored source video with HTTP Range support so the moment viewer
     can seek. Bounded to ~4MB per request; the browser asks for more as it plays."""
     _owned(MatchRepository(session), match_id, user)
@@ -403,14 +456,22 @@ def list_matches(
     game_id: str | None = None,
     edition: str | None = None,
     session: Session = Depends(db_session),
-    user: str = Depends(current_user),
+    user: str = Depends(require_user),
 ) -> JSONResponse:
-    matches = MatchRepository(session).list(game_id=game_id, edition=edition, identity=user)
+    repo = MatchRepository(session)
+    matches = repo.list(game_id=game_id, edition=edition, identity=user)
+    # Heal stuck runs where people stare at them: a list forever showing
+    # "processing" is the watchdog's whole reason to exist.
+    stale = [m.id for m in matches
+             if m.status == MatchStatus.PROCESSING
+             and fail_if_stale(session, m.id, get_settings())]
+    if stale:
+        matches = repo.list(game_id=game_id, edition=edition, identity=user)
     return JSONResponse([_payload(m) for m in matches])
 
 
 @router.get("/{match_id}/progress")
-async def progress_stream(match_id: str, user: str = Depends(current_user)):
+async def progress_stream(match_id: str, user: str = Depends(require_user)):
     """SSE stream of pipeline progress. Emits a snapshot immediately, then live
     updates from the worker via Redis pub/sub, and closes on a terminal status."""
     settings = get_settings()
@@ -421,7 +482,14 @@ async def progress_stream(match_id: str, user: str = Depends(current_user)):
 
         session = get_session()
         try:
-            match = MatchRepository(session).get(match_id)
+            repo = MatchRepository(session)
+            match = repo.get(match_id)
+            # The analyzing page opens this stream and then WAITS on it - if the
+            # worker died, this is the one place a stuck run must not get past.
+            if match is not None and match.status == MatchStatus.PROCESSING and \
+                    fail_if_stale(session, match_id, settings):
+                session.commit()
+                match = repo.get(match_id)
         finally:
             session.close()
         # Same ownership rule as the REST endpoints: another account's progress
@@ -465,7 +533,7 @@ async def progress_stream(match_id: str, user: str = Depends(current_user)):
 @router.get("/patterns/{game_id}/{edition}")
 def patterns(game_id: str, edition: str, last: int = 8,
              session: Session = Depends(db_session),
-             user: str = Depends(current_user)) -> dict:
+             user: str = Depends(require_user)) -> dict:
     """What keeps going wrong across matches - the cross-match memory the coach
     already uses to spot repeats. It was computed for the prompt and never shown
     to the player; this exposes it.
@@ -494,7 +562,7 @@ def patterns(game_id: str, edition: str, last: int = 8,
 @router.get("/trends/{game_id}/{edition}", response_model=list[TrendResponse])
 def trends(game_id: str, edition: str, last: int | None = None,
            session: Session = Depends(db_session),
-           user: str = Depends(current_user)) -> list[TrendResponse]:
+           user: str = Depends(require_user)) -> list[TrendResponse]:
     matches = MatchRepository(session).list(game_id=game_id, edition=edition, identity=user)
 
     # The baseline comes from EVERY match, always - never from the window. It is

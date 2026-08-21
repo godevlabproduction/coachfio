@@ -23,6 +23,28 @@ _CONTROL_SCHEMES = {"Classic", "Alternate"}
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s.]+\.[^@\s]+$")
 
 
+def merge_survey_answers(existing: dict, survey_key: str, answers: dict) -> dict:
+    """Merge one game's survey answers into the stored per-game shape.
+
+    Stored shape: {"<game_id>@<edition>": {question: answer, ...}} - the key is
+    an OPAQUE namespace here (core never interprets it; the API layer builds it
+    from the adapter registry), it exists so two games' answers cannot collide.
+    Merges rather than replaces at both levels, so answering one question does
+    not wipe the others, and updating one game does not touch another's answers.
+    Values are coerced to short strings - opaque data the adapter interprets,
+    but not a dumping ground.
+    """
+    key = str(survey_key or "").strip()[:64]
+    if not key:
+        return dict(existing or {})
+    nested = dict(existing or {})
+    bucket = dict(nested.get(key) or {})
+    for k, v in (answers or {}).items():
+        bucket[str(k)[:32]] = str(v)[:32] if v is not None else ""
+    nested[key] = bucket
+    return nested
+
+
 def normalise_email(email: object) -> str:
     return str(email or "").strip().lower()
 
@@ -178,26 +200,33 @@ def update_user(session: Session, user_id: str, **fields: Any) -> UserRow:
     if "role" in fields and fields["role"] in _ROLES:
         row.role = fields["role"]
     if "skill_survey" in fields and isinstance(fields["skill_survey"], dict):
-        # Merge rather than replace, so answering one question does not wipe the
-        # others. Values are coerced to short strings - this is opaque data the
-        # adapter interprets, but it must not become a dumping ground.
-        merged = dict(row.skill_survey or {})
-        for k, v in fields["skill_survey"].items():
-            merged[str(k)[:32]] = str(v)[:32] if v is not None else ""
-        row.skill_survey = merged
+        # Answers land under the caller-supplied "<game_id>@<edition>" namespace
+        # (see merge_survey_answers). No key, no write: a survey answer that
+        # cannot say which game it belongs to would corrupt another game's set.
+        key = str(fields.get("skill_survey_key") or "").strip()
+        if key:
+            row.skill_survey = merge_survey_answers(
+                row.skill_survey or {}, key, fields["skill_survey"])
 
     session.flush()
     return row
 
 
-def user_profile(row: UserRow) -> dict:
+def user_profile(row: UserRow, survey_key: str | None = None) -> dict:
+    """Serialize a profile. `survey_key` ("<game_id>@<edition>", opaque here)
+    scopes `skill_survey` to that game's flat answers - what game pages render.
+    Without it (hub/session contexts, which never show a survey) the full
+    per-game mapping is returned under `skill_surveys` and `skill_survey` is
+    empty rather than a guess: core cannot know which game a caller means."""
+    nested = dict(row.skill_survey or {})
     return {
         "user_id": row.user_id,
         "display_name": row.display_name,
         "email": row.email,
         "skill_level": row.skill_level,
         "control_scheme": row.control_scheme,
-        "skill_survey": dict(row.skill_survey or {}),
+        "skill_survey": dict(nested.get(survey_key) or {}) if survey_key else {},
+        "skill_surveys": nested,
         "role": getattr(row, "role", None) or "player",
         "coach_profile": dict(getattr(row, "coach_profile", None) or {}),
         # A URL rather than the key: the client only needs somewhere to point an

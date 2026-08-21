@@ -19,7 +19,7 @@ OUT_DIR = Path("/app/reports")
 
 # fpdf2 core fonts are latin-1; map the few unicode chars our text may carry.
 _SUBS = {
-    "-": "-", "-": "-", "‘": "'", "’": "'",
+    "–": "-", "—": "-", "‘": "'", "’": "'",
     "“": '"', "”": '"', "…": "...", "•": "-", " ": " ",
 }
 

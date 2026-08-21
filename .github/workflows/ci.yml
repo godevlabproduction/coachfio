@@ -1,0 +1,32 @@
+# CI: keep main deployable, mechanically. Runs the same two commands a person
+# runs locally (ruff check . / pytest -q) - the suite is pure-logic (no DB, no
+# OCR, no API keys), so this needs no services and finishes in well under a
+# minute. The OCR extra is deliberately NOT installed: paddle wheels are heavy,
+# platform-fussy, and nothing in tests/ imports them.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Tests (pytest)
+        run: pytest -q

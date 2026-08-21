@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterator
 
-from fastapi import Header, Request
+from fastapi import Header, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from core.auth import read_session
@@ -40,6 +40,25 @@ def current_user(
     if _settings.allow_dev_user_header and x_user_id:
         return x_user_id.strip() or "anonymous"
     return "anonymous"
+
+
+def require_user(
+    request: Request,
+    x_user_id: str | None = Header(default=None),
+) -> str:
+    """`current_user`, but refusing the shared "anonymous" identity once real
+    sign-in exists.
+
+    Every unsigned visitor resolves to the SAME literal identity, so with real
+    accounts switched on, "anonymous" is one shared account: any unsigned
+    visitor could upload matches and read every other unsigned visitor's
+    matches and reports. While no provider is configured (local dev without
+    keys) anonymous stays usable - it is the only identity there is.
+    """
+    user = current_user(request, x_user_id)
+    if user == "anonymous" and _settings.supabase_enabled:
+        raise HTTPException(401, "sign in to continue")
+    return user
 
 
 def db_session() -> Iterator[Session]:

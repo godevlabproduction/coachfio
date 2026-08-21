@@ -66,34 +66,42 @@ def _adapter(game_id: str = "ea-fc", edition: str = "26"):
         return None
 
 
-def _payload(session: Session, user: str) -> dict:
+def _payload(session: Session, user: str,
+             game_id: str = "ea-fc", edition: str = "26") -> dict:
     row = get_or_create_user(session, user)
     limit = get_settings().free_match_limit
     used = get_usage(session, user)
-    adapter = _adapter()
+    adapter = _adapter(game_id, edition)
     survey = adapter.skill_survey() if adapter else []
-    answers = dict(row.skill_survey or {})
+    # Answers are stored per game ("<game_id>@<edition>" in users.skill_survey);
+    # this page is one game's account view, so only that game's answers apply.
+    survey_key = f"{game_id}@{edition}"
+    profile = user_profile(row, survey_key=survey_key)
     return {
-        "profile": user_profile(row),
+        "profile": profile,
         "usage": {"used": used, "limit": limit, "remaining": max(0, limit - used)},
         "skill_levels": SKILL_LEVELS,
         "skill_survey": survey,
-        "suggestion": (adapter.suggest_skill_level(answers) if adapter else None),
+        "suggestion": (adapter.suggest_skill_level(profile["skill_survey"])
+                       if adapter else None),
     }
 
 
 @router.get("")
 def read_account(session: Session = Depends(db_session),
-                 user: str = Depends(current_user)) -> dict:
-    return _payload(session, user)
+                 user: str = Depends(current_user),
+                 game_id: str = "ea-fc", edition: str = "26") -> dict:
+    return _payload(session, user, game_id, edition)
 
 
 @router.patch("")
 def patch_account(body: ProfileUpdate,
                   session: Session = Depends(db_session),
-                  user: str = Depends(current_user)) -> dict:
-    update_user(session, user, **body.model_dump(exclude_unset=True))
-    return _payload(session, user)
+                  user: str = Depends(current_user),
+                  game_id: str = "ea-fc", edition: str = "26") -> dict:
+    update_user(session, user, skill_survey_key=f"{game_id}@{edition}",
+                **body.model_dump(exclude_unset=True))
+    return _payload(session, user, game_id, edition)
 
 
 @router.get("/skill-survey")

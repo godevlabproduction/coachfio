@@ -77,6 +77,30 @@ class MatchRepository:
             row.status = status.value
             self.s.flush()
 
+    def reset_for_reanalysis(self, match_id: str) -> bool:
+        """Put a finished/failed match back on the queue: status QUEUED, old
+        warnings dropped (they describe the PREVIOUS run - carrying them over
+        would show last time's failure on top of this run's report). Outcome,
+        metrics and events are left alone; the pipeline overwrites them."""
+        row = self.s.get(MatchRow, match_id)
+        if row is None:
+            return False
+        row.status = MatchStatus.QUEUED.value
+        row.warnings = []
+        self.s.flush()
+        return True
+
+    def delete(self, match_id: str) -> bool:
+        """Remove the match row. Metrics and events go with it (FK CASCADE);
+        the caller owns cleaning the object store - the row must not outlive
+        its files, so delete storage FIRST, then the row."""
+        row = self.s.get(MatchRow, match_id)
+        if row is None:
+            return False
+        self.s.delete(row)
+        self.s.flush()
+        return True
+
     # --- read ---------------------------------------------------------------
     def get(self, match_id: str) -> Match | None:
         row = self.s.execute(

@@ -43,3 +43,6 @@ eng.traineddata
 # OS
 .DS_Store
 Thumbs.db
+
+# Native (no-Docker) dev logs/pids - see scripts/dev_up.sh
+.localdev/

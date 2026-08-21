@@ -11,10 +11,16 @@ dependencies = [
     "pydantic>=2.7",
     "pydantic-settings>=2.3",
     "sqlalchemy>=2.0.30",
+    "alembic>=1.13",
     "psycopg[binary]>=3.1",
     "celery>=5.4",
     "redis>=5.0",
     "boto3>=1.34",
+    "itsdangerous>=2.2",
+    # TLS trust for the stdlib urllib calls in core/auth/supabase.py. Linux
+    # containers have system CAs, but python.org macOS builds do not - without
+    # this every Supabase call fails CERTIFICATE_VERIFY_FAILED on a Mac.
+    "certifi>=2024.0",
     # Pinned to the numpy-1.x era: PaddleOCR/OpenCV 2.x wheels are compiled
     # against numpy 1.x ABI and fail to import under numpy 2.x.
     "numpy==1.26.4",
@@ -64,6 +70,12 @@ include = ["core*", "adapters*", "api*", "workers*"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[tool.ruff.lint]
+# The classic default set (pyflakes + pycodestyle errors), pinned explicitly:
+# ruff 0.16 widened its defaults and CI must not go red because a linter
+# release re-opined. Widen deliberately, not by upgrade.
+select = ["E4", "E7", "E9", "F"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

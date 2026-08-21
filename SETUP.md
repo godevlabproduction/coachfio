@@ -67,6 +67,44 @@ hour wondering why (ask us how we know).
 **#2:** changing values in `.env` needs `docker compose up -d --force-recreate api worker`
 (plain `restart` reuses the old env).
 
+## Running without Docker
+
+No Docker Desktop? Run the same stack natively (tested on macOS/Homebrew):
+
+```bash
+# one-time setup
+brew install postgresql@16 redis minio
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+initdb --locale=C -E UTF-8 /opt/homebrew/var/postgresql@16   # first time only
+brew services start postgresql@16
+psql postgres -c "CREATE ROLE coachio WITH LOGIN SUPERUSER PASSWORD 'coachio';"
+psql postgres -c "CREATE DATABASE coachio OWNER coachio;"
+
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"        # add ".[ocr]" too if you need PaddleOCR (legacy
+                                # frame pipeline) - the main VIDEO_NATIVE path
+                                # doesn't need it
+
+cp .env.example .env
+# edit .env: point DATABASE_URL/REDIS_URL/S3_ENDPOINT_URL at localhost instead
+# of the Docker service names (postgres/redis/minio), set OCR_ENGINE=stub, and
+# fill in OPENAI_API_KEY with your Gemini key as above.
+```
+
+Then, every time:
+
+```bash
+scripts/dev_up.sh      # starts Postgres/Redis/MinIO (brew) + API + worker
+scripts/dev_down.sh    # stops the API/worker/MinIO (Postgres/Redis keep running
+                        # as ordinary brew services)
+```
+
+Logs land in `.localdev/{api,worker,minio}.log`. The schema and the MinIO
+bucket are handled automatically on API startup (`init_db()` runs the Alembic
+migrations in `migrations/`; `ensure_bucket()` creates the bucket) - nothing to
+apply by hand. `ffmpeg` just needs to be on PATH (`brew install ffmpeg`).
+
 ## Teach the coach (knowledge brain)
 
 The coach grounds its advice in `adapters/ea_fc_26/knowledge/*.yaml`. Grow it:

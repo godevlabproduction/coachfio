@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 
+from celery.exceptions import SoftTimeLimitExceeded
+
 from adapters.base.registry import load_builtin_adapters, registry
 from core.ai.vision import build_vision
 from core.config import get_settings
@@ -109,6 +111,15 @@ def run_match_pipeline(match_id: str) -> dict:
 
     try:
         run_pipeline(ctx, stages=stages)
+    except SoftTimeLimitExceeded:
+        # The runner's generic handler already set FAILED, but its warning reads
+        # "pipeline error: SoftTimeLimitExceeded()" - say what actually happened
+        # and what to do about it. Swallowed (not re-raised) so the "final"
+        # report below still closes the progress stream before the hard limit.
+        match.status = MatchStatus.FAILED
+        match.warnings.append(
+            "analysis hit the 40-minute time limit and was stopped - "
+            "try again; if it keeps happening, trim the video before uploading")
     finally:
         with session_scope() as session:
             MatchRepository(session).save(match)

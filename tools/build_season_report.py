@@ -39,7 +39,7 @@ from core.storage.db import init_db, session_scope
 from core.storage.repository import MatchRepository
 from core.storage.users import find_by_email, normalise_email
 from tools._docstyle import (
-    ACCENT, BODY, FULL, MARGIN, MUTED, PAGE_H, PAGE_W, RULE, S,
+    BODY, FULL, MARGIN, MUTED, PAGE_H, PAGE_W, RULE, S,
     P, bullets, callout, rule, table,
 )
 
@@ -189,13 +189,13 @@ def story(name, rows, dropped, total):
     yield P("Match record", "h1")
     played = [r for r in rows if isinstance(r["gf"], int)]
     w = sum(1 for r in played if r["gf"] > r["ga"])
-    l = sum(1 for r in played if r["gf"] < r["ga"])
-    d = len(played) - w - l
+    losses = sum(1 for r in played if r["gf"] < r["ga"])
+    d = len(played) - w - losses
     gf = sum(r["gf"] for r in played)
     ga = sum(r["ga"] for r in played)
     yield from table([
         ["Played", "Won", "Drawn", "Lost", "Scored", "Conceded"],
-        [str(len(played)), str(w), str(d), str(l), str(gf), str(ga)],
+        [str(len(played)), str(w), str(d), str(losses), str(gf), str(ga)],
     ], [FULL / 6.0] * 6)
     yield from table(
         [["Match", "Date", "Score", "Recorded faults"]] +

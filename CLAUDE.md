@@ -52,6 +52,12 @@ are **normalized** [0-1] so one schema scales across resolutions.
 - **No local Python/ffmpeg.** Run everything in Docker (`docker compose run --rm
   api ...`). A portable ffmpeg for frame inspection lives in the session
   scratchpad, not on PATH.
+  - **No Docker available?** `scripts/dev_up.sh` / `scripts/dev_down.sh` run the
+    same stack natively via Homebrew (Postgres, Redis, MinIO) + a `.venv`
+    (`pip install -e ".[dev]"`) - see SETUP.md's "Running without Docker"
+    section. `OCR_ENGINE=stub` there since the main VIDEO_NATIVE path doesn't
+    touch PaddleOCR; switch to `paddle` + `pip install -e ".[ocr]"` only if you
+    need the legacy frame-OCR pipeline.
 - **PowerShell is the shell.** Inline `python -c "..."` with quotes gets mangled
   - write a `tools/*.py` script and run it as a module instead.
 - **Docker Desktop needs WSL2** (admin + reboot to install - user action).
@@ -64,6 +70,13 @@ are **normalized** [0-1] so one schema scales across resolutions.
   mount), so use it to iterate on extraction logic.
 - **`docker compose exec postgres psql ... TRUNCATE` can hang** on a table lock;
   use `python -m tools.reset_data` (weaker lock + timeout) instead.
+- **Schema changes are Alembic migrations** (`migrations/`, since 2026-08-21).
+  Edit `core/storage/models.py`, then `alembic revision --autogenerate -m "..."`
+  and review the generated file - `init_db()` upgrades to head on API boot, so
+  nothing is applied by hand. Do NOT add a column to models.py without a
+  migration: the old `create_all` path silently ignored new columns on existing
+  DBs, which is how five hand-written `tools/_*.py` patch scripts came to exist
+  (all deleted; pre-Alembic DBs are auto-stamped at the `0001` baseline).
 
 ## OCR robustness - the hard-won design
 
@@ -134,6 +147,25 @@ dispatches to `adapter.ingest()`. Validated end-to-end via API (13-11, rounds +
 kills + round/highlight events, $0) and in `tests/test_cs2.py`. The
 no-game-branching guard still passes → the design holds with two very different
 games.
+
+## Reliability layer (built 2026-08-21)
+
+- **Stuck-match watchdog:** the worker stamps a TTL'd Redis heartbeat on every
+  progress report (`core/progress/bus.py`); the API's read paths (match GET,
+  list, progress snapshot) flip a heartbeat-less "processing" match to failed
+  (`core/progress/watchdog.py`). No scheduler process needed - swept on read.
+  Celery also has soft/hard time limits (40/45 min) as the in-worker backstop.
+- **Match lifecycle endpoints:** `DELETE /api/matches/{id}` (row + the whole
+  `matches/{id}/` object-store prefix; usage NOT refunded, or delete-reupload
+  dodges the limit) and `POST /api/matches/{id}/reanalyze` (terminal states
+  only, re-queues on stored footage, no new usage charge).
+- **Signed-in gate:** `api/deps.require_user` - match routes 401 anonymous
+  visitors when Supabase is configured (all unsigned visitors share ONE
+  identity; without the gate they'd read each other's reports). Keyless local
+  dev still works.
+- **CI:** `.github/workflows/ci.yml` runs `ruff check .` + `pytest -q` on every
+  push/PR. Ruff's ruleset is PINNED in pyproject (`[tool.ruff.lint] select`) -
+  widen it deliberately, never by a linter upgrade re-opining.
 
 ## Phase 1 extras (built)
 

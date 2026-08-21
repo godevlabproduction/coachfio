@@ -71,7 +71,7 @@ def test_a_typo_in_the_env_var_does_not_take_the_api_down():
 # to the whole host. Browsers resolve *.localhost to 127.0.0.1 with no setup, so
 # it is the first host anyone tries.
 
-from api.routes.site import host_root
+from api.routes.site import host_root  # noqa: E402 - narrative test file, imports sit with their chapter
 
 
 @pytest.mark.parametrize("host,expected", [

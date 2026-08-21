@@ -120,9 +120,11 @@ class UserRow(Base):
     skill_level: Mapped[str] = mapped_column(String(32), default="intermediate")
     control_scheme: Mapped[str] = mapped_column(String(32), default="Classic")
 
-    # Free-form answers to the adapter's skill survey (e.g. FC's Division Rivals
-    # tier and Champs record). Opaque here on purpose: the questions are
-    # game-specific and live in the adapter, so this must not become typed columns.
+    # Free-form answers to the adapter's skill survey, keyed by game:
+    # {"<game_id>@<edition>": {question: answer, ...}} - one account plays many
+    # games, and two games' answers must not collide (migration 0002 nested the
+    # old flat shape). Opaque here on purpose: the questions are game-specific
+    # and live in the adapter, so this must not become typed columns.
     skill_survey: Mapped[dict] = mapped_column(JSONB, default=dict)
 
     # Public-facing coach profile: {headline, bio, specialties[], experience}.

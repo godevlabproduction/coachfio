@@ -316,9 +316,9 @@ def _read_score_timeline(video_bytes: bytes, settings, frag: dict[str, str]) -> 
         start, imgs = job
         prompt = (
             frag.get("scoreboard_batch", "").format(n=len(imgs))
-            + f"Reply JSON {{\"reads\": [{{\"i\": 0, \"home\": int, \"away\": int}}, ...]}} "
-            f"with i = the image's position in this batch, starting at 0. Return one entry "
-            f"per image, in order. "
+            + "Reply JSON {\"reads\": [{\"i\": 0, \"home\": int, \"away\": int}, ...]} "
+            "with i = the image's position in this batch, starting at 0. Return one entry "
+            "per image, in order. "
             + frag.get("scoreboard_not_a_board", "")
         )
         try:
@@ -1546,7 +1546,7 @@ class GeminiVideoCoaching(Stage):
         return ctx.match.source_type == SourceType.VIDEO_NATIVE
 
     def run(self, ctx: PipelineContext) -> None:
-        from core.ai.gemini_video import GeminiVideoModel, ModelUnavailable
+        from core.ai.gemini_video import GeminiVideoModel
 
         s = ctx.settings
         if not ctx.source_bytes:
@@ -1606,12 +1606,12 @@ class GeminiVideoCoaching(Stage):
             "NAME the user's players (read them from the correct badge) - I want specific names. "
             + frag.get("observe_roles", "")
             + "Never invent a name and never use an opponent's name.\n\n"
-            f"Produce a DENSE, chronological log of 20-35 CONCRETE, SPECIFIC observations about the "
-            f"USER'S team across the whole match. Each observation MUST have 'time' (MM:SS you saw "
-            f"it) and 'note' = WHO (named user player), WHAT they did, and WHERE (relative to the "
-            f"user's own goal vs the opponent's goal - NOT left/right, since ends switch at "
-            f"half-time). Cover build-up/passing, attacking movement and chances, defensive shape "
-            f"and marking, transitions, and individual duels - BOTH good and bad, with mistakes. "
+            "Produce a DENSE, chronological log of 20-35 CONCRETE, SPECIFIC observations about the "
+            "USER'S team across the whole match. Each observation MUST have 'time' (MM:SS you saw "
+            "it) and 'note' = WHO (named user player), WHAT they did, and WHERE (relative to the "
+            "user's own goal vs the opponent's goal - NOT left/right, since ends switch at "
+            "half-time). Cover build-up/passing, attacking movement and chances, defensive shape "
+            "and marking, transitions, and individual duels - BOTH good and bad, with mistakes. "
             + frag.get("observe_actions", "")
             + "Only report what you ACTUALLY see; if you can't place a timestamp, skip it.\n"
             "Also read the on-screen scoreboard for the FINAL score (home vs away).\n"
@@ -1839,11 +1839,11 @@ class GeminiVideoCoaching(Stage):
                 )
             else:
                 goals_instr = (
-                    f"GOALS: the FINAL SCORE is authoritative - the 'goals' list must total EXACTLY "
-                    f"(home + away) goals and NO MORE. Do NOT infer a goal from an attacking move or a "
-                    f"chance; only count actual goals consistent with the scoreline. Each entry: time "
-                    f"(MM:SS), type ('scored'|'conceded'), summary (what happened + which player), and "
-                    f"for conceded goals a 'fix'. Order by time.\n"
+                    "GOALS: the FINAL SCORE is authoritative - the 'goals' list must total EXACTLY "
+                    "(home + away) goals and NO MORE. Do NOT infer a goal from an attacking move or a "
+                    "chance; only count actual goals consistent with the scoreline. Each entry: time "
+                    "(MM:SS), type ('scored'|'conceded'), summary (what happened + which player), and "
+                    "for conceded goals a 'fix'. Order by time.\n"
                 )
             multi = len(pass_lists) > 1
             numbered = "\n".join(
@@ -2004,13 +2004,15 @@ class GeminiVideoCoaching(Stage):
         """One Gemini call over the whole video -> the coaching report. Minimal
         requests (compress locally, upload once, ONE generate) so it never trips the
         rate limit. No scoreboard/roster/deep/self-learning extras."""
+        # Local import like run()'s: this method referenced the name without one,
+        # so `except ModelUnavailable` raised NameError DURING a provider outage -
+        # the one moment the graceful "try again shortly" path was supposed to run.
+        from core.ai.gemini_video import ModelUnavailable
+
         s = ctx.settings
         spec = adapter.report_spec()
         frag = adapter.prompt_fragments(side)
         evidence = _EVIDENCE_RULES.format(evidence_example=frag.get("evidence_example", ""))
-        srow = "TOP" if side == "home" else "BOTTOM"
-        sbadge = "LEFT" if side == "home" else "RIGHT"
-        obadge = "RIGHT" if side == "home" else "LEFT"
         playbook = adapter.coaching_playbook(_playbook_hints(ctx))
         history = _history_block(ctx.player_history, adapter.issue_vocabulary())
         player_ctx = _player_block(ctx.match.capture)
@@ -2031,10 +2033,10 @@ class GeminiVideoCoaching(Stage):
             + frag.get("timestamp_example", "'... (03:12)'")
             + ". This MUST be the elapsed position "
             "in THIS video clip (time from the start of the clip), NOT the in-game match clock shown on "
-            f"the scoreboard. The clip is only a few minutes long, so every timestamp must be within the "
-            f"clip's real duration. This lets the player jump to the exact moment - every point needs at least one.\n"
-            f"Read the on-screen scoreboard for the FINAL score and set 'score' {{home, away}}. The "
-            f"'goals' list must total EXACTLY (home+away) goals - one entry each: time (MM:SS), type "
+            "the scoreboard. The clip is only a few minutes long, so every timestamp must be within the "
+            "clip's real duration. This lets the player jump to the exact moment - every point needs at least one.\n"
+            "Read the on-screen scoreboard for the FINAL score and set 'score' {home, away}. The "
+            "'goals' list must total EXACTLY (home+away) goals - one entry each: time (MM:SS), type "
             "('scored'|'conceded'), summary (what happened + which player), and a 'fix' for conceded "
             "ones. Set 'stats' (integer counts you saw), and "
             "'weakness_tags' (2-5 from the tag list above).\n"

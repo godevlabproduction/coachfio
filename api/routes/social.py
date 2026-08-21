@@ -17,7 +17,7 @@ from api.deps import current_user, db_session
 from core.storage import social
 from core.storage.repository import MatchRepository
 from core.storage.models import UserRow
-from core.storage.users import get_or_create_user, user_profile
+from core.storage.users import get_or_create_user
 
 router = APIRouter(prefix="/api", tags=["social"])
 

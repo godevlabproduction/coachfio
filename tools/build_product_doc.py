@@ -18,7 +18,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
-    BaseDocTemplate, Frame, KeepTogether, ListFlowable, ListItem, NextPageTemplate,
+    BaseDocTemplate, Frame, ListFlowable, ListItem, NextPageTemplate,
     PageBreak, PageTemplate, Paragraph, Spacer, Table, TableStyle,
 )
 

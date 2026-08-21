@@ -73,7 +73,7 @@ def main() -> None:
         try:
             logs = d.get_log("browser")
             res["severe_console_errors"] = [
-                l["message"][:160] for l in logs if l.get("level") == "SEVERE"]
+                entry["message"][:160] for entry in logs if entry.get("level") == "SEVERE"]
         except Exception:
             res["severe_console_errors"] = "n/a"
 
