@@ -56,51 +56,51 @@
       "key": "ea-fc:key-art",
       "name": "Key art",
       "swatch": [
-        "#4E3E37",
-        "#A07A69",
-        "#CCCC66"
+        "#176E47",
+        "#2EDB8F",
+        "#6467CE"
       ],
-      "accent": "#C07859"
+      "accent": "#3BDE96"
     },
     {
       "key": "ea-fc:vivid",
       "name": "Vivid",
       "swatch": [
-        "#80472D",
-        "#D27C56",
-        "#E9E967"
+        "#04AA60",
+        "#29FFA0",
+        "#52FFBC"
       ],
-      "accent": "#D4825E"
+      "accent": "#33FFA5"
     },
     {
       "key": "ea-fc:deep",
       "name": "Deep",
       "swatch": [
-        "#302622",
-        "#6A4F43",
-        "#6B6B24"
+        "#0E442C",
+        "#19945E",
+        "#22246D"
       ],
-      "accent": "#A26B53"
+      "accent": "#17DD86"
     },
     {
       "key": "ea-fc:duotone",
       "name": "Duotone",
       "swatch": [
-        "#5E463B",
-        "#BCBC2F",
-        "#B78671"
+        "#168353",
+        "#2C31BE",
+        "#3DEA9E"
       ],
-      "accent": "#DDDD40"
+      "accent": "#3E43E0"
     },
     {
       "key": "ea-fc:muted",
       "name": "Muted",
       "swatch": [
-        "#53433C",
-        "#808060",
-        "#A1A187"
+        "#3C5349",
+        "#606180",
+        "#87A197"
       ],
-      "accent": "#BE7D60"
+      "accent": "#60BE94"
     }
   ]
 }

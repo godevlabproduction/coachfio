@@ -574,3 +574,49 @@ def test_every_scoreboard_helper_call_passes_all_its_arguments():
         )
 
     assert seen >= 3, f"expected to find the known call sites, found {seen}"
+
+
+class TestTwoPassKeepsAdapterSections:
+    """The deep (two-pass) path must store the same sections as the single-call
+    path. It used to flatten the synthesis into a FIXED six-key dict, so every
+    adapter-defined section - diagnosis, event_log, practice_plan - was asked
+    for in the schema, answered by the model, paid for, and then dropped on the
+    floor. The report simply had fewer sections than an older one of the same
+    match, with no warning to say why.
+    """
+
+    def _spec(self):
+        from types import SimpleNamespace
+        return SimpleNamespace(sections={
+            "diagnosis": {"type": "object"},
+            "event_log": {"type": "array"},
+            "practice_plan": {"type": "array"},
+        })
+
+    def test_sections_survive_the_flatten(self):
+        from core.pipeline.stages import _flatten_report, _template_payload
+
+        answer = {
+            "summary": "You lost 3-4.",
+            "strengths": [{"point": "Cutbacks", "evidence_ids": [1]}],
+            "recurring_mistakes": [],
+            "diagnosis": {"main_tactical_problem": "Centre-backs stepping out"},
+            "event_log": [{"time": "09:30", "what_i_did": "stepped out"}],
+            "practice_plan": [{"drill": "Defend with the pivot"}],
+        }
+        stored = _flatten_report(answer, ["[09:30] conceded"])
+        stored.update(_template_payload(answer, self._spec()))
+
+        for key in ("diagnosis", "event_log", "practice_plan"):
+            assert key in stored, f"{key} was dropped from the two-pass report"
+        assert stored["summary"] == "You lost 3-4."
+        # the citation lists are still remapped to real timestamps
+        assert stored["strengths"] == ["Cutbacks (09:30)"]
+
+    def test_empty_section_is_kept_absent_is_not(self):
+        """"Asked, and the answer is none" is a finding; "never asked" is not."""
+        from core.pipeline.stages import _template_payload
+
+        out = _template_payload({"event_log": [], "diagnosis": {"a": "b"}}, self._spec())
+        assert out["event_log"] == []            # empty list survives
+        assert "practice_plan" not in out        # absent stays absent

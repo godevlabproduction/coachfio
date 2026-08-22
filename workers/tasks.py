@@ -13,6 +13,7 @@ from core.models.enums import MatchStatus, SourceType
 from core.pipeline.context import PipelineContext
 from core.pipeline.cost import CostAccountant
 from core.pipeline.runner import run_pipeline
+from core.pipeline.stages import make_playback_video
 from core.storage.db import session_scope
 from core.storage.frame_keys import frame_prefix, parse_frame_key, source_key
 from core.storage.objectstore import get_object_store
@@ -132,15 +133,23 @@ def run_match_pipeline(match_id: str) -> dict:
     if (settings.store_compressed_source
             and match.status == MatchStatus.COMPLETE
             and match.source_type == SourceType.VIDEO_NATIVE
-            and ctx.compressed_source and source_bytes
-            and len(ctx.compressed_source) < len(source_bytes)):
-        try:
-            get_object_store().put(
-                source_key(match_id), ctx.compressed_source, content_type="video/mp4")
-            log.info("match %s: stored video shrunk %.1f MB -> %.1f MB", match_id,
-                     len(source_bytes) / 1e6, len(ctx.compressed_source) / 1e6)
-        except Exception as exc:  # noqa: BLE001 - keeping the original is a safe outcome
-            log.warning("match %s: could not swap in compressed video: %s", match_id, exc)
+            and source_bytes):
+        # NOT the model's upload copy. That one is 12fps by design (the model
+        # samples ~1fps), and storing it made the moments viewer play the
+        # player's own match back as a slideshow. Re-encode for a human, and
+        # keep it only if it is genuinely smaller - a storage optimisation that
+        # makes the video worse AND bigger is not one.
+        keep = make_playback_video(source_bytes, settings.playback_fps, settings.playback_crf)
+        if keep and len(keep) < len(source_bytes):
+            try:
+                get_object_store().put(source_key(match_id), keep, content_type="video/mp4")
+                log.info("match %s: stored video %.1f MB -> %.1f MB (%dfps playback copy)",
+                         match_id, len(source_bytes) / 1e6, len(keep) / 1e6, settings.playback_fps)
+            except Exception as exc:  # noqa: BLE001 - keeping the original is a safe outcome
+                log.warning("match %s: could not swap in playback video: %s", match_id, exc)
+        else:
+            log.info("match %s: keeping the original (%.1f MB) - no smaller watchable encode",
+                     match_id, len(source_bytes) / 1e6)
 
     reporter.report(
         "pipeline",

@@ -492,3 +492,123 @@ gaps:
     positions in FC 26?
   status: open
   match_id: 385d605b9fa647a79a4aa3834313c40e
+- id: how-does-the-deep-lying-playmaker-focus-setting-affect-defen
+  question: How does the Deep-Lying Playmaker++ focus setting affect defensive recovery
+    positioning in FC 26?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: what-are-the-specific-stamina-drain-rates-of-the-attacking-w
+  question: What are the specific stamina drain rates of the Attacking Wingback role
+    in a 4-5-1 Flat system?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-does-setting-the-defensive-line-height-above-60-impact-a
+  question: How does setting the defensive line height above 60 impact AI offside
+    trap behavior versus manual jockeying?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-significantly-does-the-inside-forward-attack-role-increa
+  question: How significantly does the Inside Forward (Attack) role increase forward
+    runs versus opening space for overlapping wingbacks?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: what-specific-defensive-coverage-trade-offs-occur-when-setti
+  question: What specific defensive coverage trade-offs occur when setting fullbacks
+    to Attacking Wingback (Support) in a 4-5-1 Flat formation?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-does-the-playmaker-attack-focus-affect-a-central-midfiel
+  question: How does the Playmaker (Attack) focus affect a central midfielder's defensive
+    tracking speed in transition?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: what-specific-defensive-impact-does-the-defender-role-focus-
+  question: What specific defensive impact does the 'Defender ++' role focus have
+    compared to 'Fullback ++' on fullbacks in FC 26?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-does-the-inside-forward-attack-role-instruction-affect-w
+  question: How does the 'Inside Forward ++ Attack' role instruction affect winger
+    tracking back on defensive transitions?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: what-are-the-stamina-drain-mechanics-for-attacking-wingback-
+  question: What are the stamina drain mechanics for 'Attacking Wingback' role vs
+    standard 'Fullback' in FC 26?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-does-the-false-9-player-role-focus-interact-with-wingers
+  question: How does the False 9++ player role focus interact with wingers set to
+    Inside Forward Attack in FC 26?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: what-specific-defensive-stat-bonuses-are-applied-by-the-atta
+  question: What specific defensive stat bonuses are applied by the Attacking Wingback
+    Support role when defending transitions in FC 26?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-does-the-high-defensive-approach-line-height-impact-cent
+  question: How does the High defensive approach line height impact center-back recovery
+    speed against through balls in FC 26?
+  status: open
+  match_id: 685baaada9b241eb88f701295b9ce7ac
+- id: how-does-the-playmaker-role-focus-modify-midfield-positionin
+  question: How does the 'PlayMaker++' role focus modify midfield positioning in FC
+    26?
+  status: open
+  match_id: babfe7be47294fc5b9eba347dcc84848
+- id: what-specific-defensive-attribute-triggers-the-automatic-blo
+  question: What specific defensive attribute triggers the automatic block animations
+    seen inside the 6-yard box in FC 26?
+  status: open
+  match_id: babfe7be47294fc5b9eba347dcc84848
+- id: how-does-tactical-focus-switching-during-live-play-affect-de
+  question: How does tactical focus switching during live play affect defender recovery
+    speed after set pieces?
+  status: open
+  match_id: babfe7be47294fc5b9eba347dcc84848
+- id: what-specific-defensive-behaviour-and-tracking-changes-occur
+  question: What specific defensive behaviour and tracking changes occur when using
+    the 'PlayMaker++' or 'Deep-Lying++' player roles?
+  status: open
+  match_id: babfe7be47294fc5b9eba347dcc84848
+- id: how-does-the-in-game-tactical-focus-dynamic-change-prompt-af
+  question: How does the in-game 'Tactical Focus' dynamic change prompt affect team
+    shape mid-possession?
+  status: open
+  match_id: babfe7be47294fc5b9eba347dcc84848
+- id: what-are-the-precise-activation-requirements-for-the-role-bo
+  question: What are the precise activation requirements for the 'Role++' boost icon
+    displayed under player cards during squad management?
+  status: open
+  match_id: babfe7be47294fc5b9eba347dcc84848
+- id: how-does-the-deep-lying-playmaker-role-focus-behave-differen
+  question: How does the Deep-Lying Playmaker role focus behave differently under
+    'Build-Up' versus 'Defend' in FC 26 tactical setups?
+  status: open
+  match_id: f97fb7770b914c42a467c3e39cfe78ce
+- id: what-specific-attribute-thresholds-trigger-the-icekeeper-pla
+  question: What specific attribute thresholds trigger the 'Icekeeper++' playstyle
+    icon during goalkeeper animations?
+  status: open
+  match_id: f97fb7770b914c42a467c3e39cfe78ce
+- id: what-are-the-best-input-methods-to-prevent-defenders-from-dr
+  question: What are the best input methods to prevent defenders from dragging out
+    of position during cutback situations in FC 26?
+  status: open
+  match_id: f97fb7770b914c42a467c3e39cfe78ce
+- id: what-specific-player-positioning-and-movement-triggers-are-p
+  question: What specific player positioning and movement triggers are provided by
+    the 'Deep-Lying Playmaker++' role in FC 26?
+  status: open
+  match_id: f97fb7770b914c42a467c3e39cfe78ce
+- id: how-does-the-icekeeper-playstyle-affect-goalkeeper-animation
+  question: How does the 'Icekeeper++' playstyle affect goalkeeper animations and
+    positioning on low driven shots?
+  status: open
+  match_id: f97fb7770b914c42a467c3e39cfe78ce
+- id: what-criteria-trigger-the-in-game-evolution-debut-visual-ove
+  question: What criteria trigger the in-game 'Evolution Debut' visual overlay card
+    popup during matches?
+  status: open
+  match_id: f97fb7770b914c42a467c3e39cfe78ce

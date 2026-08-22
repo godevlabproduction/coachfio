@@ -170,10 +170,14 @@ games.
   handful per hour. At deploy: proxy must pass X-Forwarded-For + uvicorn
   --proxy-headers, or all visitors share the proxy's IP.
 - **Storage-cost swap** (`STORE_COMPRESSED_SOURCE`, default on): after a
-  SUCCESSFUL whole-video analysis the worker replaces the stored original
-  (hundreds of MB-GBs) with the 720p re-encode the stage already made for its
-  Gemini upload (~10x smaller). Timestamp playback keeps working; failed runs
-  keep the original so retries start from full quality.
+  SUCCESSFUL whole-video analysis the worker replaces the stored original with a
+  720p **playback** re-encode (`PLAYBACK_FPS`/`PLAYBACK_CRF`, 30fps/CRF30).
+  Do NOT store the model's upload copy: that is 12fps by design (Gemini samples
+  ~1fps) and the moments viewer played the player's own match back as a
+  slideshow - the bug this note exists to prevent. The swap is skipped whenever
+  the re-encode is not smaller than the original, so it can never make the video
+  worse AND bigger. Failed runs keep the original so retries start from full
+  quality.
 - **CI:** `.github/workflows/ci.yml` runs `ruff check .` + `pytest -q` on every
   push/PR. Ruff's ruleset is PINNED in pyproject (`[tool.ruff.lint] select`) -
   widen it deliberately, never by a linter upgrade re-opining.

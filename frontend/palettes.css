@@ -52,50 +52,50 @@ body[data-game-id="cs2"]:not([data-sky]) {
   --h-violet-line: color-mix(in oklab, #EA952F 45%, transparent);
 }
 body[data-sky="ea-fc:key-art"] {
-  --s1: #4E3E37; --s2: #A07A69; --s3: #CCCC66; --s4: #111722;
-  --h-violet: #C07859;
-  --h-violet-2: color-mix(in oklab, #C07859 72%, white);
-  --h-violet-deep: color-mix(in oklab, #C07859 78%, black);
-  --h-violet-soft: color-mix(in oklab, #C07859 14%, transparent);
-  --h-violet-line: color-mix(in oklab, #C07859 45%, transparent);
+  --s1: #176E47; --s2: #2EDB8F; --s3: #6467CE; --s4: #0A1029;
+  --h-violet: #3BDE96;
+  --h-violet-2: color-mix(in oklab, #3BDE96 72%, white);
+  --h-violet-deep: color-mix(in oklab, #3BDE96 78%, black);
+  --h-violet-soft: color-mix(in oklab, #3BDE96 14%, transparent);
+  --h-violet-line: color-mix(in oklab, #3BDE96 45%, transparent);
 }
 body[data-sky="ea-fc:vivid"] {
-  --s1: #80472D; --s2: #D27C56; --s3: #E9E967; --s4: #43430E;
-  --h-violet: #D4825E;
-  --h-violet-2: color-mix(in oklab, #D4825E 72%, white);
-  --h-violet-deep: color-mix(in oklab, #D4825E 78%, black);
-  --h-violet-soft: color-mix(in oklab, #D4825E 14%, transparent);
-  --h-violet-line: color-mix(in oklab, #D4825E 45%, transparent);
+  --s1: #04AA60; --s2: #29FFA0; --s3: #52FFBC; --s4: #0D0F44;
+  --h-violet: #33FFA5;
+  --h-violet-2: color-mix(in oklab, #33FFA5 72%, white);
+  --h-violet-deep: color-mix(in oklab, #33FFA5 78%, black);
+  --h-violet-soft: color-mix(in oklab, #33FFA5 14%, transparent);
+  --h-violet-line: color-mix(in oklab, #33FFA5 45%, transparent);
 }
 body[data-sky="ea-fc:deep"] {
-  --s1: #302622; --s2: #6A4F43; --s3: #6B6B24; --s4: #0C1018;
-  --h-violet: #A26B53;
-  --h-violet-2: color-mix(in oklab, #A26B53 72%, white);
-  --h-violet-deep: color-mix(in oklab, #A26B53 78%, black);
-  --h-violet-soft: color-mix(in oklab, #A26B53 14%, transparent);
-  --h-violet-line: color-mix(in oklab, #A26B53 45%, transparent);
+  --s1: #0E442C; --s2: #19945E; --s3: #22246D; --s4: #070B1D;
+  --h-violet: #17DD86;
+  --h-violet-2: color-mix(in oklab, #17DD86 72%, white);
+  --h-violet-deep: color-mix(in oklab, #17DD86 78%, black);
+  --h-violet-soft: color-mix(in oklab, #17DD86 14%, transparent);
+  --h-violet-line: color-mix(in oklab, #17DD86 45%, transparent);
 }
 body[data-sky="ea-fc:duotone"] {
-  --s1: #5E463B; --s2: #BCBC2F; --s3: #B78671; --s4: #363612;
-  --h-violet: #DDDD40;
-  --h-violet-2: color-mix(in oklab, #DDDD40 72%, white);
-  --h-violet-deep: color-mix(in oklab, #DDDD40 78%, black);
-  --h-violet-soft: color-mix(in oklab, #DDDD40 14%, transparent);
-  --h-violet-line: color-mix(in oklab, #DDDD40 45%, transparent);
+  --s1: #168353; --s2: #2C31BE; --s3: #3DEA9E; --s4: #111236;
+  --h-violet: #3E43E0;
+  --h-violet-2: color-mix(in oklab, #3E43E0 72%, white);
+  --h-violet-deep: color-mix(in oklab, #3E43E0 78%, black);
+  --h-violet-soft: color-mix(in oklab, #3E43E0 14%, transparent);
+  --h-violet-line: color-mix(in oklab, #3E43E0 45%, transparent);
 }
 body[data-sky="ea-fc:muted"] {
-  --s1: #53433C; --s2: #808060; --s3: #A1A187; --s4: #16191D;
-  --h-violet: #BE7D60;
-  --h-violet-2: color-mix(in oklab, #BE7D60 72%, white);
-  --h-violet-deep: color-mix(in oklab, #BE7D60 78%, black);
-  --h-violet-soft: color-mix(in oklab, #BE7D60 14%, transparent);
-  --h-violet-line: color-mix(in oklab, #BE7D60 45%, transparent);
+  --s1: #3C5349; --s2: #606180; --s3: #87A197; --s4: #16181D;
+  --h-violet: #60BE94;
+  --h-violet-2: color-mix(in oklab, #60BE94 72%, white);
+  --h-violet-deep: color-mix(in oklab, #60BE94 78%, black);
+  --h-violet-soft: color-mix(in oklab, #60BE94 14%, transparent);
+  --h-violet-line: color-mix(in oklab, #60BE94 45%, transparent);
 }
 body[data-game-id="ea-fc"]:not([data-sky]) {
-  --s1: #4E3E37; --s2: #A07A69; --s3: #CCCC66; --s4: #111722;
-  --h-violet: #C07859;
-  --h-violet-2: color-mix(in oklab, #C07859 72%, white);
-  --h-violet-deep: color-mix(in oklab, #C07859 78%, black);
-  --h-violet-soft: color-mix(in oklab, #C07859 14%, transparent);
-  --h-violet-line: color-mix(in oklab, #C07859 45%, transparent);
+  --s1: #176E47; --s2: #2EDB8F; --s3: #6467CE; --s4: #0A1029;
+  --h-violet: #3BDE96;
+  --h-violet-2: color-mix(in oklab, #3BDE96 72%, white);
+  --h-violet-deep: color-mix(in oklab, #3BDE96 78%, black);
+  --h-violet-soft: color-mix(in oklab, #3BDE96 14%, transparent);
+  --h-violet-line: color-mix(in oklab, #3BDE96 45%, transparent);
 }

@@ -1110,17 +1110,12 @@
         dd.classList.toggle("is-open", open);
         ddBtn.setAttribute("aria-expanded", String(open));
         if (open) {
-          // Downward is what people expect, so only flip up when there is
-          // genuinely not room below - this card is the last thing on the page,
-          // so that does happen. Measured after unhiding, or the panel has no
-          // height to measure.
+          // ALWAYS downward. Flipping a list above the control it belongs to is
+          // disorienting, and this card being last on the page is a reason to
+          // scroll the list into view - not to move it somewhere unexpected.
+          dd.classList.remove("is-up");
           var r = ddBtn.getBoundingClientRect();
-          var need = ddPanel.offsetHeight + 8;
-          var below = window.innerHeight - r.bottom;
-          dd.classList.toggle("is-up", below < need && r.top > below);
-          // If it opens downward and the page cannot show it, bring it into view
-          // rather than leaving half a list off-screen.
-          if (!dd.classList.contains("is-up") && below < need) {
+          if (window.innerHeight - r.bottom < ddPanel.offsetHeight + 8) {
             ddPanel.scrollIntoView({ block: "nearest", behavior: "smooth" });
           }
           var cur = ddOpts.filter(function (o) { return o.getAttribute("data-v") === ddInput.value; })[0];

@@ -113,6 +113,14 @@ class Settings(BaseSettings):
     # moment viewer - which the re-encode serves fine. Failed runs keep the
     # original untouched so a retry works from full quality.
     store_compressed_source: bool = True
+    # The kept copy is re-encoded for a HUMAN, not for the model. The model's
+    # upload copy is 12fps/CRF32 - fine for something that samples ~1fps, and
+    # visibly stuttery in the moments viewer, which is the one feature that
+    # plays footage back to a person. 30fps is what fixes that; CRF trades
+    # sharpness for size (30 keeps a real storage win on a 15-minute match,
+    # lower numbers can end up LARGER than the original upload).
+    playback_fps: int = 30
+    playback_crf: int = 30
     # True  = deep mode: watch (dense observations) THEN synthesise a report - best
     #         quality, but several Gemini calls per match.
     # False = SINGLE-CALL mode: one Gemini call over the whole video returns the

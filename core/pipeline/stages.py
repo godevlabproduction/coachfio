@@ -77,6 +77,39 @@ def _compress_video(video_bytes: bytes) -> bytes:
             return video_bytes
 
 
+def make_playback_video(video_bytes: bytes, fps: int = 30, crf: int = 30) -> bytes | None:
+    """A WATCHABLE 720p re-encode, for the copy we keep after analysis.
+
+    Deliberately not `_compress_video`: that one exists to make an upload small
+    for a model that samples ~1fps, so it drops to 12fps and CRF 32. Keeping it
+    as the stored video made the moments viewer play a 12fps slideshow of the
+    player's own match. This keeps motion (30fps) and audio, and still lands
+    well under a raw console capture.
+
+    Returns None on any failure - the caller then keeps the original, because a
+    big correct video beats a small broken one.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        src = Path(tmp) / "in.mp4"
+        out = Path(tmp) / "out.mp4"
+        src.write_bytes(video_bytes)
+        try:
+            subprocess.run(
+                ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(src),
+                 "-vf", "scale=1280:720:force_original_aspect_ratio=decrease",
+                 "-r", str(fps), "-c:v", "libx264", "-preset", "veryfast",
+                 "-crf", str(crf), "-pix_fmt", "yuv420p",
+                 # keep sound when the capture has any; `?` makes it optional
+                 "-map", "0:v:0", "-map", "0:a:0?", "-c:a", "aac", "-b:a", "96k",
+                 "-movflags", "+faststart", str(out)],
+                check=True, timeout=1800,
+            )
+            data = out.read_bytes()
+            return data or None
+        except Exception:  # noqa: BLE001 - never let a re-encode fail the match
+            return None
+
+
 def _video_duration(video_bytes: bytes) -> float:
     """Seconds via ffprobe; 0 if unknown."""
     with tempfile.TemporaryDirectory() as tmp:
@@ -1898,6 +1931,13 @@ class GeminiVideoCoaching(Stage):
                 if syn_res.data.get("summary"):
                     # Map cited observation ids -> real timestamps (deterministic).
                     d = _flatten_report(syn_res.data, observations)
+                    # The adapter's own sections (diagnosis, event_log,
+                    # practice_plan, ...) travel untouched - _flatten_report only
+                    # knows the five citation lists and returns a FIXED dict, so
+                    # without this every section the schema required was asked
+                    # for, paid for, and then dropped. Same helper the
+                    # single-call path uses, so the two paths cannot drift.
+                    d.update(_template_payload(syn_res.data, spec))
                     d["weakness_tags"] = [str(t) for t in (syn_res.data.get("weakness_tags") or [])]
                     d["goals"] = _reconcile_goals(det_goals, syn_res.data.get("goals") or [])
                     d["stats"] = syn_res.data.get("stats") or {}

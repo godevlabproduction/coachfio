@@ -204,4 +204,22 @@
     }
     $("[data-shell-name]").textContent = name;
   }).catch(function () {});
+
+  /* ==== playback: stop paying for glass while a video runs ================
+     The material costs GPU on every composited frame: four animated 46vw
+     blurred fields behind the page, plus a backdrop-filter on every panel.
+     Idle, that is nearly free; with video playing the compositor redoes all of
+     it per decoded frame - which is why playback is choppy in this design and
+     was not in the flat one. So while something plays the page goes calm (the
+     field freezes, panels turn solid) and it all returns on pause.
+     Media events do not bubble, hence the capture-phase listeners. */
+  var playing = 0;
+  function setPlaying(delta) {
+    playing = Math.max(0, playing + delta);
+    body.classList.toggle("is-playing", playing > 0);
+  }
+  document.addEventListener("play", function () { setPlaying(1); }, true);
+  document.addEventListener("pause", function () { setPlaying(-1); }, true);
+  document.addEventListener("ended", function () { setPlaying(-1); }, true);
+  addEventListener("pagehide", function () { playing = 0; body.classList.remove("is-playing"); });
 })();

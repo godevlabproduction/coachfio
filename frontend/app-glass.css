@@ -887,3 +887,140 @@ body[data-auth-page] .auth__spacer { display: none; }
 @media (max-width: 940px) {
   body[data-auth-page] .auth__grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ==== analyzing: the step list ===========================================
+   The dot was an 18px circle with a Material icon crammed inside it, and the
+   rows sat on hairlines with almost no padding - so the icons cropped and the
+   list read as four lines of text rather than four stages. Same icon-tile
+   vocabulary as the rest of the app, with room to breathe. */
+body[data-app-page] .steps { display: flex; flex-direction: column; gap: 4px; }
+body[data-app-page] .step {
+  gap: 14px; padding: 12px 10px; font-size: 14px; border: 0; border-radius: 12px;
+  color: var(--h-ink-3); background: none;
+  transition: background-color .3s ease, color .3s ease;
+}
+body[data-app-page] .step + .step { border-top: 0; margin-top: 0; }
+body[data-app-page] .step__dot {
+  width: 32px; height: 32px; border-radius: 10px; flex: none;
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink-3);
+  transition: background-color .3s ease, border-color .3s ease, color .3s ease;
+}
+body[data-app-page] .step__dot .material-symbols-outlined { font-size: 17px; }
+
+/* done: the stage is behind you - quiet, but clearly complete */
+body[data-app-page] .step.is-done { color: var(--h-ink-2); }
+body[data-app-page] .step.is-done .step__dot {
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+}
+/* running now: the one row that has weight, on a soft plate */
+body[data-app-page] .step.is-active { color: var(--h-ink); background: var(--pill-hover); font-weight: 600; }
+body[data-app-page] .step.is-active .step__dot {
+  background: var(--acc-glass); border-color: var(--acc-border); color: var(--acc-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+/* the running pulse becomes a ring around the tile, not a dot inside it */
+body[data-app-page] .step.is-active .step__dot::after {
+  content: ""; position: absolute; inset: -4px; width: auto; height: auto; border-radius: 14px;
+  background: none; border: 1px solid var(--h-violet); opacity: .5;
+  animation: step-ring 1.8s ease-in-out infinite;
+}
+body[data-app-page] .step__dot { position: relative; }
+@keyframes step-ring {
+  0%, 100% { opacity: .45; transform: scale(1); }
+  50% { opacity: 0; transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-app-page] .step.is-active .step__dot::after { animation: none; opacity: .45; }
+}
+
+/* the panel that holds them, and the progress block above it */
+body[data-app-page] .steps { margin: -4px; }
+body[data-app-page] [data-cx-pct] { font-family: var(--h-mono); color: var(--h-ink); }
+body[data-app-page] .row-between + .progress { margin-top: 0; }
+
+/* ==== "What keeps costing you" meters (locker + statistics) ==============
+   A full bar ran right up against its count, because the only separation was
+   the grid gap and the fill reaches the very end of its track. Widen that
+   column gap and give the count a fixed, right-aligned column so the numbers
+   line up down the list instead of drifting with their width. */
+body[data-app-page] .pattern { column-gap: 22px; row-gap: 6px; }
+body[data-app-page] .pattern__meter { margin-right: 2px; }
+body[data-app-page] .pattern__count {
+  padding-left: 4px; min-width: 56px; text-align: right; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+/* the stacked (panel) variant: the bar sits under the label, so it needs air
+   above it rather than beside it */
+body[data-app-page] .panel .pattern { column-gap: 16px; row-gap: 8px; }
+body[data-app-page] .panel .pattern__meter { margin-right: 0; margin-top: 2px; }
+@media (max-width: 620px) {
+  body[data-app-page] .pattern { column-gap: 14px; }
+  body[data-app-page] .pattern__count { min-width: 0; }
+}
+
+/* ==== "Was this report useful?" ==========================================
+   Head, stars, the reveal and the actions each had their own idea of spacing,
+   and the panel/controls still wore the old flat chrome. One rhythm, and the
+   same material as every other control in the app. */
+body[data-app-page] .fb { padding: 22px 24px; gap: 0; }
+body[data-app-page] .fb__head { gap: 14px; align-items: center; }
+body[data-app-page] .fb__tile { width: 38px; height: 38px; border-radius: 12px; }
+body[data-app-page] .fb__tile .material-symbols-outlined { font-size: 20px; }
+body[data-app-page] .fb__title { font-family: var(--h-mono); font-size: 15px; font-weight: 700; }
+body[data-app-page] .fb__sub { font-size: 13px; color: var(--h-ink-2); margin-top: 4px; }
+body[data-app-page] .fb-stars { gap: 4px; margin-left: auto; }
+body[data-app-page] .fb-star { width: 36px; height: 36px; border-radius: 10px; }
+body[data-app-page] .fb-star:hover { background: var(--pill-hover); }
+
+/* the detail block that appears after a rating */
+body[data-app-page] .fb__more { gap: 14px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--h-line-2); }
+body[data-app-page] .fb__note {
+  padding: 12px 14px; min-height: 76px; border-radius: 12px; line-height: 1.55;
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink);
+}
+body[data-app-page] .fb__note:focus { border-color: var(--h-violet); box-shadow: var(--ring); }
+body[data-app-page] .fb__actions { gap: 14px; margin-top: 2px; }
+body[data-app-page] .fb__said { font-size: 13px; color: var(--h-ink-3); }
+
+/* trigger + list: same vocabulary as the upgraded selects */
+body[data-app-page] .fb__ddbtn {
+  min-height: 44px; padding: 11px 14px; border-radius: 12px;
+  background: var(--fill-bg); border: 1px solid var(--fill-border); color: var(--h-ink-2);
+}
+body[data-app-page] .fb__ddbtn:hover { border-color: var(--h-line-2); background: var(--pill-hover); color: var(--h-ink); }
+body[data-app-page] .fb__dd.is-open .fb__ddbtn { border-color: var(--h-violet); color: var(--h-ink); }
+body[data-app-page] .fb__chev { transition: transform .25s var(--spring); color: var(--h-ink-3); }
+body[data-app-page] .fb__dd.is-open .fb__chev { transform: rotate(180deg); color: var(--h-violet-2); }
+body[data-app-page] .fb__ddpanel {
+  top: calc(100% + 8px); bottom: auto; padding: 7px; border-radius: 14px; max-height: 260px;
+  background: color-mix(in oklab, var(--h-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(30px) saturate(190%); backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid var(--lq-border);
+  box-shadow: 0 26px 60px rgba(2, 8, 22, .5), inset 0 1px 0 rgba(220, 235, 255, .3);
+}
+/* the flip-up variant is gone from the script; make sure no stale rule moves it */
+body[data-app-page] .fb__dd.is-up .fb__ddpanel { top: calc(100% + 8px); bottom: auto; }
+body[data-app-page] .fb__ddopt {
+  padding: 10px 12px; border-radius: 10px; font-size: 13.5px; color: var(--h-ink-2);
+}
+body[data-app-page] .fb__ddopt:hover, body[data-app-page] .fb__ddopt:focus-visible {
+  outline: none; background: var(--pill-hover); color: var(--h-ink);
+}
+body[data-app-page] .fb__ddopt[aria-selected="true"] {
+  background: var(--acc-glass); color: var(--acc-ink); border: 1px solid var(--acc-border);
+}
+
+/* ==== while a video plays ================================================
+   Freeze the DRIFTING FIELD only. Those four 46vw layers are blurred at 70px
+   and animate forever, so the compositor repaints them alongside every decoded
+   frame - that is the expensive half. The panels keep their glass: their blur
+   is static, and losing it mid-playback made the page visibly change costume.
+   Fading the field rather than snapping it keeps the moment calm. */
+body[data-app-page].is-playing .hub-sky i { animation-play-state: paused; }
+body[data-app-page] .hub-sky { transition: opacity .4s ease; }
+body[data-app-page].is-playing .hub-sky { opacity: .55; }
+
+/* the video is its own compositing island, so panels around it never force it
+   to repaint - and it keeps its own corners */
+body[data-app-page] .video-frame { contain: paint; isolation: isolate; }
+body[data-app-page] .video-frame video { display: block; width: 100%; }

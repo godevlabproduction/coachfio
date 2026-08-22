@@ -362,7 +362,12 @@ def get_clip(match_id: str, key: str, session: Session = Depends(db_session),
     return Response(content=data, media_type="video/mp4")
 
 
-VIDEO_CHUNK_BYTES = 4 * 1024 * 1024
+# How much of the video one range request may return. Every chunk is a round
+# trip (browser -> API -> object store) and the player asks for the next one as
+# it plays, so a small cap turns a 100 MB match into ~25 sequential fetches and
+# the video stutters while it waits. 16 MB is ~4 fetches a minute at 720p and
+# still bounded, so no request can pull a multi-GB file into memory.
+VIDEO_CHUNK_BYTES = 16 * 1024 * 1024
 
 
 def parse_byte_range(rng: str, total: int) -> tuple[str, int, int]:
@@ -431,7 +436,11 @@ def get_video(match_id: str, request: Request, session: Session = Depends(db_ses
                 "Content-Range": f"bytes {start}-{end}/{total}",
                 "Accept-Ranges": "bytes",
                 "Content-Length": str(len(data)),
-                "Cache-Control": "no-store",
+                # `private` = this browser only, never a shared/CDN cache: the
+                # video is owner-only. Without it (no-store) nothing could be
+                # reused, so scrubbing back through a moment re-downloaded
+                # bytes the player had already fetched seconds earlier.
+                "Cache-Control": "private, max-age=3600",
             },
         )
 
@@ -447,7 +456,8 @@ def get_video(match_id: str, request: Request, session: Session = Depends(db_ses
 
     return StreamingResponse(
         _chunks(), media_type="video/mp4",
-        headers={"Accept-Ranges": "bytes", "Content-Length": str(total)},
+        headers={"Accept-Ranges": "bytes", "Content-Length": str(total),
+                 "Cache-Control": "private, max-age=3600"},
     )
 
 
