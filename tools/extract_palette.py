@@ -56,21 +56,23 @@ class Swatch:
 
 
 def _hex(r: float, g: float, b: float) -> str:
-    to = lambda v: max(0, min(255, round(v * 255)))
+    def to(v: float) -> int:
+        return max(0, min(255, round(v * 255)))
+
     return f"#{to(r):02X}{to(g):02X}{to(b):02X}"
 
 
 def _shift(sw: Swatch, *, light: float | None = None, sat: float | None = None,
            dl: float = 0.0, ds: float = 0.0) -> str:
     """Recolour a swatch in HLS: absolute targets win, deltas apply after."""
-    h, l, s = sw.hls
+    hue, lum, sat_ = sw.hls
     if light is not None:
-        l = light
+        lum = light
     if sat is not None:
-        s = sat
-    l = max(0.0, min(1.0, l + dl))
-    s = max(0.0, min(1.0, s + ds))
-    return _hex(*colorsys.hls_to_rgb(h, l, s))
+        sat_ = sat
+    lum = max(0.0, min(1.0, lum + dl))
+    sat_ = max(0.0, min(1.0, sat_ + ds))
+    return _hex(*colorsys.hls_to_rgb(hue, lum, sat_))
 
 
 def swatches(path: Path) -> list[Swatch]:
@@ -101,8 +103,8 @@ def swatches(path: Path) -> list[Swatch]:
 def _chroma(sw: Swatch) -> float:
     """How much COLOUR a swatch carries. Near-blacks and greys score ~0, so a
     poster that is mostly night sky still yields its kit colour as the accent."""
-    _, l, s = sw.hls
-    return s * (1 - abs(l - 0.5) * 1.3)
+    _, lum, sat_ = sw.hls
+    return sat_ * (1 - abs(lum - 0.5) * 1.3)
 
 
 def build_theme(art: Path) -> dict:
@@ -238,8 +240,10 @@ def regenerate(themes: list[dict]) -> tuple[Path, Path]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--game"); ap.add_argument("--edition", default="")
-    ap.add_argument("--art"); ap.add_argument("--pkg")
+    ap.add_argument("--game")
+    ap.add_argument("--edition", default="")
+    ap.add_argument("--art")
+    ap.add_argument("--pkg")
     ap.add_argument("--all", action="store_true",
                     help="regenerate frontend artifacts from every adapter theme")
     a = ap.parse_args()

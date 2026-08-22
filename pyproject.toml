@@ -70,6 +70,10 @@ include = ["core*", "adapters*", "api*", "workers*"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# `.claude/skills/` is VENDORED third-party code (installed skills), not ours to
+# lint or fix - and one of those scripts is not even valid on our target Python.
+# Linting it only ever produces noise that blocks CI on someone else's file.
+extend-exclude = [".claude"]
 
 [tool.ruff.lint]
 # The classic default set (pyflakes + pycodestyle errors), pinned explicitly:
