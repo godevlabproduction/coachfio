@@ -1,0 +1,77 @@
+# KNOWLEDGE POLICY - how the coach is allowed to claim things.
+#
+# Written from the owner's review of the gap backlog. The lesson there was not
+# "answer all 85 questions": most of them asked for hidden formulas, or treated
+# an on-screen icon as proof of a mechanic. Answering those invents facts. This
+# file exists so the coach can tell the difference between what it SAW, what it
+# INFERS, and what is actually a published RULE.
+#
+# Loaded like every other knowledge module (the loader globs *.yaml), and the
+# core rules are also injected unconditionally into the report instructions -
+# a policy that only applies when a keyword happens to match is not a policy.
+
+evidence_tiers:
+  - tier: fact
+    means: A rule confirmed by an official source or a reliable current database.
+    phrasing: State plainly.
+  - tier: strong_inference
+    means: The most plausible gameplay cause of what is visible, well supported.
+    phrasing: Say it is the likely cause, and name what would confirm it.
+  - tier: observation
+    means: What is visibly present in the footage, with no explanation attached.
+    phrasing: Describe what happened, at its timestamp.
+  - tier: unverified
+    means: Not published and not measured by controlled testing.
+    phrasing: "The exact figure is not publicly verified."
+  - tier: term_not_found
+    means: A label that may be a misread UI string, a community name, an Evolution
+      cosmetic, a feature of another game, or an OCR error.
+    phrasing: Say the term could not be confirmed; do not reason from it.
+
+# Never fabricate these. If the number is not published or measured, say so.
+forbidden_precision:
+  - stamina-drain rates or percentages
+  - attribute thresholds that "trigger" a Role, badge or PlayStyle
+  - tackle-recovery times in milliseconds
+  - coin-reward or forfeit-penalty formulas
+  - goalkeeper coverage radii
+  - animation probabilities or exact timing windows
+  - Role++ activation requirements (not in official documentation)
+  - hidden AI positioning equations or weights
+
+# An icon is not evidence of a mechanic.
+visual_indicators:
+  rule: >-
+    A badge, glow, overlay, celebration card or animation above a player is NOT
+    proof that a PlayStyle, Role, Evolution or tactic activated. It may be a UI
+    indicator, an Evolution cosmetic, a Role/Role++ marker, a replay graphic, a
+    contextual animation marker or a recording artifact - and the player can
+    switch some of them off entirely.
+  when_seen: Describe the moment and coach the decision; do not attribute a cause.
+
+# Labels seen in footage or questions that are not confirmed FC 26 terms.
+terminology_watchlist:
+  - 'Shadow S (role)'
+  - 'Shadow PlayStyle+'
+  - 'Inside Foot Curled (corner mechanic)'
+  - 'Icekeeper++'
+  - 'Advanced Forward dynamic badge animation'
+  - 'Role PlayStyles calculated out of position' 
+
+# Every claim is scoped. FC 26 has already changed under patches, and FC 27
+# (25 September 2026) changes defending, runs, passing and set pieces enough
+# that FC 26 answers must not be recycled into it.
+scope_every_claim:
+  - game (FC 26 / FC 27)
+  - platform and controller layout
+  - mode
+  - gameplay style (Competitive / Authentic)
+  - patch or version
+  - date verified
+
+insufficient_evidence:
+  rule: >-
+    Questions about what a specific icon, card modifier or animation meant at a
+    given timestamp cannot be answered without the frames, the platform, the
+    mode, the squad, the tactical setup and the patch.
+  phrasing: "The supplied evidence is insufficient to identify the exact trigger."

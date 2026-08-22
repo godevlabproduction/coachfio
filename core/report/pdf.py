@@ -450,10 +450,11 @@ def _render(match: Any, insight: Any, player_name: str, trim: int) -> tuple[byte
             flow.append(Paragraph(label, st["h2"]))
             flow.append(_kv_table(rows, st))
 
-    # trim 1+: the evidence log is the raw observation dump the analysis was built
-    # from. Useful, but every line of it is restated in a section above.
-    evidence = [] if trim >= 1 else [
-        str(e) for e in (payload.get("evidence_log") or []) if str(e).strip()]
+    # The evidence log (the raw observation dump the analysis was built from) is
+    # not printed at all: every line of it is restated in a section above, so it
+    # only ever made the document longer. The web report drops it too - the two
+    # must not disagree about what a report contains.
+    evidence: list[str] = []
     if evidence:
         flow.append(PageBreak())
         flow.append(Paragraph("Evidence log", st["h2"]))

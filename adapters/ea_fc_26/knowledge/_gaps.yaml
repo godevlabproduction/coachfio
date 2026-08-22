@@ -15,13 +15,16 @@ gaps:
 - id: how-are-playstyle-indicators-displayed-above-player-heads-du
   question: How are playstyle indicators displayed above player heads during high-pressure
     defensive duels in FC 26?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: 'Not coachable: the icon above a player''s head is a UI/animation marker and
+    can be switched off entirely. An icon never proves a PlayStyle activated.'
 - id: what-specific-attributes-determine-player-positioning-speed-
   question: What specific attributes determine player positioning speed when transitioning
     from high press to low block in FC 26?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: 'Answered: Acceleration, Reactions, Defensive Awareness, Agility/Balance.'
 - id: what-are-the-exact-stat-requirements-for-the-what-a-hit-evol
   question: What are the exact stat requirements for the 'What a Hit' evolution shown
     in the pause menu?
@@ -45,12 +48,17 @@ gaps:
 - id: how-does-manual-goalkeeper-positioning-toggle-affect-keeper-
   question: How does manual goalkeeper positioning toggle affect keeper AI coverage
     on near-post shots in FC 26?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: 'Answered: manual keeper movement (R3/RS) + near-post positioning, with the
+    Holiday Update limits.'
 - id: how-does-the-advanced-forward-role-affect-player-movement-in
   question: How does the Advanced Forward role affect player movement in FC 26?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: Answered by the owner as a link role between midfield and attack (false-nine
+    like) - CONFLICTS with the Advanced Forward definition in the blueprint (threatens
+    the space behind the last line). Needs one confirmation.
 - id: what-button-combination-executes-the-low-finesse-shot-mechan
   question: What button combination executes the low finesse shot mechanic in FC 26?
   status: resolved
@@ -58,8 +66,9 @@ gaps:
 - id: what-playstyle-bonuses-does-the-advanced-forward-playstyle-p
   question: What playstyle bonuses does the Advanced Forward playstyle provide in
     FC 26?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: 'Premise corrected: Advanced Forward is a Role, not a PlayStyle.'
 - id: how-does-the-team-press-quick-tactic-impact-player-fatigue-i
   question: How does the Team Press quick tactic impact player fatigue in FC 26?
   status: resolved
@@ -92,13 +101,15 @@ gaps:
 - id: what-are-the-exact-triggers-for-the-opponent-forfeit-prompt-
   question: What are the exact triggers for the opponent forfeit prompt in Ultimate
     Team?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: Answered from EA documentation (quit/disconnect win conditions).
 - id: how-does-playstyle-affect-pina-s-finesse-shooting-accuracy-f
   question: How does PlayStyle+ affect Pina's finesse shooting accuracy from outside
     the box?
-  status: open
+  status: resolved
   match_id: abae1db84907403088b47c3cf6b9cc1d
+  note: 'Answered: PlayStyle+ improves the action on any player - no percentages.'
 - id: how-does-manual-goalkeeper-movement-affect-shot-coverage-in-
   question: How does manual goalkeeper movement affect shot coverage in FC 26?
   status: resolved
@@ -109,8 +120,9 @@ gaps:
   match_id: 028d96e3e34942b1baa98f4031c4da74
 - id: how-are-division-rivals-forfeit-penalties-calculated-in-fc-2
   question: How are Division Rivals forfeit penalties calculated in FC 26?
-  status: open
+  status: resolved
   match_id: 028d96e3e34942b1baa98f4031c4da74
+  note: 'Reclassified UNVERIFIED_FORMULA: no published Rivals forfeit coin formula.'
 - id: how-does-the-advanced-forward-role-affect-striker-positionin
   question: How does the Advanced Forward role affect striker positioning in FC 26
     build-up?
@@ -119,8 +131,9 @@ gaps:
 - id: what-quick-tactic-triggers-aggressive-team-pressing-during-o
   question: What quick tactic triggers aggressive team pressing during opposition
     goal kicks?
-  status: open
+  status: resolved
   match_id: 97b7c428681947ca94db41ea40b1ed32
+  note: 'Answered: D-pad UP then LEFT (PS5); Offside Trap = double-tap UP.'
 - id: what-is-the-function-of-the-quick-tactics-team-press-mechani
   question: What is the function of the Quick Tactics 'Team Press' mechanic in FC
     26?
@@ -129,23 +142,29 @@ gaps:
 - id: how-does-the-role-assignment-affect-midfielder-positioning-i
   question: How does the 'Role+' assignment affect midfielder positioning in FC 26
     tactical setups?
-  status: open
+  status: resolved
   match_id: 97b7c428681947ca94db41ea40b1ed32
+  note: 'Answered: Role++ = discipline, transitions, support, tactical AI quality.'
 - id: what-are-the-requirements-for-completing-a-favourite-evoluti
   question: What are the requirements for completing a Favourite Evolution objective
     during Ultimate Team matches?
-  status: open
+  status: resolved
   match_id: 97b7c428681947ca94db41ea40b1ed32
+  note: 'Out of scope: Evolution objective requirements are per-Evolution UI text,
+    not inferable from footage.'
 - id: what-specific-playstyle-perks-are-active-on-gullit-during-co
   question: What specific playstyle perks are active on Gullit during corner kick
     routines in FC 26?
-  status: open
+  status: resolved
   match_id: edcbd5016dac4b0bbd8537e51781f46f
+  note: Requires video context that the report does not carry; and an icon is not
+    proof of a PlayStyle. Not answerable as a fact.
 - id: how-does-the-team-press-quick-tactic-impact-player-stamina-d
   question: How does the Team Press quick tactic impact player stamina drain during
     early-game transitions in FC 26?
-  status: open
+  status: resolved
   match_id: edcbd5016dac4b0bbd8537e51781f46f
+  note: 'Answered: stamina drains faster while active; exact rate unverified.'
 - id: what-are-the-objectives-required-to-complete-the-what-a-hit-
   question: What are the objectives required to complete the What a Hit favorite evolution
     seen in the menu?
@@ -612,3 +631,33 @@ gaps:
     popup during matches?
   status: open
   match_id: f97fb7770b914c42a467c3e39cfe78ce
+- id: what-are-the-specific-tactical-movement-triggers-for-the-sha
+  question: What are the specific tactical movement triggers for the 'Shadow Striker'
+    player role in FC 26?
+  status: open
+  match_id: 8258612ca0254d52959f8f405263c5f2
+- id: how-does-the-stamina-penalty-affect-acceleration-and-top-spr
+  question: How does the stamina penalty affect acceleration and top sprint speed
+    during defensive transitions in FC 26?
+  status: open
+  match_id: 8258612ca0254d52959f8f405263c5f2
+- id: what-are-the-most-effective-corner-kick-delivery-settings-fo
+  question: What are the most effective corner kick delivery settings for attacking
+    the near post in FC 26?
+  status: open
+  match_id: 8258612ca0254d52959f8f405263c5f2
+- id: what-specific-defensive-playstyle-effects-does-van-de-ven-tr
+  question: What specific defensive PlayStyle+ effects does van de Ven trigger during
+    recovery tackles in FC 26?
+  status: open
+  match_id: 8258612ca0254d52959f8f405263c5f2
+- id: how-does-the-new-tactical-focus-switch-defending-attacking-i
+  question: How does the new tactical focus switch (Defending/Attacking) influence
+    midfield AI pressing compactness in FC 26?
+  status: open
+  match_id: 8258612ca0254d52959f8f405263c5f2
+- id: what-are-the-precise-role-attributes-for-the-shadow-striker-
+  question: What are the precise role attributes for the 'Shadow Striker+' role utilized
+    by Andonova?
+  status: open
+  match_id: 8258612ca0254d52959f8f405263c5f2

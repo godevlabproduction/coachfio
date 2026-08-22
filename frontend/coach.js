@@ -896,13 +896,6 @@
     }).join("");
 
 
-    // Evidence log
-    var ev = (p.evidence_log || []).map(function (e) {
-      var tm = (String(e).match(/\[([^\]]+)\]/) || [])[1] || "";
-      return '<div class="log__item"><span class="log__time">' + esc(tm) + "</span>"
-        + '<span class="log__text">' + esc(String(e).replace(/^\s*\[[^\]]*\]\s*/, "")) + "</span></div>";
-    }).join("");
-
     var youAre = p.your_team && p.your_team.abbrev ? " · You: " + esc(p.your_team.abbrev) : "";
 
     main.innerHTML =
@@ -954,12 +947,9 @@
         : "")
 
 
-      + (ev
-        ? '<section class="section"><details class="disclosure"><summary>'
-          + icon("receipt_long") + "Evidence log"
-          + '<span class="material-symbols-outlined disclosure__chevron">expand_more</span></summary>'
-          + '<div class="disclosure__body"><div class="log">' + ev + "</div></div></details></section>"
-        : "")
+      // The evidence log (the raw observation dump the analysis was built from)
+      // is deliberately NOT shown: every line of it is already restated in the
+      // sections above, so it only made the report longer, not clearer.
 
       + feedbackBlock(p, rep.summary);
 

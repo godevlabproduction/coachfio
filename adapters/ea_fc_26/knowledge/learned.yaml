@@ -36,7 +36,8 @@ entries:
   detail: In EA Sports FC 26, the player requirements for the 'What a Hit' evolution
     are a primary or alternative position of CM, a maximum Overall rating of 87, and
     a maximum Pace attribute of 93  [1.3.1,
-  sources: []
+  sources:
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgth_aqQlutbKqIYoz_NssZSqNVp4u9kAq_RRfQ2Oa-BVyquJFWnAGlXd5Raa2RjP30HVDGSx-vqMbFabMhbFQzt_4Cwx5lnlY37cEADd1fbrZE25Tpl8IYNogIjhRYFfBEpM83f1Yx_4KQRUx7vhoEJe99C4vLj-3O3CynI8=
   tags: []
   reviewed: false
 - id: how-does-the-role-playstyle-dynamic-impact-midfielder-positi
@@ -51,28 +52,6 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEcJx5ZlYTfA1Wj34nThOe5yDL9cz-nWyzIrfdPe3Ah2mhHSRdvJHXqzX6KK5jyDmf3_uheOFFekPH0JlWQNUfiq-hfDfM0B0Pxl83rS34MEt8GYA2PAanj
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFClMdd3gmqPf3QmnNFq5WvScg0CY1mUdkbFLsigBeh9RIZrOjt4RzOkG71yB-kInTBoAK5APILVbgEqhfoEuKuj0RkBCAEUekvkUX3Nq5hwHBO
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF-2T5Z4Os3tMTjnZDujO_zF_q6amueEVLrIh7ve2M3tImn-W5wz_RFd0Njoses5Ja5hXTtwGIr0BuS7VA4CBLo09nJbBYoVH20bb-YSl9Z9zUrBEPKnDtjbDciVZUhcEIm206P3n_YkAIo9qEjTDFxNBvRuUC3YSa9r00zDGG2P8hF
-  tags: []
-  reviewed: false
-- id: how-does-the-advanced-forward-playstyle-role-affect-player-p
-  detail: In EA Sports FC 26, a striker with the Advanced Forward role stays close
-    to the opposition's defensive line while actively making themselves available
-    as a passing option during build-up play. Depending on their focus setting, they
-    can also drift wider or drop into deeper pockets to support ball progression before
-    making runs in behind the defense.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQELfJ9ANxvnUSnCK-Qo2nVoaO8oIFQSL6ShWeXI7i3thPmlLwgkpeAokSSiPkj1FZJgClMy-vLgwuCr1kyR89SflBiRJ5oXCbLLKe1Dykl3HX5H
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGF4-zLzwaJts6mvunbyekGUVXYK5ToUHfUpImoZnmWiPSLHmDBEscmecjt_jhrn6zSlw4l54z-HI021PbzFX4vatOkHLJ5WWlfbKbUamSFd4R4ApQ9foYj
-  tags: []
-  reviewed: false
-- id: what-quick-tactic-setting-triggers-the-team-press-prompt-see
-  detail: The 'Team Press' prompt on the bottom-left D-pad overlay is triggered by
-    selecting the **Team Press** option within the Quick Tactics menu. Players access
-    this by pressing **Up** on the directional pad (D-pad) during gameplay and then
-    selecting Team Press (by pressing **Right**). Once activated, team members temporarily
-    apply aggressive, high-pressure defense against the opposing ball carrier.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGsriOtwu72GkXUz1VDrl-r_u8TUWSBnbuqjo5fmPQ663FXBoAmua93tLTQZnBnTiaQ8AKCL9hHttknydQrJq9RdXzl7ublwc_9Qi7fCjpHQ_4F4sx5G8_G8ubMfwNpKUY=
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGZqjtN_ol9QPFxGJMc2DdQnBO0JmcvuESEVUt-8xn8IY6VYLc7STheRYCbkZsUYbGsY9DWiVzsO_2Tjbu5DXlkEcPybmRne9DzvilzFrkH6y1D2I6pSSkjAX7FB0uWHNXa7ke3zVxPdk2csrVINHe21a9ArkpdHVz-PyGsc4szFwfwAkz-
   tags: []
   reviewed: false
 - id: 4-4-1-1-2-meta-custom-tactics-fc-iq-player-roles
@@ -91,20 +70,6 @@ entries:
   - formation
   - meta
   - tactic
-  reviewed: false
-- id: essential-meta-passing-playstyles-pinged-pass-incisive-pass
-  detail: 'Pinged Pass (and Pinged Pass+) accelerates ground passes through dense
-    midfields without causing heavy receiving touches. Incisive Pass (and Incisive
-    Pass+) delivers sharper, faster through balls into space for attacking runs. Controls:
-    R1 + X / RB + A (Pinged Pass), Triangle / Y (Incisive Pass)'
-  sources:
-  - video:training1.mp4
-  tags:
-  - playstyles
-  - pinged_pass
-  - incisive_pass
-  - passing
-  - meta
   reviewed: false
 - id: recycling-possession-in-the-final-third
   detail: 'When an opponent blocks forward passing lanes in the penalty box, recycle
@@ -860,28 +825,6 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEXKfEha8NzbeMmQ3c99T-RZH-vYAXjm-UD8IurT7liE4LiEjyXgSBZmjEaPtaDCO8EvbiM7csMduJ7XhqQR4tq8g4V6Xd6HemwKne6lRhnVu5pCDf3d_yhafoDinFxq1NLp16e1sT399VN2G9ecKvZpHXGwC1y5fcOE0ejsAIMuTmFVtflk2Lu_sVri6IioIJ5UbOKC7MvVR_Ek88=
   tags: []
   reviewed: false
-- id: how-does-the-team-press-quick-tactic-impact-player-fatigue-i
-  detail: Activating the Team Press quick tactic instructs players to aggressively
-    swarm opponents and close down passing lanes, which causes a rapid surge in stamina
-    depletion. Repeated or sustained use significantly accelerates player fatigue
-    across the team, lowering overall physical effectiveness and stamina for the remainder
-    of the match.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH3Uxm-uV5bPDs_5_G2s6BVOX5qGazOirYjEUzNYJkGAuM5DIqEoXvtk6U4KgXJj22gNMsKwF_c5BbQU5heOO4oGNU-_M8rCYp46cpmKQGqOax7iMYFitgR3WbmC8qYTg==
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF7r_mVpZPtOLQIQBxs5x_XwKRo55WI90HBCVyq0Mg3iiFozOvcWYlTxpFTuPIrnHl252kBfA_qZDKvr0THpizLYYEVpL-sR8yFeJkYZ54dzZHg_3cTO1jcXfNcBanryH0=
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHjc-B1E1mb0Tx8ubV720uDk8Sz03z4Q0IPcjzQGeYno7mshSdfKp-Oqb5_-lIR7kwr8xySbrVn6_XyhFHvE1uk6yffMfFK8tIYwKHyeck1I2_hhdBgw2E1G0QRjzafj9_3ZAqZfYTcCU1_fb3rY6nfex8Jv3ZZxATIdOP_miXBmfuceuU=
-  tags: []
-  reviewed: false
-- id: what-are-the-requirements-for-triggering-the-what-a-hit-evol
-  detail: To be eligible for the **What a Hit** evolution in EA Sports FC 26, a player
-    card must have the **CM** position, a maximum overall rating of **87**, and a
-    maximum pace of **93**. Additionally, the player must have at most **10 PlayStyles**,
-    a maximum of **2 PlayStyles+**, and cannot be of the **World Tour Silver Stars**
-    rarity.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFgth_aqQlutbKqIYoz_NssZSqNVp4u9kAq_RRfQ2Oa-BVyquJFWnAGlXd5Raa2RjP30HVDGSx-vqMbFabMhbFQzt_4Cwx5lnlY37cEADd1fbrZE25Tpl8IYNogIjhRYFfBEpM83f1Yx_4KQRUx7vhoEJe99C4vLj-3O3CynI8=
-  tags: []
-  reviewed: false
 - id: how-does-the-overload-set-pieces-quick-tactic-alter-player-p
   detail: The **Overload Set Pieces** quick tactic does not alter player positioning
     during open-play build-up. Instead, it functions as an in-game toggle that exclusively
@@ -905,21 +848,6 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHs4qrpihNR1uimn-0w5lCXoKc-LAZmvkY0tb_RFPEW18XXMlHBuHJbjjSZNapGV_mOG79KhZ9AUBSkl6vCgWMk3XkLA6okjU-9Tl0t275Lqwmlo2FlLtMUnr04V8rjDeSLq1ac1UMzkNJH9JzJp_bG_PFkxw==
   tags: []
   reviewed: false
-- id: how-does-the-team-press-quick-tactic-affect-stamina-depletio
-  detail: Activating the "Team Press" quick tactic causes rapid, temporary stamina
-    depletion across your outfield players as they aggressively sprint to close down
-    opponents and cut off passing lanes. The tactic remains active for up to 20 seconds
-    (or until possession is regained), causing significantly higher stamina drain
-    during that window before entering a cooldown period. Repeatedly triggering it
-    throughout a match will quickly exhaust your players' overall stamina and reduce
-    their performance attributes.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHcpUHXuYasZ_ZIShCfgP91IdoGkcHyFMdhezlyPcTySJfyr7etNOuuMvXhfyBJWld7i2jEIhNtkx3HQ_jwvdXdh_RR2M5EkM26V9wl6LAu1GJE4pZEa9bf6MyFNfinOapdith-dVUJYt5P_xrMXfHQnOhxZICcpDrJYYXCgtrdBwXWKOODrWD-PlyvBcN-AT_BEVeZW3ABsoc-UrDSS1Z7eqrqcjhJvHPcACw=
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHgvb7Cr4diFnGJWmWwdDN67N-8y6_4AINDntHccQjSwWc-xA3vV9KO2-v4AzkuPpLr3wPyGMCFBEpeaYYKkjaobkChgNOPYr2wbfoe0u5CXDuk5TT_wg8rzOS3F1Qgjgc=
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEaTwaa4j95oq7IXjAmoGj-f3UpE-PGDLKX3hLhtB9PkZ7LfmEft3kQuvgv5za2WBQPsnWY47BkMjVGUs5mNgLONvJGOnTChX95_1kg2KgTLZfQ36o1CJCGZIfZbw==
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGRaR4o4mvDDNtCHcTrUk5dq1VOkE2DCHDBwNQrbi0f55TSoXUGbxdLbyQK9ePItNP-wNr37UaHdp1ucXKR-6bLGhUg9t1w3SbT2ob1vuW247w-Dbhh_PIpyjpxA8534PheFhv7cxIlRtkRsbInYsPj4tx3jjvIGIdZRF_B9ltbsePoAjnAimJ41IFmDwOuhQUm4j4AyyS-iLc=
-  tags: []
-  reviewed: false
 - id: what-specific-attribute-boosts-are-granted-by-the-advanced-f
   detail: The Advanced Forward evolution cards (such as ST Advanced Forward+ / Advanced
     Forward++) grant no direct numerical attribute boosts. Instead, they exclusively
@@ -940,40 +868,6 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGwYFQnqvw3AxrsOxxD0IhIoSPvqJq0uKs4Dz7uDCZhRedhC4KzalF2l3BW1sZN78F3x3j3nIApv0XiLIi5xnZDpMjn2dqeQfziWnlp-Trbmh-savZ1cG-_oP0fj86NlZFjZ4zYfanDtdRA0U6o6qRRxtfVp4Rulw==
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE8In681o4z3y0tAFpvwSv4b-qXzXKwcsoKdZDXSvCX1mp-8DaryvI7g__vc_sBBEAlsF6shXyid-lcHhx1smMEbo09uSrgCcUfMzY9Xz2vkJTcgjrGVQuYLEH2qx2K_wJmccj8EJVOF4Lhnwp9zr4Yv57Yylu9bQ==
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGguVoALwYTHr8YMgSOAz9o35Bp2LHlXhsrZcS6wuPqBUXX-7QG8vwaDVaHM1G6Dj5FGbReEVC4KZi5sNp8Uuh9Kgm1Br6k_VyWjOQOhiv-7UiqBXpmnHpl69cDpTP7nSQdniebQ1Wi6Hkz5kdFlDXobtWj6fpAw5Bm5saS4ZnyTwGqB4AHT4G_1A==
-  tags: []
-  reviewed: false
-- id: what-quick-tactic-inputs-trigger-team-press-in-fc-26
-  detail: To trigger Team Press using quick tactics, press **Up on the D-Pad** to
-    open the Quick Tactics menu, followed by **Left on the D-Pad**. On PC using default
-    keyboard controls, this corresponds to pressing the **Up Arrow** key followed
-    by the **Left Arrow** key.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEN8ZgiBGY6HQnWQkjGgT_7CXFmhqcAvfSoJACeckSirN7MPXvnTbzmDHNz5GMCFznx1IFzSX5o4c0gnmkQs89H3GOnylrNPdwU25wVEfddlEx_u0Tg6yNIWcjoQ_XVx5pIzuFVo-OfmDMvgf03lo95Ntoi7OfKwOQzOrb08vdHJ3e6mxRpm7U=
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEf94yoDhxxnz00IeCNbHsmu7ik8eRfvqseR4naYYhWN3cJ_eGkkD4ROk6CZ6wMO3WbT5QR68rx9eDrSQ1XsqWFJlstA-TCb0iQFsnP_BYW69smWIkN73NRs5l1KFv1rQ==
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF18MfAFK56KOrNvQQ0n7E2dgWEyCzTSCDF8BE6c_yGoEwJtRMzW_WPztHngll9qIpVIdXe-0aIW5Xu6PYceqvWaq5zN3m3SwpPC3xWm1jM1YKfcYnNxzyo9RZzGnE2mZ4TbkdzRng=
-  tags: []
-  reviewed: false
-- id: how-does-the-advanced-forward-role-affect-striker-positionin
-  detail: In *EA Sports FC 26*, the Advanced Forward role positions the striker close
-    to the opposition’s defensive line while actively moving to open passing lanes
-    to support build-up play. Depending on the assigned focus (Attack, Support, or
-    Versatile), the player balances showing as a receiving outlet with making direct
-    runs in behind the defense to exploit space.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHA9XDMQ5_bfFCodfRH1Aiup04-9KZnKzHkWJG4Wxni5Zs8Jb_DCspOqjCN14kve8DoPSaoj8in3MzBaiz7faih5d4q29Z1drschN5dgPWsjjY=
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFh7piQzcmv6fcUXxYzu2Q3hdy4nrQCBZ0jGlYT2NdjJnOSLjsrMINsxffs-9re-hGYXDmjet1SRf4qQ6phcSRq0RiLd-Y8ApWcec_50GAa1ftsuoxLLPgxYTq6b5FjSQc-
-  tags: []
-  reviewed: false
-- id: what-is-the-function-of-the-quick-tactics-team-press-mechani
-  detail: In *EA Sports FC 26*, activating the 'Team Press' Quick Tactic instructs
-    AI-controlled teammates to temporarily push high up the pitch and aggressively
-    pressure the opponent with the ball while cutting off passing lanes to force a
-    turnover. Using this mechanic significantly increases player stamina depletion
-    while active.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHeZaKJYCoGPxJZYRZvI9sgpRL-8wDV7T7AaBIA29d3OUJfGF98Q--YvwENg-rt5w8NRXcxtOrTZLGMjSbNmhE1Pi4cZtac5ng_vFburesLnTLJpIkkxYhMRMMc4YpS7Q==
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAHkg_CUkxQuqA6DzsnGYJjCuckkjjlLPcqjjltX2ARUjEAiAHPzxbXsBh_WTckQq6J42rYuk_GDw143lXF5BjdQz8a6a-FHRfMfrykynKl8oSyGBo7eehdBtPItpraA==
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGxiiQ19wkvjcussueDiRDckGa-_sWeZHqyFaFqeiKrwiedAY-P9eEyv6odq7LMIn-8LMBTNuwmYTmW6QnDTtbByXzcSUqyPSRbXUFoTn6bPGkO0jWUyfZI2Q5j5woDaxc=
   tags: []
   reviewed: false
 - id: what-are-the-objectives-required-to-complete-the-what-a-hit-
@@ -1151,17 +1045,6 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4wUCdMMosgEegoLPsySdpVUlIAIdf-k3NqWtinNhiPlfu6tipXcW83VtlT-EWNkvv5gB_1wwhDO2rHMJNPPzNlg3YZleuClmbV6L4YU_RRjCPsgKp8k3rDil81mkFvJbdaYkhczQR0pK9rRc0ygSh7Te2EfZQY8XYivwDTsiuwmRPv2WxygX6ras=
   tags: []
   reviewed: false
-- id: how-does-the-overload-set-pieces-quick-tactic-impact-midfiel
-  detail: The "Overload Set Pieces" quick tactic commits extra outfield players, including
-    midfielders, into the penalty box during attacking corners and free kicks. Consequently,
-    this leaves fewer players positioned outside the area to provide defensive cover,
-    significantly compromising midfield balance and increasing vulnerability to fast
-    counter-attacks during defensive transitions.
-  sources:
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFctT5hl9wimrz-0a9zJF7BIad-duS8IqnfhdGsM8r-1FoI9rh0AB7wTHp3-eAA_zGGI1O0lU59rb77JkhTyNnmKbQC6Dzocir5wFxaQf7qI2QynO8z6JhIH2pM1QuWyO-6OzUq
-  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4HurI1pWaGAR8Y-gw1dZVpYM9zZiYEgH0f62zUIRKFhVnt7D_0TgPR5aroulvaS0_AgWwFvNnYv-VL01RuVuido58u2tOFjQkMAZihuVWj5-M_eZMXJ5HnwYMkRiBqg==
-  tags: []
-  reviewed: false
 - id: how-does-tactical-custom-tactics-switching-function-during-a
   detail: During active gameplay in EA Sports FC 26, players can switch custom tactics
     without pausing by pressing Left on the D-pad to open the in-match tactical overlay.
@@ -1197,6 +1080,8 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG85kmfdV6GdJe3wJtGg7WwE5CJbLh7eRQqm-w_ZZ1FpdAj6ShKbRSFGcrToY5PRFEW7HB7I3rxVuOTjrYmiWjSYXnatB2zZAqqF66PDm7mmPxccT9l6MvusJDpYYEb2S0=
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEPPRdigEpgDLhBAexsHRJT9mkFmNi_Nh-9iZYSjWC3Wj1HrkbgEAsvx9U809HHWCE3NUbG0MB5go4k1M30oKP9InMDyewgTB8vcasM6SMmaYSGBr2nByQZB-JhK3LOIA==
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEYuXLgwRTfA-kXYOQpSsOPCQt5a63qElneen2_VgdN9C1hK8WkcNANKVDYXx1WoSCjSPqdDO9ExTeqh1E4egm9sD-cFk8etVjMhCXxFCCNW1dUA3l8IObkNu3SrrBny-Bys1qf6f8KYvl-ALHb-MRLTSRtBKT9-UPA29uRNcJiGqE9NJTVcPph_W_DbBIcs98RBTZo2O3ewI-y5zKdTHeAxzMg4WMwEg==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFctT5hl9wimrz-0a9zJF7BIad-duS8IqnfhdGsM8r-1FoI9rh0AB7wTHp3-eAA_zGGI1O0lU59rb77JkhTyNnmKbQC6Dzocir5wFxaQf7qI2QynO8z6JhIH2pM1QuWyO-6OzUq
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH4HurI1pWaGAR8Y-gw1dZVpYM9zZiYEgH0f62zUIRKFhVnt7D_0TgPR5aroulvaS0_AgWwFvNnYv-VL01RuVuido58u2tOFjQkMAZihuVWj5-M_eZMXJ5HnwYMkRiBqg==
   tags: []
   reviewed: false
 - id: what-is-the-difference-between-controlled-and-explosive-acce
@@ -1248,4 +1133,157 @@ entries:
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGIhTLxtLxZqqg77YwYPMjRyipXmbdySlH7imIBdREDv4eXq4WjWYTd7H3AoSN9MPAp3EtqRvklkmsvyBVFi3npY0jXmzBQv9RCf5EDijhsqg9oBr7QHaIOYw3l_OJjvp4V9A16kIZ-_DyjSRdK-V_cVhVJMbz
   - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEs7AIJALb0Pu3tPeT5weoRSc6c_tsjISk55Ajgf7TMh4VgaUhLEzjhopvKsDVCEoRQzDMwrWQVjj3zwq_d9LTNW7ws4K3nCE7zx0cNcFZ7BwfQTrjZR5LKqbQZap5cr3w49OEe
   tags: []
+  reviewed: false
+- id: repositioning-speed-from-high-press-to-low-block
+  detail: 'The attributes that govern how quickly players get back into shape when
+    you drop from a high press to a low block are Acceleration, Reactions, Defensive
+    Awareness and Agility/Balance. Coach the consequence, not a formula: a side built
+    on low Reactions/Defensive Awareness cannot press high and recover, so either
+    press with the pivot only or set a lower line. The exact positioning-speed formula
+    is not publicly verified.'
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - attributes
+  - pressing
+  - defending
+  reviewed: false
+- id: manual-goalkeeper-movement-r3-and-near-post-shots
+  detail: 'Manual keeper movement is click-and-hold R3 (PlayStation) / RS (Xbox),
+    then steer with the left stick. Positioning the keeper toward the near post when
+    you read a near-post shot improves the chance of the save. Treat it as a positioning
+    adjustment, NOT an automatic save: since the Holiday Update the movement is slower
+    and covers less ground, moving early exposes the far post, and while you hold
+    manual control the keeper''s AI coverage is reduced. Coaching order: stay aligned
+    with ball and near post, do not commit before the shooter does, use small adjustments
+    rather than a full reposition, and re-centre after a cutback or deflection. Do
+    not claim a hidden coverage radius changes - that is not published.'
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - goalkeeper
+  - controls
+  - defending
+  reviewed: false
+- id: advanced-forward-is-a-role-not-a-playstyle
+  detail: 'Advanced Forward is a ROLE (an AI movement preference), not a PlayStyle.
+    Asking what ''PlayStyle bonuses the Advanced Forward PlayStyle gives'' is a category
+    error: Roles shape where a player moves, PlayStyles modify a specific action or
+    animation family. Never answer a question that mixes the two without correcting
+    the premise.'
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - roles
+  - playstyles
+  - terminology
+  reviewed: false
+- id: playstyle-what-it-actually-does
+  detail: 'A PlayStyle+ is not player-specific and not a flat attribute boost. On
+    ANY player it upgrades the relevant action: faster and cleaner animations, more
+    precision, and more speed on the shot for shooting styles. It modifies one action
+    family (shooting, passing, dribbling, defending, goalkeeping) in context. Never
+    state a percentage improvement - no official figure is published.'
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - playstyles
+  - shooting
+  reviewed: false
+- id: activating-team-press-and-offside-trap-quick-tactics
+  detail: On a PS5 controller, tap D-pad UP then LEFT to trigger Team Press. A single
+    press opens the quick-tactic options so you choose what to trigger (e.g. Team
+    Press or Offside Trap); the Offside Trap is triggered by DOUBLE-TAPPING D-pad
+    UP. Coach it as a timed tool - a trigger you spend, not a setting you leave on.
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEN8ZgiBGY6HQnWQkjGgT_7CXFmhqcAvfSoJACeckSirN7MPXvnTbzmDHNz5GMCFznx1IFzSX5o4c0gnmkQs89H3GOnylrNPdwU25wVEfddlEx_u0Tg6yNIWcjoQ_XVx5pIzuFVo-OfmDMvgf03lo95Ntoi7OfKwOQzOrb08vdHJ3e6mxRpm7U=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEf94yoDhxxnz00IeCNbHsmu7ik8eRfvqseR4naYYhWN3cJ_eGkkD4ROk6CZ6wMO3WbT5QR68rx9eDrSQ1XsqWFJlstA-TCb0iQFsnP_BYW69smWIkN73NRs5l1KFv1rQ==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF18MfAFK56KOrNvQQ0n7E2dgWEyCzTSCDF8BE6c_yGoEwJtRMzW_WPztHngll9qIpVIdXe-0aIW5Xu6PYceqvWaq5zN3m3SwpPC3xWm1jM1YKfcYnNxzyo9RZzGnE2mZ4TbkdzRng=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGsriOtwu72GkXUz1VDrl-r_u8TUWSBnbuqjo5fmPQ663FXBoAmua93tLTQZnBnTiaQ8AKCL9hHttknydQrJq9RdXzl7ublwc_9Qi7fCjpHQ_4F4sx5G8_G8ubMfwNpKUY=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGZqjtN_ol9QPFxGJMc2DdQnBO0JmcvuESEVUt-8xn8IY6VYLc7STheRYCbkZsUYbGsY9DWiVzsO_2Tjbu5DXlkEcPybmRne9DzvilzFrkH6y1D2I6pSSkjAX7FB0uWHNXa7ke3zVxPdk2csrVINHe21a9ArkpdHVz-PyGsc4szFwfwAkz-
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHeZaKJYCoGPxJZYRZvI9sgpRL-8wDV7T7AaBIA29d3OUJfGF98Q--YvwENg-rt5w8NRXcxtOrTZLGMjSbNmhE1Pi4cZtac5ng_vFburesLnTLJpIkkxYhMRMMc4YpS7Q==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFAHkg_CUkxQuqA6DzsnGYJjCuckkjjlLPcqjjltX2ARUjEAiAHPzxbXsBh_WTckQq6J42rYuk_GDw143lXF5BjdQz8a6a-FHRfMfrykynKl8oSyGBo7eehdBtPItpraA==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGxiiQ19wkvjcussueDiRDckGa-_sWeZHqyFaFqeiKrwiedAY-P9eEyv6odq7LMIn-8LMBTNuwmYTmW6QnDTtbByXzcSUqyPSRbXUFoTn6bPGkO0jWUyfZI2Q5j5woDaxc=
+  tags:
+  - tactics
+  - controls
+  - pressing
+  reviewed: false
+- id: role-highest-role-familiarity
+  detail: Role++ is the strongest role-familiarity level. In play it shows up as better
+    positional discipline, smoother transitions, smarter support movement and generally
+    sharper tactical AI for that role. It raises the QUALITY of the role's tendencies
+    - it does not guarantee a run or a specific action on any given possession, and
+    the activation requirements are not published in official documentation.
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - roles
+  - tactics
+  reviewed: false
+- id: team-press-and-stamina
+  detail: Triggering Team Press drains stamina faster while it is active - that is
+    the whole cost of the tool and there is nothing special beyond it. The exact drain
+    rate is not publicly verified, so never quote a number; coach the trade-off instead
+    (press in chosen windows, not continuously, or the last fifteen minutes are played
+    by tired legs).
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHcpUHXuYasZ_ZIShCfgP91IdoGkcHyFMdhezlyPcTySJfyr7etNOuuMvXhfyBJWld7i2jEIhNtkx3HQ_jwvdXdh_RR2M5EkM26V9wl6LAu1GJE4pZEa9bf6MyFNfinOapdith-dVUJYt5P_xrMXfHQnOhxZICcpDrJYYXCgtrdBwXWKOODrWD-PlyvBcN-AT_BEVeZW3ABsoc-UrDSS1Z7eqrqcjhJvHPcACw=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHgvb7Cr4diFnGJWmWwdDN67N-8y6_4AINDntHccQjSwWc-xA3vV9KO2-v4AzkuPpLr3wPyGMCFBEpeaYYKkjaobkChgNOPYr2wbfoe0u5CXDuk5TT_wg8rzOS3F1Qgjgc=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEaTwaa4j95oq7IXjAmoGj-f3UpE-PGDLKX3hLhtB9PkZ7LfmEft3kQuvgv5za2WBQPsnWY47BkMjVGUs5mNgLONvJGOnTChX95_1kg2KgTLZfQ36o1CJCGZIfZbw==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGRaR4o4mvDDNtCHcTrUk5dq1VOkE2DCHDBwNQrbi0f55TSoXUGbxdLbyQK9ePItNP-wNr37UaHdp1ucXKR-6bLGhUg9t1w3SbT2ob1vuW247w-Dbhh_PIpyjpxA8534PheFhv7cxIlRtkRsbInYsPj4tx3jjvIGIdZRF_B9ltbsePoAjnAimJ41IFmDwOuhQUm4j4AyyS-iLc=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH3Uxm-uV5bPDs_5_G2s6BVOX5qGazOirYjEUzNYJkGAuM5DIqEoXvtk6U4KgXJj22gNMsKwF_c5BbQU5heOO4oGNU-_M8rCYp46cpmKQGqOax7iMYFitgR3WbmC8qYTg==
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF7r_mVpZPtOLQIQBxs5x_XwKRo55WI90HBCVyq0Mg3iiFozOvcWYlTxpFTuPIrnHl252kBfA_qZDKvr0THpizLYYEVpL-sR8yFeJkYZ54dzZHg_3cTO1jcXfNcBanryH0=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHjc-B1E1mb0Tx8ubV720uDk8Sz03z4Q0IPcjzQGeYno7mshSdfKp-Oqb5_-lIR7kwr8xySbrVn6_XyhFHvE1uk6yffMfFK8tIYwKHyeck1I2_hhdBgw2E1G0QRjzafj9_3ZAqZfYTcCU1_fb3rY6nfex8Jv3ZZxATIdOP_miXBmfuceuU=
+  tags:
+  - tactics
+  - pressing
+  - stamina
+  reviewed: false
+- id: fut-quits-and-disconnects-what-ea-documents
+  detail: 'EA''s launch documentation states that in certain Live Events, Rivals and
+    Champions situations you receive a WIN when the opponent quits or disconnects
+    while the match is tied, if one of these has happened: 45 in-game minutes have
+    passed, the quitting player conceded a penalty, or the quitting player was shown
+    a red card. At launch this was capped at five such wins per day, resetting 00:00
+    UTC. These rules change between updates - check the current version before presenting
+    them. There is NO published Division Rivals forfeit coin formula; do not invent
+    one.'
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - mode-rules
+  - ultimate-team
+  reviewed: false
+- id: chemistry-styles-in-fc-26-use-a-3-6-9-system
+  detail: FC 26 Chemistry Styles apply boosts on a 3/6/9-point scale, not FC 25's
+    4/8/12. Pace-focused styles carry trade-offs; non-pace styles lean on Composure,
+    Reactions and Stamina. Never carry an FC 25 chemistry value into an FC 26 answer
+    - read the boost from the actual player item and the current database.
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  tags:
+  - ultimate-team
+  - chemistry
+  reviewed: false
+- id: roles-are-movement-preferences-not-attribute-boosts
+  detail: 'Read every Role as an AI movement tendency: Advanced Forward threatens
+    the space behind the last line and acts as the main outlet; Inside Forward starts
+    wide and moves inside to receive, combine or shoot; Deep-Lying Playmaker offers
+    a deeper passing option (moves forward under Build-Up, prioritises security under
+    a defensive focus); Fullback preserves width and defensive structure; Inverted
+    Wingback moves inside in possession to add a central player; Attacking Wingback
+    pushes forward aggressively and therefore enlarges defensive-transition risk.
+    Phrase these as intended tendencies, never as commands the AI must obey.'
+  sources:
+  - owner-verified (player, in-game, FC 26)
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQELfJ9ANxvnUSnCK-Qo2nVoaO8oIFQSL6ShWeXI7i3thPmlLwgkpeAokSSiPkj1FZJgClMy-vLgwuCr1kyR89SflBiRJ5oXCbLLKe1Dykl3HX5H
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGF4-zLzwaJts6mvunbyekGUVXYK5ToUHfUpImoZnmWiPSLHmDBEscmecjt_jhrn6zSlw4l54z-HI021PbzFX4vatOkHLJ5WWlfbKbUamSFd4R4ApQ9foYj
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHA9XDMQ5_bfFCodfRH1Aiup04-9KZnKzHkWJG4Wxni5Zs8Jb_DCspOqjCN14kve8DoPSaoj8in3MzBaiz7faih5d4q29Z1drschN5dgPWsjjY=
+  - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFh7piQzcmv6fcUXxYzu2Q3hdy4nrQCBZ0jGlYT2NdjJnOSLjsrMINsxffs-9re-hGYXDmjet1SRf4qQ6phcSRq0RiLd-Y8ApWcec_50GAa1ftsuoxLLPgxYTq6b5FjSQc-
+  tags:
+  - roles
+  - tactics
   reviewed: false

@@ -49,11 +49,16 @@ def test_builds_a_pdf_from_a_full_report():
             {"time": "10:02", "type": "scored", "summary": "Counter."},
         ],
         "stats": {"goals_for": 3, "goals_against": 1, "shots": 7},
+        # still supplied on purpose: the builder must IGNORE it, not print it
         "evidence_log": ["[01:12] Pressed high.", "[04:20] Lost the ball."],
     }), player_name="Ilija")
     assert pdf is not None and pdf.startswith(PDF_MAGIC)
-    # The evidence log forces its own page, so a full report is never one page.
-    assert pdf.count(b"/Type /Page\n") >= 2 or b"/Count 2" in pdf or len(pdf) > 3000
+    # Was "a full report is never one page", which only held because the evidence
+    # log forced a PageBreak. That dump is no longer printed (every line of it is
+    # restated in a section above), so assert what the document must CONTAIN
+    # instead of how many pages it happens to need.
+    assert b"/Type /Page" in pdf
+    assert len(pdf) > 1500, "a full report should not collapse to a stub"
 
 
 def test_accepts_points_as_plain_strings():

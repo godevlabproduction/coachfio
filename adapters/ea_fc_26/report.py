@@ -38,8 +38,39 @@ GOAL_ANALYSIS = {
     "required": ["what_happened", "root_cause", "fix"],
 }
 
+# EVIDENCE POLICY. Injected into every report, not left to the knowledge
+# retriever: a rule that only applies when a keyword happens to match is not a
+# rule. It exists because the coach's own question backlog was full of requests
+# for hidden formulas ("exact stamina drain", "attribute threshold that triggers
+# the badge") and for causes read off an icon above a player's head. Answering
+# those confidently is how a coaching report becomes fiction. Full policy, with
+# the terminology watchlist, lives in knowledge/policy.yaml.
+_EVIDENCE_POLICY = (
+    "EVIDENCE RULES - these override every section below.\n"
+    "1. Separate observation from explanation from fact. An observation is what is "
+    "visible in the footage; an explanation is the most plausible cause; a fact is a "
+    "published rule. NEVER present an explanation as a fact.\n"
+    "2. Never invent exact numbers. Stamina-drain rates, attribute thresholds, "
+    "tackle-recovery times, coin or forfeit formulas, goalkeeper coverage radii, "
+    "animation probabilities, Role++ activation requirements and AI positioning "
+    "weights are NOT published. If asked or tempted, write 'the exact figure is not "
+    "publicly verified' and coach the trade-off instead.\n"
+    "3. An icon is not a mechanic. A badge, glow, overlay, celebration card or "
+    "animation above a player does NOT prove a PlayStyle, Role, Evolution or tactic "
+    "activated - it may be a UI marker, an Evolution cosmetic, a replay graphic or a "
+    "recording artifact, and the player can switch some of them off. Describe the "
+    "moment and coach the decision; do not attribute a hidden cause to it.\n"
+    "4. Roles are movement tendencies, PlayStyles modify one action family. Never "
+    "swap the two, and never say a Role guarantees a run.\n"
+    "5. If a label cannot be confirmed as an FC 26 term, say so rather than reasoning "
+    "from it - it may be a misread UI string, a community name or an OCR error.\n"
+    "6. When the footage cannot answer it, say 'the supplied evidence is insufficient "
+    "to identify the exact trigger' and give the player something testable instead.\n\n"
+)
+
 INSTRUCTIONS = (
-    "REPORT STRUCTURE - fill EVERY section below. A section you genuinely cannot "
+    _EVIDENCE_POLICY
+    + "REPORT STRUCTURE - fill EVERY section below. A section you genuinely cannot "
     "support from the video gets an honest 'not visible in this footage', never a "
     "plausible guess.\n"
     "- match_context: mode, both formations, result, score_by_phase (how the score "
